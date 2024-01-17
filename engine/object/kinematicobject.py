@@ -23,7 +23,7 @@ class KinematicObject(entityobject.EntityObject):
 
     def apply_force(self, force: pygame.math.Vector2):
         # F = m * a <=> a = F/m
-        new_acceleration = pygame.math.Vector2(force.x/self.mass, force.y/self.mass)
+        new_acceleration = pygame.math.Vector2(force.x, force.y) / self.mass
         self.acceleration += new_acceleration
 
     def draw_hitbox(self):
