@@ -1,8 +1,4 @@
-import pygame
-
-import globals as g
-import graphics as gr
-import metrics as m
+from engine import metrics as m
 from testobj import *
 
 def main():
@@ -13,22 +9,24 @@ def main():
     print("wow")
 
     o = TestObj(1, 1)
-    #gr.pixels_per_meter = 25
+    m.pixels_per_meter = 50
 
     while g.handle_event():
         mouse_x, mouse_y = pygame.mouse.get_pos()
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
 
-        m.x_offset_pixel += -(g.is_key_down(pygame.K_RIGHT) - g.is_key_down(pygame.K_LEFT))
-        m.y_offset_pixel += -(g.is_key_down(pygame.K_DOWN) - g.is_key_down(pygame.K_UP))
-
         # Update
+
+        # Move the camera at 5 meters / sec
+        m.x_offset_pixel += -(g.is_key_down(pygame.K_RIGHT) - g.is_key_down(pygame.K_LEFT)) * m.meters_to_pixels(5) * g.deltatime
+        m.y_offset_pixel += -(g.is_key_down(pygame.K_DOWN) - g.is_key_down(pygame.K_UP)) * m.meters_to_pixels(5) * g.deltatime
         o.update()
 
         # Process physic (maybe do this in the object's update ? idk)
         o.process_physics(g.deltatime)
 
         # Draw
+
         g.window.fill((25, 25, 25))
         gr.draw_grid()
         o.draw()
@@ -39,7 +37,6 @@ def main():
         window.blit(dt_text, (10, 34))
         mouse_pos_text = default_font.render(f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}", True, (255, 255, 255))
         window.blit(mouse_pos_text, (10, 58))
-
 
         pygame.display.flip()       # put this in handle event ???
 

@@ -1,19 +1,11 @@
 import pygame
 
-import globals as g
-import graphics as gr
+from engine import globals as g, graphics as gr
+from engine.object import kinematicobject as ko
 
-class TestObj(object):
+class TestObj(ko.KinematicObject):
     def __init__(self, x, y):
-        self.mass = 10      # in kg
-        self.position = pygame.math.Vector2(x, y)       # in m
-        self.velocity = pygame.math.Vector2(0, 0)       # in m/s
-        self.acceleration = pygame.math.Vector2(0, 0)   # in m/s²
-        self.enable_physics = False
-
-        # self.velocity.x = 3000
-        # self.velocity.y = -3000
-        # self.acceleration.x = 100
+        super().__init__(x, y, 1, 1, 10)
 
     def update(self):
         if g.is_key_pressed(pygame.K_SPACE):
@@ -21,34 +13,19 @@ class TestObj(object):
             # self.velocity.y = -500
 
             # Here we need to devide by dt so it cancels with the dt from the velocity calculation (?)
-            self.apply_force(pygame.math.Vector2(5 * self.mass / g.deltatime, -5 * self.mass / g.deltatime))    # this will result in adding a velocity of 500 pixels sec on this frame
+            # this will result in adding a velocity of 5 meter / sec on this frame
+            self.apply_force(pygame.math.Vector2(5 * self.mass / g.deltatime,
+                                                 -5 * self.mass / g.deltatime))
 
             # Concept : we could say that each worms have a different strength when throwing an item. Therefore we could do it like this :
             # self.apply_force(pygame.math.Vector2(self.strength * cos(throw_angle) / g.deltatime, self.strength * sin(throw_angle) / g.deltatime))
 
-            # self.apply_force(pygame.math.Vector2(0, -50000 * self.mass))
             self.enable_physics = True
 
         # self.velocity.x = ((g.is_key_down(pygame.K_RIGHT) - g.is_key_down(pygame.K_LEFT))) * 100
         # self.velocity.y = ((g.is_key_down(pygame.K_DOWN) - g.is_key_down(pygame.K_UP))) * 100
 
-    def process_physics(self, dt: float):
-        if not self.enable_physics:
-            return
-
-        # F = m * a
-        self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²
-        # self.acceleration.y = 981
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity * dt
-        self.acceleration = pygame.math.Vector2(0, 0)       # reset acceleration
-
-
-
-    def apply_force(self, force: pygame.math.Vector2):
-        # F = m * a <=> a = F/m
-        new_acceleration = pygame.math.Vector2(force.x/self.mass, force.y/self.mass)
-        self.acceleration += new_acceleration
-
     def draw(self):
-        gr.draw_rectangle(self.position.x, self.position.y, 1, 1, (255, 255, 255))
+        x, y, w, h = self.get_rectangle()
+        gr.draw_rectangle(x, y, w, h, (255, 255, 255))
+        self.draw_hitbox()

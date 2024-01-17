@@ -1,18 +1,18 @@
 """
-The goal of this file is to draw stuf on the window using meters as a metric.
+The goal of this file is to draw stuff on the window using meters as a metric.
 For pixel graphics, we should use pygame's natives API calls.
 """
 
 import pygame
 
-import globals as g
-import metrics as m
+from . import globals as g
+from . import metrics as m
 
 
 print("graphics module instantiated")
 
 
-def draw_rectangle(x, y, w, h, c):
+def draw_rectangle(x: float, y: float, w: float, h: float, c, fill = True):
     """
     Take rec in meters
     :param x: x position in meter
@@ -29,7 +29,7 @@ def draw_rectangle(x, y, w, h, c):
     pixel_height = m.meters_to_pixels(h)
 
     #print(pixel_x, pixel_y, pixel_width, pixel_height)
-    pygame.draw.rect(g.window, c, (pixel_x, pixel_y, pixel_width, pixel_height))
+    pygame.draw.rect(g.window, c, (pixel_x, pixel_y, pixel_width, pixel_height), width=(0 if fill else 1))
 
 
 def draw_line(start: pygame.math.Vector2, end: pygame.math, c):
