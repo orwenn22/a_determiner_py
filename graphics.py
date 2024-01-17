@@ -1,16 +1,16 @@
 """
-The goal of this file is to convert meters positions to pixel on the screen
+The goal of this file is to draw stuf on the window using meters as a metric.
+For pixel graphics, we should use pygame's natives API calls.
 """
 
 import pygame
 
 import globals as g
+import metrics as m
 
-pixels_per_meter = 50
 
-# absolute position of the origin on the window
-x_offset_pixel = 0
-y_offset_pixel = 0
+print("graphics module instantiated")
+
 
 def draw_rectangle(x, y, w, h, c):
     """
@@ -22,29 +22,35 @@ def draw_rectangle(x, y, w, h, c):
     :param c: color
     :return: nothing
     """
-    pixel_x = x * pixels_per_meter + x_offset_pixel
-    pixel_y = y * pixels_per_meter + y_offset_pixel
-    pixel_width = w * pixels_per_meter
-    pixel_height = h * pixels_per_meter
+    origin_vec = m.meters_position_to_window_position(pygame.math.Vector2(x, y))
+    pixel_x = int(origin_vec.x)
+    pixel_y = int(origin_vec.y)
+    pixel_width = m.meters_to_pixels(w)
+    pixel_height = m.meters_to_pixels(h)
 
+    #print(pixel_x, pixel_y, pixel_width, pixel_height)
     pygame.draw.rect(g.window, c, (pixel_x, pixel_y, pixel_width, pixel_height))
 
+
+def draw_line(start: pygame.math.Vector2, end: pygame.math, c):
+    """
+    Draw a line using two point in meters
+    :param start: start postion in meters
+    :param end: end position in meters
+    :param c: color
+    :return: nothing
+    """
+    start_pixel = m.meters_position_to_window_position(start)
+    end_pixel = m.meters_position_to_window_position(end)
+    pygame.draw.line(g.window, c, start_pixel, end_pixel)
 
 def draw_grid():
     """
     Draw a grid at the origin. Each square is 1*1 meter
     :return: nothing
     """
-
-    # TODO : draw_line function with meter parameters ?
+    # TODO : draw the grid only on the visible space of the window.
     for y in range(-10, 11):
-        pygame.draw.line(
-            g.window, (0, 0, 255),
-            (-pixels_per_meter*10 + x_offset_pixel, y_offset_pixel + y*pixels_per_meter),
-            (pixels_per_meter*10 + x_offset_pixel, y_offset_pixel + y*pixels_per_meter))
-
+        draw_line(pygame.math.Vector2(-10, y), pygame.math.Vector2(10, y), (0, 0, 255))
     for x in range(-10, 11):
-        pygame.draw.line(
-            g.window, (0, 0, 255),
-            (x_offset_pixel + x*pixels_per_meter, -pixels_per_meter*10 + y_offset_pixel),
-            (x_offset_pixel + x*pixels_per_meter, pixels_per_meter*10 + y_offset_pixel))
+        draw_line(pygame.math.Vector2(x, -10), pygame.math.Vector2(x, 10), (0, 0, 255))
