@@ -1,6 +1,7 @@
 import pygame
 
 import globals as g
+import graphics as gr
 from testobj import *
 
 def main():
@@ -10,7 +11,7 @@ def main():
 
     print("wow")
 
-    o = TestObj(60, 600)
+    o = TestObj(1, 1)
 
     while g.handle_event():
         if g.is_key_pressed(pygame.K_DOWN):
@@ -23,11 +24,13 @@ def main():
         o.process_physics(g.deltatime)
 
         # Draw
-        #g.window.fill((25, 25, 25))
-
+        g.window.fill((25, 25, 25))
         fps_text = default_font.render("FPS: " + str(g.get_fps()), True, (255, 255, 255))
         window.blit(fps_text, (10, 10))
+        dt_text = default_font.render("DT: " + str(g.deltatime) + "s", True, (255, 0, 0))
+        gr.draw_grid()
 
+        window.blit(dt_text, (10, 34))
         o.draw()
 
         pygame.display.flip()

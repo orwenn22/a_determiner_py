@@ -1,12 +1,12 @@
 import pygame
 
 running = False
-window = None
+window : pygame.Surface = None
 clock = None
 keyboard_state = []
 keys_pressed = {}
 deltatime = 0.0
-FPS = 30
+FPS = 120
 
 
 def init_window(w, h):

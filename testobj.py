@@ -1,13 +1,14 @@
 import pygame
 
 import globals as g
+import graphics as gr
 
 class TestObj(object):
     def __init__(self, x, y):
         self.mass = 10      # in kg
-        self.position = pygame.math.Vector2(x, y)
-        self.velocity = pygame.math.Vector2(0, 0)
-        self.acceleration = pygame.math.Vector2(0, 0)
+        self.position = pygame.math.Vector2(x, y)       # in m
+        self.velocity = pygame.math.Vector2(0, 0)       # in m/s
+        self.acceleration = pygame.math.Vector2(0, 0)   # in m/s²
         self.enable_physics = False
 
         # self.velocity.x = 3000
@@ -20,7 +21,7 @@ class TestObj(object):
             # self.velocity.y = -500
 
             # Here we need to devide by dt so it cancels with the dt from the velocity calculation (?)
-            self.apply_force(pygame.math.Vector2(500 * self.mass / g.deltatime, -500 * self.mass / g.deltatime))    # this will result in adding a velocity of 500 pixels sec on this frame
+            self.apply_force(pygame.math.Vector2(5 * self.mass / g.deltatime, -5 * self.mass / g.deltatime))    # this will result in adding a velocity of 500 pixels sec on this frame
 
             # Concept : we could say that each worms have a different strength when throwing an item. Therefore we could do it like this :
             # self.apply_force(pygame.math.Vector2(self.strength * cos(throw_angle) / g.deltatime, self.strength * sin(throw_angle) / g.deltatime))
@@ -36,7 +37,7 @@ class TestObj(object):
             return
 
         # F = m * a
-        self.apply_force(pygame.math.Vector2(0, 981*self.mass))     # gravity : 9.81 m/s² (assume 100 pixels is 1 meter)
+        self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²
         # self.acceleration.y = 981
         self.velocity += self.acceleration * dt
         self.position += self.velocity * dt
@@ -50,4 +51,4 @@ class TestObj(object):
         self.acceleration += new_acceleration
 
     def draw(self):
-        g.window.fill((255, 255, 255), (self.position.x, self.position.y, 60, 60))
+        gr.draw_rectangle(self.position.x, self.position.y, 1, 1, (255, 255, 255))
