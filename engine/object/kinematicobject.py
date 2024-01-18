@@ -9,13 +9,15 @@ class KinematicObject(entityobject.EntityObject):
         self.velocity = pygame.math.Vector2(0, 0)       # velocity in m/s
         self.acceleration = pygame.math.Vector2(0, 0)   # acceleration in m/s²
         self.enable_physics = False                     # physics disabled by default
+        self.enable_gravity = True                      # gravity enabled by default
         self.mass = mass                                # mass in kg
 
     def process_physics(self, dt: float):
         if not self.enable_physics:
             return
         # F = m * a
-        self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²      TODO : option to enable/disable gravity on the object ?
+        if self.enable_gravity:
+            self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²      TODO : option to enable/disable gravity on the object ?
         # self.acceleration.y = 981
         self.velocity += self.acceleration * dt
         self.position += self.velocity * dt

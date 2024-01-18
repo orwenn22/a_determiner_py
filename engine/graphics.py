@@ -54,3 +54,14 @@ def draw_grid():
         draw_line(pygame.math.Vector2(-10, y), pygame.math.Vector2(10, y), (0, 0, 255))
     for x in range(-10, 11):
         draw_line(pygame.math.Vector2(x, -10), pygame.math.Vector2(x, 10), (0, 0, 255))
+
+
+def draw_circle(center: pygame.math.Vector2, radius: float, c):
+    """
+    Draw a circle using meters unit
+    :param center: position of the center
+    :param radius: radius in meter
+    :param c: color
+    :return: nothing
+    """
+    pygame.draw.circle(g.window, c, m.meters_position_to_window_position(center), m.meters_to_pixels(radius))
