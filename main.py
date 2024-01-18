@@ -6,6 +6,7 @@ import pygame
 def main():
     pygame.init()
     window = testobj.g.init_window(1280, 720)
+    # it's illegal apparently the None TODO : redo it
     default_font = pygame.font.SysFont(None, 24)
 
     print("wow")

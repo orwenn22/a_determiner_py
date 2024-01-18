@@ -2,17 +2,21 @@ import pygame
 
 from engine import graphics as gr
 
+
 class EntityObject(object):
-    def __init__(self, x: float, y: float, width: float, height: float):
+    def __init__(self, x: float, y: float, width: float, height: float, sprite_path: str = ""):
         """
         :param x: x pos in meter (center of the object)
         :param y: y pos in meter (center of the object)
         :param width: width in meter
         :param height: height in meter
+        :param sprite_path: non mandatory parameter to load an image
         """
-        self.position = pygame.math.Vector2(float(x), float(y))     # position in m
+        self.position = pygame.math.Vector2(
+            float(x), float(y))     # position in m
         self.width = width
         self.height = height
+        self.sprite_path = sprite_path
 
     def update(self):
         pass
@@ -26,7 +30,6 @@ class EntityObject(object):
         :return: a tuple (x,y,width,height)  TODO : implement our own rectangle type ?
         """
         return (self.position.x - self.width/2, self.position.y - self.height/2, self.width, self.height)
-
 
     def draw_hitbox(self):
         """
