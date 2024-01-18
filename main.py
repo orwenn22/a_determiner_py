@@ -11,6 +11,7 @@ def main():
     print("wow")
 
     o = testobj.TestObj(1, 1)
+    o2 = testobj.TestObj(3, 1, 20)
     m.pixels_per_meter = 50
 
     while testobj.g.handle_event():
@@ -26,15 +27,18 @@ def main():
         m.y_offset_pixel += -(testobj.g.is_key_down(pygame.K_DOWN) -
                               testobj.g.is_key_down(pygame.K_UP)) * m.meters_to_pixels(5) * testobj.g.deltatime
         o.update()
+        o2.update()
 
         # Process physic (maybe do this in the object's update ? idk)
         o.process_physics(testobj.g.deltatime)
+        o2.process_physics(testobj.g.deltatime)
 
         # Draw
 
         testobj.g.window.fill((25, 25, 25))
         testobj.gr.draw_grid()
         o.draw()
+        o2.draw()
 
         fps_text = default_font.render(
             "FPS: " + str(testobj.g.get_fps()), True, (255, 255, 255))
