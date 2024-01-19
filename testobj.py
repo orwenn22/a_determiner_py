@@ -12,6 +12,7 @@ class TestObj(ko.KinematicObject):
         super().__init__(x, y, 1, 1, mass)
         self.throw_angle = 0.0
         self.strength = 100     # this is the launch force intensity in newton (not really in reality, but we will pretend it is)
+        self.enable_physics = False
 
     def update(self, dt: float):
         self.throw_angle += (g.is_key_down(pygame.K_d) - g.is_key_down(pygame.K_q)) * g.deltatime
@@ -27,6 +28,8 @@ class TestObj(ko.KinematicObject):
             # throwed_item.apply_force(pygame.math.Vector2(self.strength * cos(throw_angle) / g.deltatime, self.strength * sin(throw_angle) / dt))
 
             self.enable_physics = True
+
+        self.process_physics(dt)
 
     def draw(self):
         x, y, w, h = self.get_rectangle()

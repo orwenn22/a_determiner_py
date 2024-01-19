@@ -1,4 +1,5 @@
 from engine import metrics as m, graphics as gr, globals as g
+from engine.object import objectmanager
 import testobj
 import pygame
 
@@ -6,15 +7,15 @@ import pygame
 def main():
     pygame.init()
     window = g.init_window(1280, 720)
-    # it's illegal apparently the None TODO : redo it
     default_font = pygame.font.SysFont(None, 24)
 
     print("wow")
 
-    o = testobj.TestObj(1, 1)
-    o2 = testobj.TestObj(3, 1, 20)
-    m.pixels_per_meter = 50
+    object_manager = objectmanager.ObjectManager()
+    object_manager.add_object(testobj.TestObj(1, 1))
+    object_manager.add_object(testobj.TestObj(3, 1, 20))
 
+    m.pixels_per_meter = 50
 
     my_sprite = pygame.image.load("./testsprite.png")
     my_rot = 0.0
@@ -32,22 +33,17 @@ def main():
                               testobj.g.is_key_down(pygame.K_LEFT)) * m.meters_to_pixels(5) * g.deltatime
         m.y_offset_pixel += -(testobj.g.is_key_down(pygame.K_DOWN) -
                               testobj.g.is_key_down(pygame.K_UP)) * m.meters_to_pixels(5) * g.deltatime
-        o.update(g.deltatime)
-        o2.update(g.deltatime)
 
-        # Process physic (maybe do this in the object's update ? idk)
-        o.process_physics(g.deltatime)
-        o2.process_physics(g.deltatime)
+        object_manager.update(g.deltatime)
 
         # Draw
 
         g.window.fill((25, 25, 25))
         gr.draw_grid()
-        o.draw()
-        o2.draw()
+        object_manager.draw()
 
-        for i in range(0, 10000):
-            gr.draw_sprite(my_sprite, pygame.Vector2(i, 0))
+        #for i in range(0, 10000):
+            #gr.draw_sprite(my_sprite, pygame.Vector2(i, 0))
             #gr.draw_sprite_scale(my_sprite, (i, 0, float(0.5), float(0.5)))
             #gr.draw_sprite_rot(my_sprite, pygame.math.Vector2(i, 0), pygame.math.Vector2(2, 1), my_rot)
 
