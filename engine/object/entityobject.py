@@ -4,21 +4,21 @@ from engine import graphics as gr
 
 
 class EntityObject(object):
-    def __init__(self, x: float, y: float, width: float, height: float, sprite_path: str = ""):
+    def __init__(self, x: float, y: float, width: float, height: float, sprite: pygame.surface.Surface = None):
         """
         :param x: x pos in meter (center of the object)
         :param y: y pos in meter (center of the object)
         :param width: width in meter
         :param height: height in meter
-        :param sprite_path: non mandatory parameter to load an image
+        :param sprite: non mandatory sprite
         """
         self.position = pygame.math.Vector2(
             float(x), float(y))     # position in m
         self.width = width
         self.height = height
-        self.sprite_path = sprite_path
+        self.sprite: pygame.surface.Surface = sprite
 
-    def update(self):
+    def update(self, dt: float):
         pass
 
     def draw(self):
