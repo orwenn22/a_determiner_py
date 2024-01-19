@@ -74,17 +74,11 @@ def draw_circle(center: pygame.math.Vector2, radius: float, c):
         center), m.meters_to_pixels(radius))
 
 
-def draw_sprite(sprite: pygame.Surface, rect_to_draw: tuple[float, float, float, float]):
-    """
-    This won't scale the sprite to fill the rectangle
-    """
-    origin_vec = m.meters_position_to_window_position(pygame.Vector2(rect_to_draw[0], rect_to_draw[1]))
+def draw_sprite(sprite: pygame.Surface, position: pygame.math.Vector2) -> None:
+    origin_vec = m.meters_position_to_window_position(position)
     x = int(origin_vec.x)
     y = int(origin_vec.y)
-    width = m.meters_to_pixels(rect_to_draw[2])
-    height = m.meters_to_pixels(rect_to_draw[3])
-    space_to_draw = (x, y, width, height)
-    g.window.blit(sprite, space_to_draw)
+    g.window.blit(sprite, (x, y))
 
 
 def draw_sprite_scale(sprite: pygame.Surface, rect_to_draw: tuple[float, float, float, float]):
