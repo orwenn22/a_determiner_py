@@ -57,7 +57,7 @@ def main():
             f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}", True, (255, 255, 255))
         window.blit(mouse_pos_text, (10, 58))
 
-        pygame.display.flip()       # put this in handle event ???
+        g.game_loop_end()
 
     pygame.quit()
 
