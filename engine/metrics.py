@@ -3,6 +3,7 @@ The goal of this file is to convert meters positions to pixel on the screen
 """
 
 import pygame
+from engine import globals as g
 
 print("metrics module instantiated")
 
@@ -12,6 +13,20 @@ pixels_per_meter = 50
 # if it is equal to {40, 40} then the entire content will be shifter a bit towards the down-right direction
 x_offset_pixel = 0
 y_offset_pixel = 0
+
+
+def set_camera_center(position: pygame.math.Vector2):
+    """
+    Set the position of the center of the "camera"
+    :param position: new position in meter
+    """
+    global x_offset_pixel, y_offset_pixel
+    distance_x = meters_to_pixels(position.x)
+    distance_y = meters_to_pixels(position.y)
+    # print("Relative position from center :", distance_x, distance_y)
+    x_offset_pixel = -distance_x + int(g.window.get_width()/2)
+    y_offset_pixel = -distance_y + int(g.window.get_height()/2)
+    # print("New calculated camera pos :", x_offset_pixel, y_offset_pixel)
 
 
 def window_position_to_meters_position(x: int, y: int) -> pygame.math.Vector2:
