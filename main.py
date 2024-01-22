@@ -47,7 +47,7 @@ def main():
 
         # for i in range(0, 10000):
         #    gr.draw_sprite(my_sprite, pygame.Vector2(i, 0))
-        #    gr.draw_sprite_scale(my_sprite, (i, 0, float(0.5), float(0.5)))
+        #    gr.draw_sprite_scale(my_sprite, (i, 0, float(10), float(10)))
         #    gr.draw_sprite_rot(my_sprite, pygame.math.Vector2(i, 0), pygame.math.Vector2(2, 1), my_rot)
 
         # Some debug infos

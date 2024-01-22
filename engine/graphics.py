@@ -3,6 +3,7 @@ The goal of this file is to draw stuff on the window using meters as a metric.
 For pixel graphics, we should use pygame's natives API calls.
 """
 
+import math
 import pygame
 
 from . import globals as g
@@ -78,6 +79,11 @@ def draw_sprite(sprite: pygame.Surface, position: pygame.math.Vector2) -> None:
     origin_vec = m.meters_position_to_window_position(position)
     x = int(origin_vec.x)
     y = int(origin_vec.y)
+    width = sprite.get_width()
+    height = sprite.get_height()
+    # TODO : check how efficient (or not) this actually is
+    if x+width < 0 or y+height < 0 or x >= g.window.get_width() or y >= g.window.get_height():
+        return
     g.window.blit(sprite, (x, y))
 
 
@@ -90,6 +96,9 @@ def draw_sprite_scale(sprite: pygame.Surface, rect_to_draw: tuple[float, float, 
     y = int(origin_vec.y)
     width = m.meters_to_pixels(rect_to_draw[2])
     height = m.meters_to_pixels(rect_to_draw[3])
+    # TODO : check how efficient (or not) this actually is
+    if x+width < 0 or y+height < 0 or x >= g.window.get_width() or y >= g.window.get_height():
+        return
     space_to_draw = (x, y, width, height)
     scaled_surface = pygame.transform.scale(sprite, (width, height))
     g.window.blit(scaled_surface, space_to_draw)
@@ -109,12 +118,19 @@ def draw_sprite_rot(sprite: pygame.Surface, position: pygame.math.Vector2, size:
     width = m.meters_to_pixels(size.x)
     height = m.meters_to_pixels(size.y)
 
+    # TODO : check how efficient (or not) this actually is
+    half_diagonal = math.sqrt(width*width + height*height) / 2
+    if x+half_diagonal < 0 or y+half_diagonal < 0 or x-half_diagonal >= g.window.get_width() or y-half_diagonal >= g.window.get_height():
+        return
+
     scaled_surface = pygame.transform.scale(sprite, (width, height))
     rotated_surface = pygame.transform.rotate(scaled_surface, rotation)
     size_rec = rotated_surface.get_rect()
 
+    # Currently, x and y are storing the position of the middle, however the pygame blit API take the top left position.
+    # Therefore, we want to actually calculate this position using the size of the resulting surface
     x -= int(size_rec.width / 2)
     y -= int(size_rec.height / 2)
 
-    #print((x, y, size_rec.width, size_rec.height))
+    # print((x, y, size_rec.width, size_rec.height))
     g.window.blit(rotated_surface, (x, y, size_rec.width, size_rec.height))
