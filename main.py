@@ -7,7 +7,7 @@ import pygame
 def main():
     pygame.init()
     window = g.init_window(1280, 720)
-    default_font = pygame.font.SysFont(None, 24)
+    default_font = pygame.font.SysFont(pygame.font.get_default_font(), 24)
 
     # create a manager with some objects in it
     object_manager = objectmanager.ObjectManager()

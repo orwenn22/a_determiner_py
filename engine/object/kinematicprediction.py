@@ -4,10 +4,7 @@ import math
 from engine import globals as g, graphics as gr
 from engine.object import kinematicobject as ko
 
-# TODO : move this in engine
-#        and rename to KinematicPrediction ?
-
-class TestObjPrediction(ko.KinematicObject):
+class KinematicPrediction(ko.KinematicObject):
     def __init__(self, x, y, w, h, mass, velocity, acceleration):
         """
         :param x: x posittion of the object
@@ -32,7 +29,6 @@ class TestObjPrediction(ko.KinematicObject):
         :return: The prediction object
         """
         return cls(other.position.x, other.position.y, other.width, other.height, other.mass, other.velocity, other.acceleration)
-
 
     def draw_simulation(self, step: int, simulation_amount: int = 100, dt: float = 0.01):
         """

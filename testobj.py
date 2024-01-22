@@ -1,17 +1,16 @@
 import pygame
 import math
 
-import testobjprediction as top
-
 from engine import globals as g, graphics as gr
-from engine.object import kinematicobject as ko
+from engine.object import kinematicobject as ko, kinematicprediction as kinematicprediction
 
 
 class TestObj(ko.KinematicObject):
     def __init__(self, x, y, mass=10):
         super().__init__(x, y, 1, 1, mass)
         self.throw_angle = 0.0
-        self.strength = 100     # this is the launch force intensity in newton (not really in reality, but we will pretend it is)
+        # this is the launch force intensity in newton (not really in reality, but we will pretend it is)
+        self.strength = 100
         self.enable_physics = False
 
     def update(self, dt: float):
@@ -45,8 +44,8 @@ class TestObj(ko.KinematicObject):
         )
 
         # Simulate throwing, and show trajectory
-        #a = top.TestObjPrediction(self.position.x, self.position.y, self.width, self.height, self.mass, self.velocity)
-        a = top.TestObjPrediction.from_other_object(self)
+        # a = kinematicprediction.TestObjPrediction(self.position.x, self.position.y, self.width, self.height, self.mass, self.velocity)
+        a = kinematicprediction.KinematicPrediction.from_other_object(self)
 
         # Add throwing force
         # And simulate with dt of 0.01
