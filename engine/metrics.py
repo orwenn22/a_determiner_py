@@ -7,12 +7,28 @@ from engine import globals as g
 
 print("metrics module instantiated")
 
+# This should not be modified directly. Instead, set_pixels_per_meter() should be used.
 pixels_per_meter = 50
 
 # absolute position of the origin on the window in pixel
 # if it is equal to {40, 40} then the entire content will be shifter a bit towards the down-right direction
 x_offset_pixel = 0
 y_offset_pixel = 0
+
+
+def set_pixels_per_meter(new_pixels_per_meter: int):
+    """
+    Set a new pixels per meter value. Will set zoom_changed to True.
+    If we need to change the amount of pixels per meters, this should be called before updating objects, as early as
+    possible in the game loop.
+    """
+    global pixels_per_meter
+    # We do this because some stuff might rely on zoom_changed to update their cached texture. Therefore, we don't want
+    # to reload their cache if the length didn't change. (also prevent negative size and 0 here, because why not)
+    if pixels_per_meter == new_pixels_per_meter or new_pixels_per_meter <= 0:
+        return
+    pixels_per_meter = new_pixels_per_meter
+    g.zoom_changed = True
 
 
 def set_camera_center(position: pygame.math.Vector2):
@@ -27,6 +43,10 @@ def set_camera_center(position: pygame.math.Vector2):
     x_offset_pixel = -distance_x + int(g.window.get_width()/2)
     y_offset_pixel = -distance_y + int(g.window.get_height()/2)
     # print("New calculated camera pos :", x_offset_pixel, y_offset_pixel)
+
+
+def get_camera_center() -> pygame.math.Vector2:
+    return window_position_to_meters_position(int(g.window.get_width()/2), int(g.window.get_height()/2))
 
 
 def window_position_to_meters_position(x: int, y: int) -> pygame.math.Vector2:

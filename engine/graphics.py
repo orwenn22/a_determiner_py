@@ -8,8 +8,7 @@ import pygame
 
 from . import globals as g
 from . import metrics as m
-# we can delete the next line it's just to avoid having my linter crying
-from engine.object.entityobject import EntityObject
+
 
 print("graphics module instantiated")
 
@@ -76,15 +75,49 @@ def draw_circle(center: pygame.math.Vector2, radius: float, c):
 
 
 def draw_sprite(sprite: pygame.Surface, position: pygame.math.Vector2) -> None:
+    """
+    This is mostly intended for drawing a precached - prescaled - texture.
+    """
     origin_vec = m.meters_position_to_window_position(position)
     x = int(origin_vec.x)
     y = int(origin_vec.y)
     width = sprite.get_width()
     height = sprite.get_height()
-    # TODO : check how efficient (or not) this actually is
+    #  (after testing, this increase performance by about 30% if a lot of objects are of screen)
     if x+width < 0 or y+height < 0 or x >= g.window.get_width() or y >= g.window.get_height():
         return
     g.window.blit(sprite, (x, y))
+
+
+def draw_sprite_big(sprite: pygame.Surface, position: pygame.math.Vector2):
+    origin_vec = m.meters_position_to_window_position(position)
+    x = int(origin_vec.x)
+    y = int(origin_vec.y)
+    width = sprite.get_width()
+    height = sprite.get_height()
+    if x+width < 0 or y+height < 0 or x >= g.window.get_width() or y >= g.window.get_height():
+        return
+
+    offset_x = 0
+    if x < 0:
+        offset_x = -x
+        x = 0
+
+    offset_y = 0
+    if y < 0:
+        offset_y = -y
+        y = 0
+
+    area_w = width - offset_x
+    if area_w + x >= g.window.get_width():
+        area_w = g.window.get_width() - x
+
+    area_h = height - offset_y
+    if area_h + y >= g.window.get_height():
+        area_h = g.window.get_height() - y
+
+    print((offset_x, offset_y, area_w, area_h))
+    g.window.blit(sprite, (x, y), (offset_x, offset_y, area_w, area_h))
 
 
 def draw_sprite_scale(sprite: pygame.Surface, rect_to_draw: tuple[float, float, float, float]):
@@ -96,16 +129,17 @@ def draw_sprite_scale(sprite: pygame.Surface, rect_to_draw: tuple[float, float, 
     y = int(origin_vec.y)
     width = m.meters_to_pixels(rect_to_draw[2])
     height = m.meters_to_pixels(rect_to_draw[3])
-    # TODO : check how efficient (or not) this actually is
+    # This is efficient because we check this before applying transformations
     if x+width < 0 or y+height < 0 or x >= g.window.get_width() or y >= g.window.get_height():
         return
     space_to_draw = (x, y, width, height)
     scaled_surface = pygame.transform.scale(sprite, (width, height))
     g.window.blit(scaled_surface, space_to_draw)
 
+
 def draw_sprite_rot(sprite: pygame.Surface, position: pygame.math.Vector2, size: pygame.math.Vector2, rotation: float):
     """
-    Draw a sprite using a position, rotation offset and rotation
+    Draw a sprite using a position and rotation
     :param sprite: the sprite we want to draw
     :param position: center of where we want to draw the sprite (in m position)
     :param size: size at which we want to draw the sprite (in m)
@@ -118,7 +152,7 @@ def draw_sprite_rot(sprite: pygame.Surface, position: pygame.math.Vector2, size:
     width = m.meters_to_pixels(size.x)
     height = m.meters_to_pixels(size.y)
 
-    # TODO : check how efficient (or not) this actually is
+    # This is efficient because we check this before applying transformations
     half_diagonal = math.sqrt(width*width + height*height) / 2
     if x+half_diagonal < 0 or y+half_diagonal < 0 or x-half_diagonal >= g.window.get_width() or y-half_diagonal >= g.window.get_height():
         return
