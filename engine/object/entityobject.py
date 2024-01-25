@@ -18,6 +18,7 @@ class EntityObject(object):
         self.width = width
         self.height = height
         self.sprite: pygame.surface.Surface = sprite
+        self.cached_sprite: pygame.surface.Surface = None
         self.manager: ObjectManager = None
 
     def update(self, dt: float):
@@ -62,4 +63,4 @@ class EntityObject(object):
         """
         if self.sprite is None:
             return
-        self.sprite = pygame.transform.scale(self.sprite, (m.meters_to_pixels(width), m.meters_to_pixels(height)))
+        self.cached_sprite = pygame.transform.scale(self.sprite, (m.meters_to_pixels(width), m.meters_to_pixels(height)))
