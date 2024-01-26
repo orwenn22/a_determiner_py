@@ -14,8 +14,35 @@ class KinematicObject(entityobject.EntityObject):
         self.mass = mass                                # mass in kg
         # TODO : option to disable acceleration reset ?
 
+    def process_physics_x(self, dt: float):
+        if not self.enable_physics:
+            return
+
+        # TODO : if we add support for non-standard gravities, maybe there would be an horizontal gravity. If so, we should apply its force here.
+        # if self.enable_gravity:
+        #     self.apply_force(pygame.math.Vector2(some_force*self.mass, 0))
+        self.velocity.x += self.acceleration.x * dt
+        self.position.x += self.velocity.x * dt
+        self.acceleration.x = 0.0
+
+    def process_physics_y(self, dt: float):
+        if not self.enable_physics:
+            return
+
+        if self.enable_gravity:
+            self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))
+        self.velocity.y += self.acceleration.y * dt
+        self.position.y += self.velocity.y * dt
+        self.acceleration.y = 0.0
+
     def process_physics(self, dt: float):
-        # TODO : split this into 2 function for vertical and horizontal simulation
+        self.process_physics_x(dt)
+        self.process_physics_y(dt)
+
+    def process_physics_old(self, dt: float):
+        """
+        This is the original, kept for reference because we know it is working
+        """
         if not self.enable_physics:
             return
         # F = m * a
