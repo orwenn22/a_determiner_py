@@ -30,6 +30,9 @@ class TestObj(ko.KinematicObject):
 
         self.process_physics(dt)
 
+        if len(self.manager.get_collision(self, TestObj)) >= 1:
+            print("collision detected")
+
     def draw(self):
         x, y, w, h = self.get_rectangle()
         gr.draw_rectangle(x, y, w, h, (255, 255, 255))
