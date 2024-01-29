@@ -17,38 +17,11 @@ sur github.
 TODO : se mettre d'accord et rédiger exactement comment on veut faire ici.
 
 
-## Système basique pour gérer le state management (facile™ et bon à avoir)
-
-Dans, le jeu, il y aura plusieurs "états" principales dans lequel peut être l'application
-(par exemple menu principal, phase gameplay, menu d'options, page des crédits, etc). Afin de simplifier
-le changement entre ces différents états et de d'isoler tous ces différents composants dans le code, 
-il est peut-être nécessaire d'ajouter un système pour switch entre eux. Cela pourrait éventuellement
-se faire avec une classe "StateManager" qui peut contenir une State, et une autre classe "State" (dont
-toutes les autres states sont dérivés) contenant une référence vers le manager. (et possiblement des méthodes
-update et draw affin d'être indépendant du reste du programme).
-
-
 ## Toolkit de widget (moyen, bon à avoir)
 
 On pourrait peut-être faire un système de widgets (boutons, labels, etc) afin de réaliser les menus et 
 interfaces du jeu plus facilement. Ça fonctionnerait surement de manière similaire aux objets, donc il y
 a peut-être moyen de réutiser une grande partie du code existant dans ce cas ?
-
-
-## Identifications d'objets (facile ?)
-
-Il est important pour les objets qu'ils puissent interagir entre eux (notamment accéder aux propriétés
-les un des autres, checks les collisions, etc). Cependant, actuellement, si un objet récupère un autre
-objet dans l'ObjectManager, il ne lui est pas possible d'identifier de quel type d'objet il s'agit
-(personnage ? projectile ? autre chose ?). 
-
-Je vois deux solutions possibles (mais si vous avez des meilleures idées n'hésitez pas) :
-1) Il est sûrement possible d'utiliser la built-in type() de python pour faire cela, mais je ne sais pas si c'est 
-efficace coté performance où si ça a des répercutions sur la qualité du code. (note random: en python il est possible
-de passer des types comme paramètres de fonction, il y a peut-être moyen de faire des interfaces clean sur 
-l'ObjectManager avec ça)
-2) Une autre option serait d'attribuer une propriété "id" à chaque type d'objet, et ainsi chaque instance de
-l'objet aurait ainsi cet identifiant.
 
 
 ## Différentes formes de hitbox (ex : cercle) ("très" compliqué et probablement pas nécessaire)
