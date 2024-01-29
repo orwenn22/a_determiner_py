@@ -32,6 +32,12 @@ class TestState(state.State):
         m.y_offset_pixel += -(g.is_key_down(pygame.K_DOWN) -
                               g.is_key_down(pygame.K_UP)) * m.meters_to_pixels(5) * dt
 
+        # Zoom control
+        if g.is_key_pressed(pygame.K_KP_PLUS):
+            m.set_pixels_per_meter(m.pixels_per_meter * 2)
+        elif g.is_key_pressed(pygame.K_KP_MINUS):
+            m.set_pixels_per_meter(m.pixels_per_meter // 2)
+
         self.object_manager.update(dt)
 
     def draw(self):

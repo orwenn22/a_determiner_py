@@ -27,8 +27,11 @@ def set_pixels_per_meter(new_pixels_per_meter: int):
     # to reload their cache if the length didn't change. (also prevent negative size and 0 here, because why not)
     if pixels_per_meter == new_pixels_per_meter or new_pixels_per_meter <= 0:
         return
+
+    previous_center = get_camera_center()
     pixels_per_meter = new_pixels_per_meter
     g.zoom_changed = True
+    set_camera_center(previous_center)
 
 
 def set_camera_center(position: pygame.math.Vector2):
