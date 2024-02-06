@@ -9,6 +9,7 @@ import pygame
 
 
 def main():
+    show_debug = False
     pygame.init()
     window = g.init_window(1280, 720)
     default_font = pygame.font.SysFont(pygame.font.get_default_font(), 24)
@@ -21,6 +22,9 @@ def main():
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
         cam_center = m.get_camera_center()
 
+        if g.is_key_pressed(pygame.K_F3):
+            show_debug = not show_debug
+
         # Update
         state_manager.update(g.deltatime)
 
@@ -28,16 +32,17 @@ def main():
         state_manager.draw()
 
         # Some debug infos
-        fps_text = default_font.render("FPS: " + str(g.get_fps()), True, (255, 255, 255))
-        window.blit(fps_text, (10, 10))
-        dt_text = default_font.render("DT: " + str(g.deltatime) + "s", True, (255, 0, 0))
-        window.blit(dt_text, (10, 34))
-        mouse_pos_text = default_font.render(
-            f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}",
-            True, (255, 255, 255))
-        window.blit(mouse_pos_text, (10, 58))
-        cam_pos_text = default_font.render("Cam center: " + str(cam_center), True, (255, 255, 255))
-        window.blit(cam_pos_text, (10, 80))
+        if show_debug:
+            fps_text = default_font.render("FPS: " + str(g.get_fps()), True, (255, 255, 255))
+            window.blit(fps_text, (10, 10))
+            dt_text = default_font.render("DT: " + str(g.deltatime) + "s", True, (255, 0, 0))
+            window.blit(dt_text, (10, 34))
+            mouse_pos_text = default_font.render(
+                f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}",
+                True, (255, 255, 255))
+            window.blit(mouse_pos_text, (10, 58))
+            cam_pos_text = default_font.render("Cam center: " + str(cam_center), True, (255, 255, 255))
+            window.blit(cam_pos_text, (10, 80))
 
         g.game_loop_end()
 
