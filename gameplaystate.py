@@ -6,7 +6,7 @@ import testobj
 import terrain
 
 
-class TestState(state.State):
+class GameplayState(state.State):
     def __init__(self):
         super().__init__()
 
@@ -18,10 +18,10 @@ class TestState(state.State):
 
         # create a manager with some objects in it
         self.object_manager = objectmanager.ObjectManager()
-        self.object_manager.add_object(testobj.TestObj(1, 1))
-        self.object_manager.add_object(testobj.TestObj(3, 1, 20))
+        self.object_manager.add_object(testobj.TestObj(1, 1, self))
+        self.object_manager.add_object(testobj.TestObj(3, 1,  self, 20))
 
-        self.terrain_surface = pygame.image.load("level.png")
+        self.terrain_surface = pygame.image.load("level2.png")
         self.t = terrain.Terrain(self.terrain_surface, pygame.Vector2(25, 12))
 
         self.mouse_rec = (0, 0, 1, 1)
@@ -49,7 +49,7 @@ class TestState(state.State):
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
         self.mouse_rec = (mouse_pos_meter.x, mouse_pos_meter.y, 1.0, 1.0)
 
-        print(self.t.check_collision_rec(self.mouse_rec))
+        # print(self.t.check_collision_rec(self.mouse_rec))
         if g.is_key_down(pygame.K_b):
             # self.t.destroy_rectangle(self.mouse_rec)
             self.t.destroy_circle(mouse_pos_meter, 1)

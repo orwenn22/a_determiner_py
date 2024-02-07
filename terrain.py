@@ -117,6 +117,12 @@ class Terrain(object):
     def update_cache(self):
         self.cached_texture = pygame.transform.scale(self.bitmap, (m.meters_to_pixels(self.size.x), m.meters_to_pixels(self.size.y)))
 
+    def pixel_width(self) -> float:
+        return self.size.x / self.bitmap.get_width()
+
+    def pixel_height(self) -> float:
+        return self.size.y / self.bitmap.get_height()
+
     def update(self):
         if g.zoom_changed:
             print("zoom changed")

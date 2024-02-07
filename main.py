@@ -1,6 +1,6 @@
 from engine import metrics as m, globals as g
 from engine.state import statemanager
-import teststate
+import gameplaystate
 import pygame
 
 # print(type(object_manager.list_object[0]))
@@ -14,7 +14,7 @@ def main():
     window = g.init_window(1280, 720)
     default_font = pygame.font.SysFont(pygame.font.get_default_font(), 24)
 
-    state_manager = statemanager.StateManager(teststate.TestState())
+    state_manager = statemanager.StateManager(gameplaystate.GameplayState())
 
     while g.handle_event():
         # Getting the mouse position, for both absolute and world coordinates.
