@@ -9,6 +9,7 @@ keyboard_state = []
 keys_pressed = {}
 mouse_state = []
 mouse_button_pressed = {}
+mouse_wheel = 0
 deltatime: float = 0.0      # This is in seconds
 FPS: int = 120
 zoom_changed: bool = False
@@ -30,9 +31,10 @@ def update_keyboard_state():
 
 
 def handle_event() -> bool:
-    global keys_pressed, running, zoom_changed
+    global keys_pressed, running, zoom_changed, mouse_wheel
     keys_pressed.clear()
     mouse_button_pressed.clear()
+    mouse_wheel = 0
     zoom_changed = False
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -41,6 +43,8 @@ def handle_event() -> bool:
             keys_pressed[event.key] = True
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse_button_pressed[event.button] = True
+        elif event.type == pygame.MOUSEWHEEL:
+            mouse_wheel = event.y
         # TODO : handle key up events ?
     update_keyboard_state()
     return running
@@ -70,6 +74,7 @@ def is_mouse_button_pressed(button) -> bool:
     if button not in mouse_button_pressed:
         return False
     return mouse_button_pressed[button]
+
 
 def get_fps() -> float:
     return clock.get_fps()
