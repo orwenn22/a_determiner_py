@@ -36,7 +36,7 @@ class TestObj(ko.KinematicObject):
 
     def draw(self):
         x, y, w, h = self.get_rectangle()
-        gr.draw_rectangle(x, y, w, h, (255, 255, 255))
+        gr.draw_rectangle(x, y, w, h, (255, 255, 255, 255))
 
         self.draw_hitbox()  # debuggging
 
@@ -44,7 +44,7 @@ class TestObj(ko.KinematicObject):
         gr.draw_line(
             self.position,
             pyray.vector2_add(self.position, pyray.Vector2(math.cos(self.throw_angle) * 1, math.sin(self.throw_angle) * 1)),
-            (0, 255, 255)
+            (0, 255, 255, 255)
         )
 
         # Simulate throwing, and show trajectory

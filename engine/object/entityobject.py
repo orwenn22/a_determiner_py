@@ -39,16 +39,16 @@ class EntityObject(object):
         This is intended for debugging purposes : draw the hitbox in red
         """
         x, y, w, h = self.get_rectangle()
-        gr.draw_rectangle(x, y, w, h, (255, 0, 0), False)
+        gr.draw_rectangle(x, y, w, h, (255, 0, 0, 255), False)
 
         # Cross at the center of the object
         gr.draw_line(
             pyray.Vector2(self.position.x - w/4, self.position.y),
             pyray.Vector2(self.position.x + w/4, self.position.y),
-            (255, 0, 0)
+            (255, 0, 0, 255)
         )
         gr.draw_line(
             pyray.Vector2(self.position.x, self.position.y - h/4),
             pyray.Vector2(self.position.x, self.position.y + h/4),
-            (255, 0, 0)
+            (255, 0, 0, 255)
         )

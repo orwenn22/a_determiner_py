@@ -45,7 +45,7 @@ class KinematicPrediction(ko.KinematicObject):
         for i in range(0, simulation_amount):
             self.process_physics(dt)
             if i%step != 0: continue
-            gr.draw_circle(self.position, 0.1, (100, 100, 255))
+            gr.draw_circle(self.position, 0.1, (100, 100, 255, 255))
 
         self.acceleration = a
         self.velocity = v

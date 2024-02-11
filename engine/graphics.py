@@ -29,7 +29,7 @@ def draw_rectangle(x: float, y: float, w: float, h: float, c, fill=True):
     pixel_width = m.meters_to_pixels(w)
     pixel_height = m.meters_to_pixels(h)
 
-    # print(pixel_x, pixel_y, pixel_width, pixel_height)
+    print(pixel_x, pixel_y, pixel_width, pixel_height)
     if fill:
         pyray.draw_rectangle(pixel_x, pixel_y, pixel_width,
                              pixel_height, c)

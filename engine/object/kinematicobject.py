@@ -73,5 +73,5 @@ class KinematicObject(entityobject.EntityObject):
             pyray.Vector2(self.position.x, self.position.y),
             pyray.vector2_add(pyray.Vector2(
                 self.position.x, self.position.y), self.velocity),
-            (255, 255, 0)
+            (255, 255, 0, 255)
         )
