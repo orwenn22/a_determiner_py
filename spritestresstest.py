@@ -17,6 +17,9 @@ class SpriteStressTest(state.State):
         self.my_sprite = pyray.load_texture("./testsprite.png")
         self.rot = 0.0
 
+    def __del__(self):
+        pyray.unload_texture(self.my_sprite)
+
     def update(self, dt: float):
         if g.is_key_pressed(pyray.KeyboardKey.KEY_T):
             import teststate
