@@ -6,7 +6,6 @@ For pixel graphics, we should use pygame's natives API calls.
 import math
 import pyray
 
-from . import globals as g
 from . import metrics as m
 
 
@@ -139,8 +138,9 @@ def draw_sprite_scale(sprite: pyray.Texture, rect_to_draw: tuple[float, float, f
     if x+width < 0 or y+height < 0 or x >= pyray.get_screen_width() or y >= pyray.get_screen_height():
         return
     space_to_draw = pyray.Rectangle(x, y, width, height)
-    pyray.draw_texture_pro(sprite, pyray.Rectangle(
-        0, 0, sprite.width, sprite.height), space_to_draw, pyray.Vector2(width/2, height/2), 0, pyray.Color(0, 0, 0, 0))
+    pyray.draw_texture_pro(sprite, pyray.Rectangle(0, 0, sprite.width, sprite.height),
+                           space_to_draw, pyray.Vector2(0, 0),
+                           0, pyray.Color(255, 255, 255, 255))
 
 
 def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.Vector2, rotation: float):
@@ -160,18 +160,10 @@ def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.
 
     # This is efficient because we check this before applying transformations
     half_diagonal = math.sqrt(width*width + height*height) / 2
-    if x+half_diagonal < 0 or y+half_diagonal < 0 or x-half_diagonal >= g.window.get_width() or y-half_diagonal >= g.window.get_height():
+    if x+half_diagonal < 0 or y+half_diagonal < 0 or x-half_diagonal >= pyray.get_screen_width() or y-half_diagonal >= pyray.get_screen_height():
         return
 
-    scaled_surface = pygame.transform.scale(sprite, (width, height))
-    rotated_surface = pygame.transform.rotate(scaled_surface, rotation)
-    size_rec = rotated_surface.get_rect()
-
-    # Currently, x and y are storing the position of the middle, however the pygame blit API take the top left position.
-    # Therefore, we want to actually calculate this position using the size of the resulting surface
-    x -= int(size_rec.width / 2)
-    y -= int(size_rec.height / 2)
-
-    # print((x, y, size_rec.width, size_rec.height))
-    g.window.blit(rotated_surface, (x, y, size_rec.width, size_rec.height))
-
+    pyray.draw_texture_pro(sprite, pyray.Rectangle(0, 0, sprite.width, sprite.height),
+                           pyray.Rectangle(x, y, width, height),
+                           pyray.Vector2(width/2, height/2),
+                           rotation, pyray.Color(255, 255, 255, 255))

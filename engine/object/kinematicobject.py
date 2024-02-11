@@ -5,7 +5,7 @@ from engine import graphics as gr
 
 
 class KinematicObject(entityobject.EntityObject):
-    def __init__(self, x: float, y: float, width: float, height: float, mass: float, sprite: pygame.Surface = None):
+    def __init__(self, x: float, y: float, width: float, height: float, mass: float, sprite: pyray.Texture = None):
         super().__init__(x, y, width, height, sprite)
         self.velocity = pyray.Vector2(0, 0)       # velocity in m/s
         self.acceleration = pyray.Vector2(0, 0)   # acceleration in m/s²

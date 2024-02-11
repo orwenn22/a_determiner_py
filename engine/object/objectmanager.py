@@ -1,4 +1,4 @@
-import pygame
+import pyray
 from . import entityobject
 from .. import utils
 

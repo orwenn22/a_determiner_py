@@ -19,7 +19,6 @@ class EntityObject(object):
         self.width = width
         self.height = height
         self.sprite: pyray.Texture = sprite
-        self.cached_sprite: pyray.Texture = None
         self.manager: ObjectManager = None
 
     def update(self, dt: float):
@@ -53,17 +52,3 @@ class EntityObject(object):
             pyray.Vector2(self.position.x, self.position.y + h/4),
             (255, 0, 0)
         )
-
-    # def setup_sprite_cache(self, width: float, height: float):
-    #     """
-    #     This will cache a texture at a specific scale in the object.
-    #     It can (should?) be drawn using the draw_sprite function from graphics in the sub-object's implementation of draw
-    #     TODO (?) : have self.sprite_cached, and keep a reference to the original in self.sprite ?
-    #     :param width: width in meter at which we want to scale the sprite
-    #     :param height: height in meter at which we want to scale the sprite
-    #     """
-    #     if self.sprite is None:
-    #         return
-    #     self.cached_sprite = pygame.transform.scale(
-    #         self.sprite, (m.meters_to_pixels(width), m.meters_to_pixels(height)))
-
