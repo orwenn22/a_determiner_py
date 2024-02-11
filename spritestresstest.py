@@ -20,8 +20,8 @@ class SpriteStressTest(state.State):
 
     def update(self, dt: float):
         if g.is_key_pressed(pygame.K_t):
-            import teststate
-            self.manager.set_state(teststate.TestState())
+            import gameplaystate
+            self.manager.set_state(gameplaystate.GameplayState())
             print(self)
             return
 
