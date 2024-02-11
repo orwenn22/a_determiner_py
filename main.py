@@ -10,7 +10,8 @@ import pygame
 
 def main():
     pygame.init()
-    window = g.init_window(1280, 720)
+    window = g.init_window(1280, 720,"game")
+    
     default_font = pygame.font.SysFont(pygame.font.get_default_font(), 24)
 
     state_manager = statemanager.StateManager(teststate.TestState())
