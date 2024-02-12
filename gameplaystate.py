@@ -35,8 +35,10 @@ class GameplayState(state.State):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
 
         if g.is_key_pressed(pyray.KeyboardKey.KEY_T):
-            import spritestresstest
-            self.manager.set_state(spritestresstest.SpriteStressTest())
+            import testwidget
+            self.manager.set_state(testwidget.WidgetTest())
+            # import spritestresstest
+            # self.manager.set_state(spritestresstest.SpriteStressTest())
             return
 
         self.update_cam_position(mouse_x, mouse_y)

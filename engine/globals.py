@@ -15,11 +15,12 @@ def init_window(w, h, game_name) -> None:
     pyray.set_target_fps(240)
     deltatime = pyray.get_time()       # Perfect approximation for the first frame
 
+
 def handle_event() -> bool:
     global keys_pressed, zoom_changed, mouse_wheel
     r = not pyray.window_should_close()
     zoom_changed = False
-    mouse_wheel = pyray.get_mouse_wheel_move()
+    mouse_wheel = int(pyray.get_mouse_wheel_move())
     return r
 
 
