@@ -10,7 +10,7 @@ import gameplaystate
 
 def main():
     show_debug = False
-    g.init_window(512, 512, "title")
+    g.init_window(960, 540, "title")
 
     state_manager = statemanager.StateManager(gameplaystate.GameplayState())
 
