@@ -20,7 +20,7 @@ def main():
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
         cam_center = m.get_camera_center()
 
-        if g.is_key_pressed(pygame.K_F3):
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_F3):
             show_debug = not show_debug
 
         # Update

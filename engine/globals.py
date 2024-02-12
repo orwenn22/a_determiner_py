@@ -1,10 +1,11 @@
-import pygame
+import pyray
 
 print("globals module instantiated")
 
 deltatime: float = 0.0      # This is in seconds
 FPS: int = 120
 zoom_changed: bool = False
+mouse_wheel: int = 0
 
 
 def init_window(w, h, game_name) -> None:
@@ -15,9 +16,10 @@ def init_window(w, h, game_name) -> None:
     deltatime = pyray.get_time()       # Perfect approximation for the first frame
 
 def handle_event() -> bool:
-    global keys_pressed, zoom_changed
+    global keys_pressed, zoom_changed, mouse_wheel
     r = not pyray.window_should_close()
     zoom_changed = False
+    mouse_wheel = pyray.get_mouse_wheel_move()
     return r
 
 
@@ -40,7 +42,7 @@ def is_mouse_button_down(button) -> bool:
 
 
 def is_mouse_button_pressed(button) -> bool:
-    return pyray.is_mouse_button_pressed
+    return pyray.is_mouse_button_pressed(button)
 
 
 def get_fps() -> float:
