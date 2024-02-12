@@ -21,16 +21,15 @@ class GameplayState(state.State):
         self.object_manager.add_object(testobj.TestObj(1, 1, self))
         self.object_manager.add_object(testobj.TestObj(3, 1,  self, 20))
 
-        self.terrain_surface = pyray.load_texture("level2.png")
-        self.t = terrain.Terrain(self.terrain_surface, pyray.Vector2(25, 12))
+        self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
 
         self.mouse_rec = (0, 0, 1, 1)
 
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
 
-    def __del__(self):
-        pyray.unload_texture(self.terrain_surface)
+    def unload_ressources(self):
+        pass    # todo: unload terrain
 
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()

@@ -35,19 +35,22 @@ class TestObj(ko.KinematicObject):
         self.process_physics_x(dt)
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):
             while self.parent_state.t.check_collision_rec(self.get_rectangle()):
-                self.position.x -= math.copysign(self.parent_state.t.pixel_width()/4, self.velocity.x)
+                self.position.x -= math.copysign(self.parent_state.t.pixel_width()/2, self.velocity.x)
             self.velocity.x = 0
 
         self.process_physics_y(dt)
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
             while self.parent_state.t.check_collision_rec(self.get_rectangle()):
-                self.position.y -= math.copysign(self.parent_state.t.pixel_height()/4, self.velocity.y)
-            self.velocity.x = 0
-            self.velocity.y = 0
-            # We disable the physics once we have landed on the ground.
-            # In the future we might want to call something in the state to pass the turn to the next player.
-            self.enable_physics = False
+                self.position.y -= math.copysign(self.parent_state.t.pixel_height()/2, self.velocity.y)
+
+            if self.velocity.y > 0:     # going down (collision with ground)
+                self.velocity.x = 0
+                # We disable the physics once we have landed on the ground.
+                # In the future we might want to call something in the state to pass the turn to the next player.
+                self.enable_physics = False
+
+            self.velocity.y = 0     # always reset y velocity on vertical collision
 
         # if len(self.manager.get_collision(self, TestObj)) >= 1:
         #     print("collision detected")

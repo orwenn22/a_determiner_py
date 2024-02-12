@@ -40,6 +40,7 @@ def main():
         pyray.end_drawing()
         g.game_loop_end()
 
+    state_manager.unload()
     pyray.close_window()
 
 
