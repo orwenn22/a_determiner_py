@@ -31,15 +31,21 @@ class TestObj(ko.KinematicObject):
             # throwed_item.apply_force(pygame.math.Vector2(self.strength * cos(throw_angle) / g.deltatime, self.strength * sin(throw_angle) / dt))
 
             self.enable_physics = True
+            self.width = 0.8
+            self.height = 0.8
 
         self.process_physics_x(dt)
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            self.width = 1
+            self.height = 1
             while self.parent_state.t.check_collision_rec(self.get_rectangle()):
                 self.position.x -= math.copysign(self.parent_state.t.pixel_width()/2, self.velocity.x)
             self.velocity.x = 0
 
         self.process_physics_y(dt)
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            self.width = 1
+            self.height = 1
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
             while self.parent_state.t.check_collision_rec(self.get_rectangle()):
                 self.position.y -= math.copysign(self.parent_state.t.pixel_height()/2, self.velocity.y)
@@ -56,8 +62,10 @@ class TestObj(ko.KinematicObject):
         #     print("collision detected")
 
     def draw(self):
-        x, y, w, h = self.get_rectangle()
-        gr.draw_rectangle(x, y, w, h, (255, 255, 255, 255))
+        gr.draw_rectangle(self.position.x - 0.5,
+                          self.position.y - 0.5,
+                          1, 1,
+                          (255, 255, 255, 255))
 
         self.draw_hitbox()  # debuggging
 
