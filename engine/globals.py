@@ -1,4 +1,4 @@
-import pyray
+import pygame
 
 print("globals module instantiated")
 
@@ -33,6 +33,14 @@ def is_key_down(key) -> bool:
 
 def is_key_pressed(key) -> bool:
     return pyray.is_key_pressed(key)
+
+
+def is_mouse_button_down(button) -> bool:
+    return pyray.is_mouse_button_down(button)
+
+
+def is_mouse_button_pressed(button) -> bool:
+    return pyray.is_mouse_button_pressed
 
 
 def get_fps() -> float:

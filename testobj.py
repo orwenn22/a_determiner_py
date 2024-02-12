@@ -3,15 +3,18 @@ import math
 
 from engine import globals as g, graphics as gr
 from engine.object import kinematicobject as ko, kinematicprediction as kinematicprediction
+from engine.state import state
 
 
 class TestObj(ko.KinematicObject):
-    def __init__(self, x, y, mass=10):
+    def __init__(self, x, y, parent_state: state.State, mass=10):
+        import gameplaystate
         super().__init__(x, y, 1, 1, mass)
         self.throw_angle = 0.0
         # this is the launch force intensity in newton (not really in reality, but we will pretend it is)
         self.strength = 100
         self.enable_physics = False
+        self.parent_state: gameplaystate.GameplayState = parent_state
 
     def update(self, dt: float):
         self.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * g.deltatime
@@ -29,10 +32,25 @@ class TestObj(ko.KinematicObject):
 
             self.enable_physics = True
 
-        self.process_physics(dt)
+        self.process_physics_x(dt)
+        if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            while self.parent_state.t.check_collision_rec(self.get_rectangle()):
+                self.position.x -= math.copysign(self.parent_state.t.pixel_width()/4, self.velocity.x)
+            self.velocity.x = 0
 
-        if len(self.manager.get_collision(self, TestObj)) >= 1:
-            print("collision detected")
+        self.process_physics_y(dt)
+        if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
+            while self.parent_state.t.check_collision_rec(self.get_rectangle()):
+                self.position.y -= math.copysign(self.parent_state.t.pixel_height()/4, self.velocity.y)
+            self.velocity.x = 0
+            self.velocity.y = 0
+            # We disable the physics once we have landed on the ground.
+            # In the future we might want to call something in the state to pass the turn to the next player.
+            self.enable_physics = False
+
+        # if len(self.manager.get_collision(self, TestObj)) >= 1:
+        #     print("collision detected")
 
     def draw(self):
         x, y, w, h = self.get_rectangle()
