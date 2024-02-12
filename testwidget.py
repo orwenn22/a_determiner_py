@@ -15,7 +15,7 @@ class WidgetTest(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
         self.widget_manager.add_widget(widget_objects.Widget(
-            0, 0, 100, 100, pyray.Color(100, 100, 100, 255), testfunc, "ClickMe"))
+            10, 10, 100, 100, pyray.Color(100, 100, 100, 255), "TL", testfunc, "ClickMe"))
 
     def update(self, dt):
         if g.is_key_pressed(pyray.KeyboardKey.KEY_T):
