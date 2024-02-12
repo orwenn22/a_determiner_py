@@ -20,6 +20,11 @@ class Terrain(object):
         pyray.unload_image_colors(image_colors)
         print("terrain : done ! :D")
 
+    def unload(self):
+        pyray.unload_texture(self.texture)
+        pyray.unload_image(self.image)
+        print("terrain : unloaded")
+
     def check_collision(self, position: pyray.Vector2):
         """
 

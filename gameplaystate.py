@@ -29,7 +29,7 @@ class GameplayState(state.State):
         self.cam_mouse_offset = (0, 0)
 
     def unload_ressources(self):
-        pass    # todo: unload terrain
+        self.t.unload()
 
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
