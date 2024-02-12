@@ -1,24 +1,22 @@
 import pyray
-from . import widget_objects as w
+from . import button as w
 
 
-class WidgetManager():
+class WidgetManager(object):
     def __init__(self):
-        self.list_widget: list[w.Widget] = []
+        self.list_widget: list[w.Button] = []
 
     def update(self):
         if pyray.is_window_resized():
             for i in self.list_widget:
                 i.reload_placement()
-        self.check_pressed()
+
+        for i in self.list_widget:
+            i.update()
 
     def draw(self):
         for i in self.list_widget:
             i.draw()
 
-    def check_pressed(self):
-        for i in self.list_widget:
-            i.checking_pressed()
-
-    def add_widget(self, widget_to_add: w.Widget):
+    def add_widget(self, widget_to_add: w.Button):
         self.list_widget.append(widget_to_add)
