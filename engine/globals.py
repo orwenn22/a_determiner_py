@@ -1,80 +1,50 @@
-import pygame
+import pyray
 
 print("globals module instantiated")
 
-running = False
-window: pygame.Surface = None       # This is the surface of the main window
-clock: pygame.time.Clock = None
-keyboard_state = []
-keys_pressed = {}
-mouse_state = []
-mouse_button_pressed = {}
-mouse_wheel = 0
 deltatime: float = 0.0      # This is in seconds
 FPS: int = 120
 zoom_changed: bool = False
+mouse_wheel: int = 0
 
 
-def init_window(w, h) -> pygame.Surface:
-    global window, running, clock, deltatime
-    running = True
-    window = pygame.display.set_mode((w, h), pygame.RESIZABLE)
-    clock = pygame.time.Clock()
-    deltatime = 1/120 / 1000        # Perfect approximation for the first frame
-    return window
-
-
-def update_keyboard_state():
-    global keyboard_state, mouse_state
-    keyboard_state = pygame.key.get_pressed()
-    mouse_state = pygame.mouse.get_pressed()
+def init_window(w, h, game_name) -> None:
+    global deltatime
+    pyray.set_config_flags(pyray.ConfigFlags.FLAG_WINDOW_RESIZABLE)
+    pyray.init_window(w, h, game_name)
+    pyray.set_target_fps(240)
+    deltatime = pyray.get_time()       # Perfect approximation for the first frame
 
 
 def handle_event() -> bool:
-    global keys_pressed, running, zoom_changed, mouse_wheel
-    keys_pressed.clear()
-    mouse_button_pressed.clear()
-    mouse_wheel = 0
+    global keys_pressed, zoom_changed, mouse_wheel
+    r = not pyray.window_should_close()
     zoom_changed = False
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            running = False
-        elif event.type == pygame.KEYDOWN:
-            keys_pressed[event.key] = True
-        elif event.type == pygame.MOUSEBUTTONDOWN:
-            mouse_button_pressed[event.button] = True
-        elif event.type == pygame.MOUSEWHEEL:
-            mouse_wheel = event.y
-        # TODO : handle key up events ?
-    update_keyboard_state()
-    return running
+    mouse_wheel = int(pyray.get_mouse_wheel_move())
+    return r
 
 
 def game_loop_end():
     global deltatime
-    deltatime = clock.tick(FPS) / 1000  # devide by 1000 to convert ms to s
-    pygame.display.flip()
+    deltatime = pyray.get_frame_time()
+#    deltatime = clock.tick(FPS) / 1000  # devide by 1000 to convert ms to s
 
 
 def is_key_down(key) -> bool:
-    return keyboard_state[key]
+    return pyray.is_key_down(key)
 
 
 def is_key_pressed(key) -> bool:
-    if key not in keys_pressed:
-        return False
-    return keys_pressed[key]
+    return pyray.is_key_pressed(key)
 
 
 def is_mouse_button_down(button) -> bool:
-    return mouse_state[button-1]
+    return pyray.is_mouse_button_down(button)
 
 
 def is_mouse_button_pressed(button) -> bool:
-    if button not in mouse_button_pressed:
-        return False
-    return mouse_button_pressed[button]
+    return pyray.is_mouse_button_pressed(button)
 
 
 def get_fps() -> float:
-    return clock.get_fps()
+    return pyray.get_fps()

@@ -1,14 +1,14 @@
-import pygame
+import pyray
 
 from . import entityobject as entityobject
 from engine import graphics as gr
 
 
 class KinematicObject(entityobject.EntityObject):
-    def __init__(self, x: float, y: float, width: float, height: float, mass: float, spite: pygame.Surface = None):
-        super().__init__(x, y, width, height, spite)
-        self.velocity = pygame.math.Vector2(0, 0)       # velocity in m/s
-        self.acceleration = pygame.math.Vector2(0, 0)   # acceleration in m/s²
+    def __init__(self, x: float, y: float, width: float, height: float, mass: float, sprite: pyray.Texture = None):
+        super().__init__(x, y, width, height, sprite)
+        self.velocity = pyray.Vector2(0, 0)       # velocity in m/s
+        self.acceleration = pyray.Vector2(0, 0)   # acceleration in m/s²
         self.enable_physics = True                      # physics disabled by default
         self.enable_gravity = True                      # gravity enabled by default
         self.mass = mass                                # mass in kg
@@ -30,7 +30,7 @@ class KinematicObject(entityobject.EntityObject):
             return
 
         if self.enable_gravity:
-            self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))
+            self.apply_force(pyray.Vector2(0, 9.81*self.mass))
         self.velocity.y += self.acceleration.y * dt
         self.position.y += self.velocity.y * dt
         self.acceleration.y = 0.0
@@ -47,15 +47,15 @@ class KinematicObject(entityobject.EntityObject):
             return
         # F = m * a
         if self.enable_gravity:
-            self.apply_force(pygame.math.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²
-        self.velocity += self.acceleration * dt
-        self.position += self.velocity * dt
-        self.acceleration = pygame.math.Vector2(0, 0)       # reset acceleration
+            self.apply_force(pyray.Vector2(0, 9.81*self.mass))     # gravity : 9.81 m/s²
+        self.velocity = pyray.vector2_add(self.velocity, pyray.vector2_scale(self.acceleration, dt))    # v += a*dt
+        self.position = pyray.vector2_add(self.position, pyray.vector2_scale(self.velocity, dt))        # p += v*dt
+        self.acceleration = pyray.Vector2(0, 0)       # reset acceleration
 
-    def apply_force(self, force: pygame.math.Vector2):
+    def apply_force(self, force: pyray.Vector2):
         # F = m * a <=> a = F/m
-        new_acceleration = pygame.math.Vector2(force.x, force.y) / self.mass
-        self.acceleration += new_acceleration
+        new_acceleration = pyray.Vector2(force.x/self.mass, force.y/self.mass)
+        self.acceleration = pyray.vector2_add(self.acceleration, new_acceleration)
 
     def draw_hitbox(self):
         """
@@ -65,7 +65,8 @@ class KinematicObject(entityobject.EntityObject):
 
         # Velocity vector
         gr.draw_line(
-            pygame.math.Vector2(self.position.x, self.position.y),
-            pygame.math.Vector2(self.position.x, self.position.y) + self.velocity,
-            (255, 255, 0)
+            pyray.Vector2(self.position.x, self.position.y),
+            pyray.vector2_add(pyray.Vector2(
+                self.position.x, self.position.y), self.velocity),
+            (255, 255, 0, 255)
         )

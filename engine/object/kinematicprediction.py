@@ -1,8 +1,9 @@
-import pygame
+import pyray
 import math
 
 from engine import globals as g, graphics as gr
 from engine.object import kinematicobject as ko
+
 
 class KinematicPrediction(ko.KinematicObject):
     def __init__(self, x, y, w, h, mass, velocity, acceleration):
@@ -16,8 +17,8 @@ class KinematicPrediction(ko.KinematicObject):
         :param acceleration: initial acceleration in m/s² (in most cases we probably want this to be {0, 0})
         """
         super().__init__(x, y, w, h, mass)
-        self.velocity = pygame.Vector2(velocity.x, velocity.y)      # do this to copy velocity (and not store a ref)
-        self.acceleration = pygame.Vector2(acceleration.x, acceleration.y)
+        self.velocity = pyray.Vector2(velocity.x, velocity.y)      # do this to copy velocity (and not store a ref)
+        self.acceleration = pyray.Vector2(acceleration.x, acceleration.y)
         self.enable_physics = True
 
     @classmethod
@@ -37,15 +38,16 @@ class KinematicPrediction(ko.KinematicObject):
         :param dt: the deltatime we want to simulate (can/should be something else than the ont calculated from FPS, default of 0.01, but can be smaller for higher accuracy)
         :return:
         """
-        #Backup all physics state
-        a = self.acceleration.copy()
-        v = self.velocity.copy()
-        p = self.position.copy()
+        # Backup all physics state
+        a = pyray.Vector2(self.acceleration.x, self.acceleration.y)
+        v = pyray.Vector2(self.velocity.x, self.velocity.y)
+        p = pyray.Vector2(self.position.x, self.position.y)
 
         for i in range(0, simulation_amount):
             self.process_physics(dt)
-            if i%step != 0: continue
-            gr.draw_circle(self.position, 0.1, (100, 100, 255))
+            if i % step != 0:
+                continue
+            gr.draw_circle(self.position, 0.1, (100, 100, 255, 255))
 
         self.acceleration = a
         self.velocity = v

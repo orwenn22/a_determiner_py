@@ -1,7 +1,7 @@
 from engine import metrics as m, globals as g
 from engine.state import statemanager
+import pyray
 import gameplaystate
-import pygame
 
 # print(type(object_manager.list_object[0]))
 # print(testobj.ko.entityobject.EntityObject.__subclasses__())  # Get all subclasses (don't include subclasses of subclasses or itself)
@@ -10,43 +10,38 @@ import pygame
 
 def main():
     show_debug = False
-    pygame.init()
-    window = g.init_window(1280, 720)
-    default_font = pygame.font.SysFont(pygame.font.get_default_font(), 24)
+    g.init_window(960, 540, "title")
 
     state_manager = statemanager.StateManager(gameplaystate.GameplayState())
 
     while g.handle_event():
         # Getting the mouse position, for both absolute and world coordinates.
-        mouse_x, mouse_y = pygame.mouse.get_pos()
+        mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
         cam_center = m.get_camera_center()
 
-        if g.is_key_pressed(pygame.K_F3):
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_F3):
             show_debug = not show_debug
 
         # Update
         state_manager.update(g.deltatime)
 
         # Draw
+        pyray.begin_drawing()
         state_manager.draw()
 
         # Some debug infos
         if show_debug:
-            fps_text = default_font.render("FPS: " + str(g.get_fps()), True, (255, 255, 255))
-            window.blit(fps_text, (10, 10))
-            dt_text = default_font.render("DT: " + str(g.deltatime) + "s", True, (255, 0, 0))
-            window.blit(dt_text, (10, 34))
-            mouse_pos_text = default_font.render(
-                f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}",
-                True, (255, 255, 255))
-            window.blit(mouse_pos_text, (10, 58))
-            cam_pos_text = default_font.render("Cam center: " + str(cam_center), True, (255, 255, 255))
-            window.blit(cam_pos_text, (10, 80))
+            pyray.draw_fps(10, 10)
+            pyray.draw_text("DT: " + str(g.deltatime) + "s", 10, 30, 20, pyray.Color(255, 0, 0, 255))
+            pyray.draw_text(f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}", 10, 50, 20, pyray.Color(255, 255, 255, 255))
+            pyray.draw_text("Cam center: (" + str(cam_center.x) + ", " + str(cam_center.y) + ")", 10, 70, 20, pyray.Color(255, 255, 255, 255))
 
+        pyray.end_drawing()
         g.game_loop_end()
 
-    pygame.quit()
+    state_manager.unload()
+    pyray.close_window()
 
 
 if __name__ == '__main__':
