@@ -173,11 +173,10 @@ class GameplayState(state.State):
         widgets_width = 0
         for w in widgets:
             widgets_width += w.width
-        widgets_width -= (widgets[0].width + widgets[-1].width)//2  # Remove the sides (because the x origin of the widgets is the center)
         widgets_width += marge * (len(widgets)-1)                   # Add marge
 
         # Display all the widgets
-        x_pos = -widgets_width//2
+        x_pos = -widgets_width//2 + widgets[0].width//2
         for i in range(len(widgets)-1):
             widgets[i].set_position(x_pos, marge)
             self.actions_widgets.add_widget(widgets[i])
