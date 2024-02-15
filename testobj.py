@@ -157,7 +157,7 @@ class TestObj(ko.KinematicObject):
         result = []
         # We don't need to set the positions here because they are calculated in GameplayState.show_action_widgets()
         result.append(button.Button(0, 0, button_size, button_size, "BC", local_setaction_jump, "JUMP"))
-        result.append(button.Button(0, 0, button_size, button_size, "BC", local_setaction_shoot, "SHOOT"))
+        result.append(button.Button(0, 0, button_size*2, button_size, "BC", local_setaction_shoot, "SHOOT"))
         result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "SKIP"))
         return result
 

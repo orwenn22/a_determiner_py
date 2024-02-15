@@ -22,7 +22,7 @@ class GameplayState(state.State):
 
         # We put all the players in here. This is to keep track of the order are the turns.
         # If a player dies, its entry in here should be set to None.
-        self.players: list[testobj.TestObj] = []
+        self.players: list[testobj.TestObj | None] = []
 
         # This indicates if we are at the begging of the game, and we are currently placing players.
         self.placing_players = True
@@ -117,6 +117,25 @@ class GameplayState(state.State):
             self.placing_players = False
             self.next_player_turn()
 
+    def kill_player(self, player_object: testobj.TestObj):
+        """
+        Kill a player.
+        Player should be removed from the game only using this method, and nothing else.
+        """
+        p_index = -1
+        for i in range(len(self.players)):
+            if self.players[i] == player_object:
+                p_index = i
+                break
+
+        if p_index == -1:
+            return      # Object not found
+
+        self.players[p_index] = None
+        self.object_manager.remove_object(player_object)
+        if p_index == self.current_player:
+            self.next_player_turn()     # this is in the case the current player died :(
+
     def next_player_turn(self):
         """
         This will go to the next player's turn
@@ -159,7 +178,9 @@ class GameplayState(state.State):
 
         # Display all the widgets
         x_pos = -widgets_width//2
-        for w in widgets:
-            w.set_position(x_pos, marge)
-            self.actions_widgets.add_widget(w)
-            x_pos += w.width + marge    # go to next position
+        for i in range(len(widgets)-1):
+            widgets[i].set_position(x_pos, marge)
+            self.actions_widgets.add_widget(widgets[i])
+            x_pos += (widgets[i].width + widgets[i+1].width)//2 + marge
+        widgets[-1].set_position(x_pos, marge)
+        self.actions_widgets.add_widget(widgets[-1])
