@@ -3,6 +3,7 @@ import math
 
 from engine import globals as g, graphics as gr
 from engine.object import kinematicobject as ko, kinematicprediction as kinematicprediction
+from engine.widget import button, widget
 from engine.state import state
 
 import bullet
@@ -94,7 +95,7 @@ class TestObj(ko.KinematicObject):
             self.enable_physics = True
             self.use_small_hitbox = True
             self.action = 1
-            self.parent_state.widget_manager.clear()
+            self.parent_state.actions_widgets.clear()
 
     def update_aim_to_shoot(self, dt: float):
         """
@@ -140,6 +141,25 @@ class TestObj(ko.KinematicObject):
 
         # if len(self.manager.get_collision(self, TestObj)) >= 1:
         #     print("collision detected")
+
+    def get_action_widgets(self) -> list[widget.Widget]:
+        def local_setaction_jump():
+            self.action = 2
+
+        def local_setaction_shoot():
+            self.action = 3
+
+        def local_skip_turn():
+            self.action_points += 10
+            self.parent_state.next_player_turn()
+
+        button_size = 64
+        result = []
+        # We don't need to set the positions here because they are calculated in GameplayState.show_action_widgets()
+        result.append(button.Button(0, 0, button_size, button_size, "BC", local_setaction_jump, "JUMP"))
+        result.append(button.Button(0, 0, button_size, button_size, "BC", local_setaction_shoot, "SHOOT"))
+        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "SKIP"))
+        return result
 
     def get_rectangle(self) -> tuple[float, float, float, float]:
         if not self.use_small_hitbox:

@@ -11,27 +11,35 @@ class GameplayState(state.State):
     def __init__(self):
         super().__init__()
 
-        # Set the unit
+        # Set the unit/zoom
         m.set_pixels_per_meter(50)
 
         # Put the cam at the center of the world
         m.set_camera_center(pyray.Vector2(0, 0))
 
-        self.widget_manager = widgetmanager.WidgetManager()
+        # Widget manager for the action buttons.
+        self.actions_widgets = widgetmanager.WidgetManager()
 
         # We put all the players in here. This is to keep track of the order are the turns.
+        # If a player dies, its entry in here should be set to None.
         self.players: list[testobj.TestObj] = []
+
+        # This indicates if we are at the begging of the game, and we are currently placing players.
         self.placing_players = True
-        self.current_player = -1        # Indicate what player is currently playing
 
-        # create a manager with some objects in it
+        # Indicate what player is currently playing
+        self.current_player = -1
+
+        # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
-        # self.object_manager.add_object(testobj.TestObj(1, 1, 0, self))
-        # self.object_manager.add_object(testobj.TestObj(3, 1,  1, self, 20))
 
+        # Terrain for collisions & stuff
         self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
+
+        # Small marker for the current player
         self.green_marker = pyray.load_texture("green_marker.png")
 
+        # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
 
@@ -41,28 +49,21 @@ class GameplayState(state.State):
 
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
-
-        self.widget_manager.update()
-
-        self.update_cam_position(mouse_x, mouse_y)
+        self.actions_widgets.update()                   # Check if we are clicking on an action
+        self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
 
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
-        if g.is_key_down(pyray.KeyboardKey.KEY_B):
-            self.t.destroy_circle(mouse_pos_meter, 1)
-
         self.t.update()
-
-        if self.placing_players:    # Technicaly this check isn't necessary, but let's do it anyway to prevent future mistakes.
-            self.place_player(mouse_pos_meter.x, mouse_pos_meter.y)
-
-        self.object_manager.update(dt)
+        self.object_manager.update(dt)                  # Update all objects
+        if self.placing_players:                        # Check if we are still placing players
+            self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players)%2)
 
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
         self.t.draw()
         gr.draw_grid()
         self.object_manager.draw()
-        self.widget_manager.draw()
+        self.actions_widgets.draw()
 
         if self.current_player != -1:
             # Display green marker on top of current player
@@ -71,7 +72,7 @@ class GameplayState(state.State):
             arrow_pos.y -= 1
             gr.draw_sprite_rot(self.green_marker, arrow_pos, pyray.Vector2(0.5, 0.5), 0.0)
 
-            # Display action points
+            # Display action points (this is temporary, we need to find a way to do this in a better way)
             arrow_pos.y -= 1
             text_pos = m.meters_position_to_window_position(arrow_pos)
             pyray.draw_text(str(self.players[self.current_player].action_points), int(text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
@@ -95,19 +96,24 @@ class GameplayState(state.State):
                 m.set_pixels_per_meter(m.pixels_per_meter // 2)
             m.set_camera_center(cam_center)
 
-    def place_player(self, mouse_x: float, mouse_y: float):
-        if not self.placing_players or not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
+    def place_player(self, dest_x: float, dest_y: float, team: int):
+        """
+        Place a new player in the game, and add it to the player list
+        :param dest_x: x destination in meter
+        :param dest_y: y destination in meter
+        """
+        # TODO : implement spawn regions for each teams ?
+        if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             return
 
-        placing_team = len(self.players)%2
-        p = testobj.TestObj(mouse_x, mouse_y, placing_team, self, 10)
-        if self.t.check_collision_rec(p.get_rectangle()):
+        p = testobj.TestObj(dest_x, dest_y, team, self, 10)
+        if self.t.check_collision_rec(p.get_rectangle()):       # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
 
-        self.players.append(p)
-        self.object_manager.add_object(p)
+        self.players.append(p)              # Add new player to player list
+        self.object_manager.add_object(p)   # Add new player to objects
         print("object spawned at", p.position.x, p.position.y)
-        if len(self.players) == 6:
+        if len(self.players) >= 6:          # Check if we are done manually spawning players
             self.placing_players = False
             self.next_player_turn()
 
@@ -118,6 +124,10 @@ class GameplayState(state.State):
         self.current_player += 1
         self.current_player %= len(self.players)
 
+        while self.players[self.current_player] is None:
+            self.current_player += 1
+            self.current_player %= len(self.players)
+
         for p in self.players:
             p.action = 0
 
@@ -127,36 +137,29 @@ class GameplayState(state.State):
 
     def show_action_widgets(self):
         """
-        This will display the on-screen control buttons
+        This will display the on-screen control buttons for the current object
         """
-        self.widget_manager.clear()
-
-        # Declare the actions of each buttons
-        def local_setaction_jump():
-            self.players[self.current_player].action = 2
-
-        def local_setaction_shoot():
-            self.players[self.current_player].action = 3
-
-        def local_skip_turn():
-            self.players[self.current_player].action_points += 10
-            self.next_player_turn()
-
-        button_size = 64
+        self.actions_widgets.clear()
         marge = 10
-        button_count = 3
-        print(button_count*button_size + (button_count-1)*marge)
-        x_pos = -(button_count*button_size + (button_count-1)*marge)//2 + button_size//2
 
-        button_jump = button.Button(x_pos, marge, button_size, button_size, "BC", local_setaction_jump, "JUMP")
-        self.widget_manager.add_widget(button_jump)
+        current_player = self.players[self.current_player]
+        if current_player is None:
+            return
 
-        x_pos += button_size + marge
+        widgets = current_player.get_action_widgets()
+        if len(widgets) == 0:
+            return
 
-        button_shoot = button.Button(x_pos, marge, button_size, button_size, "BC", local_setaction_shoot, "SHOOT")
-        self.widget_manager.add_widget(button_shoot)
+        # Get width of all widget combined
+        widgets_width = 0
+        for w in widgets:
+            widgets_width += w.width
+        widgets_width -= (widgets[0].width + widgets[-1].width)//2  # Remove the sides (because the x origin of the widgets is the center)
+        widgets_width += marge * (len(widgets)-1)                   # Add marge
 
-        x_pos += button_size + marge
-
-        button_skip_turn = button.Button(x_pos, marge, button_size, button_size, "BC", local_skip_turn, "SKIP")
-        self.widget_manager.add_widget(button_skip_turn)
+        # Display all the widgets
+        x_pos = -widgets_width//2
+        for w in widgets:
+            w.set_position(x_pos, marge)
+            self.actions_widgets.add_widget(w)
+            x_pos += w.width + marge    # go to next position
