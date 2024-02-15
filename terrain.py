@@ -86,10 +86,13 @@ class Terrain(object):
         pixel_x = int(center.x / self.size.x * self.image.width)
         pixel_y = int(center.y / self.size.y * self.image.height)
 
-        step_count = int(radius_pixel * 3.0)
+        step_count = int(radius_pixel * 3.14)
 
+        previous_xpos = -99999
         for i in range(0, step_count):
             x_pos = pixel_x + int(math.cos(i * math.pi / step_count) * radius_pixel)  # x position
+            if x_pos == previous_xpos: continue
+            previous_xpos = x_pos
 
             if x_pos < 0:
                 continue

@@ -6,6 +6,7 @@ deltatime: float = 0.0      # This is in seconds
 FPS: int = 120
 zoom_changed: bool = False
 mouse_wheel: int = 0
+mouse_used: bool = False
 
 
 def init_window(w, h, game_name) -> None:
@@ -17,7 +18,8 @@ def init_window(w, h, game_name) -> None:
 
 
 def handle_event() -> bool:
-    global keys_pressed, zoom_changed, mouse_wheel
+    global keys_pressed, zoom_changed, mouse_wheel, mouse_used
+    mouse_used = False
     r = not pyray.window_should_close()
     zoom_changed = False
     mouse_wheel = int(pyray.get_mouse_wheel_move())
