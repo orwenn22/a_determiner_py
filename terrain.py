@@ -34,7 +34,8 @@ class Terrain(object):
         pixel_y = int(position.y / self.size.y * self.image.height)
 
         if pixel_x < 0 or pixel_x >= self.image.width or pixel_y < 0 or pixel_y >= self.image.height:
-            return False
+            # return False
+            return True
         return self.collision_mask[pixel_x + pixel_y * self.image.width]
 
     def check_collision_rec(self, rectangle: tuple[float, float, float, float]):
@@ -49,10 +50,11 @@ class Terrain(object):
 
         # print(pixel_x, pixel_y, pixel_x2, pixel_y2)
 
-        if pixel_x < 0: pixel_x = 0
-        if pixel_x2 >= self.image.width: pixel_x2 = self.image.width - 1
-        if pixel_y < 0: pixel_y = 0
-        if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
+        # if pixel_x < 0: pixel_x = 0
+        # if pixel_x2 >= self.image.width: pixel_x2 = self.image.width - 1
+        # if pixel_y < 0: pixel_y = 0
+        # if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
+        if pixel_x < 0 or pixel_x2 >= self.image.width or pixel_y < 0 or pixel_y2 >= self.image.height: return True
 
         for y in range(pixel_y, pixel_y2 + 1):
             for x in range(pixel_x, pixel_x2 + 1):
@@ -121,6 +123,7 @@ class Terrain(object):
 
     def draw(self):
         gr.draw_sprite_scale(self.texture, (0, 0, self.size.x, self.size.y))
+        gr.draw_rectangle(0, 0, self.size.x, self.size.y, pyray.Color(255, 0, 0, 255), False)
 
     def update_sprite(self):
         pyray.unload_texture(self.texture)
