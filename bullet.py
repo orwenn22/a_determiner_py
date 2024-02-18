@@ -5,11 +5,11 @@ from engine import graphics as gr
 
 
 class Bullet(kinematicobject.KinematicObject):
-    def __init__(self, x: float, y: float, parent_state, thrower: kinematicobject.KinematicObject):
+    def __init__(self, x: float, y: float, parent_state, thrower: kinematicobject.KinematicObject, enable_gravity: bool = False):
         import gameplaystate
         super().__init__(x, y, 0.25, 0.25, 5)
         self.enable_physics = True
-        self.enable_gravity = True
+        self.enable_gravity = enable_gravity
         self.parent_state: gameplaystate.GameplayState = parent_state
         self.power = 2.0
         self.thrower: kinematicobject.KinematicObject = thrower

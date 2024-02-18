@@ -148,9 +148,9 @@ class GameplayState(state.State):
             self.current_player %= len(self.players)
 
         for p in self.players:
-            if p is not None: p.action = 0
+            if p is not None: p.is_playing = 0
 
-        self.players[self.current_player].action = 1
+        self.players[self.current_player].is_playing = 1
         print("player", self.current_player)
         self.show_action_widgets()
 
