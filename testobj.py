@@ -115,18 +115,18 @@ class TestObj(ko.KinematicObject):
         """
         # Horizontal
         self.process_physics_x(dt)
-        if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
             self.use_small_hitbox = False
-            while self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
                 self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
             self.velocity.x = 0
 
         # Vertical
         self.process_physics_y(dt)
-        if self.parent_state.t.check_collision_rec(self.get_rectangle()):
+        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
             self.use_small_hitbox = False
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
-            while self.parent_state.t.check_collision_rec(self.get_rectangle()):
+            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
                 self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
 
             if self.velocity.y > 0:  # going down (collision with ground)
@@ -180,6 +180,6 @@ class TestObj(ko.KinematicObject):
         """
         old_y = self.position.y
         self.position.y += 0.1
-        result = self.parent_state.t.check_collision_rec(self.get_rectangle())
+        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True)
         self.position.y = old_y
         return result
