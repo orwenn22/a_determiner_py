@@ -107,7 +107,7 @@ class GameplayState(state.State):
             return
 
         p = testobj.TestObj(dest_x, dest_y, team, self, 10)
-        if self.t.check_collision_rec(p.get_rectangle()):       # Check if object is clipping in terrain
+        if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
 
         self.players.append(p)              # Add new player to player list
