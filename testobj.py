@@ -68,7 +68,7 @@ class TestObj(ko.KinematicObject):
                                         math.sin(self.throw_angle) * self.strength / 0.01))
             a.draw_simulation(10)
         elif self.action == 3:
-            b = bullet.Bullet(self.position.x, self.position.y, self.parent_state)
+            b = bullet.Bullet(self.position.x, self.position.y, self.parent_state, self)
             a = kinematicprediction.KinematicPrediction.from_other_object(b)
             a.apply_force(pyray.Vector2(math.cos(self.throw_angle) * self.strength / 0.01,
                                         math.sin(self.throw_angle) * self.strength / 0.01))
@@ -103,7 +103,7 @@ class TestObj(ko.KinematicObject):
         """
         self.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * dt
         if g.is_key_pressed(pyray.KeyboardKey.KEY_SPACE) and self.action_points >= 25:
-            b = bullet.Bullet(self.position.x, self.position.y, self.parent_state)
+            b = bullet.Bullet(self.position.x, self.position.y, self.parent_state, self)
             b.apply_force(pyray.Vector2(math.cos(self.throw_angle) * self.strength / dt,
                                         math.sin(self.throw_angle) * self.strength / dt))
             self.manager.add_object(b)
