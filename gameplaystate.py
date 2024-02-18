@@ -3,7 +3,7 @@ from engine.object import objectmanager
 from engine.widget import widgetmanager, button
 from engine import metrics as m, graphics as gr, globals as g
 import pyray
-import testobj
+import player
 import terrain
 
 
@@ -22,7 +22,8 @@ class GameplayState(state.State):
 
         # We put all the players in here. This is to keep track of the order are the turns.
         # If a player dies, its entry in here should be set to None.
-        self.players: list[testobj.TestObj | None] = []
+        # (use kill_player)
+        self.players: list[player.Player | None] = []
 
         # This indicates if we are at the begging of the game, and we are currently placing players.
         self.placing_players = True
@@ -106,7 +107,7 @@ class GameplayState(state.State):
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             return
 
-        p = testobj.TestObj(dest_x, dest_y, team, self, 10)
+        p = player.Player(dest_x, dest_y, team, self, 10)
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
 
@@ -117,7 +118,7 @@ class GameplayState(state.State):
             self.placing_players = False
             self.next_player_turn()
 
-    def kill_player(self, player_object: testobj.TestObj):
+    def kill_player(self, player_object: player.Player):
         """
         Kill a player.
         Player should be removed from the game only using this method, and nothing else.

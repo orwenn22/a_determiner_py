@@ -3,10 +3,6 @@ from engine.state import statemanager
 import pyray
 import gameplaystate
 
-# print(type(object_manager.list_object[0]))
-# print(testobj.ko.entityobject.EntityObject.__subclasses__())  # Get all subclasses (don't include subclasses of subclasses or itself)
-# print(testobj.ko.entityobject.EntityObject.__subclasscheck__(testobj.ko.entityobject.EntityObject))  # this check if it is a subclass of object (include subclasses of subclasses and itself)
-
 
 def main():
     show_debug = False

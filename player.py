@@ -6,7 +6,7 @@ from engine.object import kinematicobject as ko
 from engine.widget import button, widget
 
 
-class TestObj(ko.KinematicObject):
+class Player(ko.KinematicObject):
     def __init__(self, x, y, team: int, parent_state, mass=10):
         """
         :param x: x position of the player
@@ -97,7 +97,7 @@ class TestObj(ko.KinematicObject):
 
             self.velocity.y = 0  # always reset y velocity on vertical collision
 
-        # if len(self.manager.get_collision(self, TestObj)) >= 1:
+        # if len(self.manager.get_collision(self, Player)) >= 1:
         #     print("collision detected")
 
     def get_action_widgets(self) -> list[widget.Widget]:

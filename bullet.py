@@ -15,7 +15,7 @@ class Bullet(kinematicobject.KinematicObject):
         self.thrower: kinematicobject.KinematicObject = thrower
 
     def update(self, dt: float):
-        import testobj
+        import player
         need_explosion = False
 
         self.process_physics(dt)
@@ -23,7 +23,7 @@ class Bullet(kinematicobject.KinematicObject):
             # TODO : instead of exploding rn, maybe we could create an "explosion" object that would handle an animation ?
             need_explosion = True
 
-        collisions = self.manager.get_collision(self, testobj.TestObj)
+        collisions = self.manager.get_collision(self, player.Player)
         if len(collisions) >= 1:
             for obj in collisions:
                 if obj != self.thrower:
