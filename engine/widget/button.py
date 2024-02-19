@@ -17,12 +17,9 @@ class Button(widget.Widget):
         :param y: placement of the widget in the window (relatively to the placement given as a string if given)
         :param width: Width of the widget
         :param height: Height of the widget
-        :param color: Color of the background of the widget
         :param placement: relative placement in the window of the widget : TL,TC,TR,ML,MC,MR,BL,BC,BR (T=top,M=middle,B=bottom,L=left,C=center,R=right)
         :param act: callback function used as the button action
         :param label: String to be displayed on the button
-        :param fontsize: integer for the fontsize 
-        :param fontcolor: tuple of 4 int for the color (RGBA)
 
         """
         super().__init__(x, y, width, height, placement)
