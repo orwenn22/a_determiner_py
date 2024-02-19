@@ -1,4 +1,5 @@
-import pyray, math
+import pyray
+import math
 
 from . import playeraction      # TODO : fix this
 from engine import globals as g
@@ -11,16 +12,17 @@ class ShootAction(playeraction.PlayerAction):
 
     def __init__(self):
         super().__init__()
-        self.action_name = "Shoot"
+        self.action_cost = 25
+        self.action_name = "Shoot\n("+str(self.action_cost)+")"
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * dt
-        if g.is_key_pressed(pyray.KeyboardKey.KEY_SPACE) and _player.action_points >= 25:
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_SPACE) and _player.action_points >= self.action_cost:
             b = bullet.Bullet(_player.position.x, _player.position.y, _player.parent_state, _player, True)
             b.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / dt,
                                         math.sin(_player.throw_angle) * _player.strength / dt))
             _player.manager.add_object(b)
-            _player.action_points -= 25
+            _player.action_points -= self.action_cost
 
     def on_draw(self, _player: player.Player):
         b = bullet.Bullet(_player.position.x, _player.position.y, _player.parent_state, _player, True)

@@ -57,7 +57,7 @@ class GameplayState(state.State):
         self.t.update()
         self.object_manager.update(dt)                  # Update all objects
         if self.placing_players:                        # Check if we are still placing players
-            self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players)%2)
+            self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
@@ -76,7 +76,8 @@ class GameplayState(state.State):
             # Display action points (this is temporary, we need to find a way to do this in a better way)
             arrow_pos.y -= 1
             text_pos = m.meters_position_to_window_position(arrow_pos)
-            pyray.draw_text(str(self.players[self.current_player].action_points), int(text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
+            pyray.draw_text(str(self.players[self.current_player].action_points), int(
+                text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
 
     def update_cam_position(self, mouse_x: int, mouse_y: int):
         # Drag & drop cam
@@ -149,7 +150,8 @@ class GameplayState(state.State):
             self.current_player %= len(self.players)
 
         for p in self.players:
-            if p is not None: p.is_playing = 0
+            if p is not None:
+                p.is_playing = 0
 
         self.players[self.current_player].is_playing = 1
         print("player", self.current_player)

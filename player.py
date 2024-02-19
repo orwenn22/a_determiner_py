@@ -60,7 +60,8 @@ class Player(ko.KinematicObject):
         # Throw angle
         gr.draw_line(
             self.position,
-            pyray.vector2_add(self.position, pyray.Vector2(math.cos(self.throw_angle) * 1, math.sin(self.throw_angle) * 1)),
+            pyray.vector2_add(self.position, pyray.Vector2(
+                math.cos(self.throw_angle) * 1, math.sin(self.throw_angle) * 1)),
             (0, 255, 255, 255)
         )
 
@@ -110,15 +111,15 @@ class Player(ko.KinematicObject):
         # Create a button for each actions
         for i in range(len(self.actions)):
             action_name = self.actions[i].action_name
-            result.append(button.Button(0, 0, button_size, button_size, "BC", self.make_action_callback(i), action_name))
+            result.append(button.Button(0, 0, button_size, button_size,
+                          "BC", self.make_action_callback(i), action_name))
 
         # Add the skip button
         def local_skip_turn():
             self.action_points += 10                # Increase points
             self.current_action = -1                # Cancel any action
             self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-
-        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip"))
+        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip\n(0)"))
         return result
 
     def make_action_callback(self, index: int):
