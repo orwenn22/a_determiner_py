@@ -5,6 +5,7 @@ from engine import metrics as m, graphics as gr, globals as g
 import pyray
 import player
 import terrain
+import portal
 
 
 class GameplayState(state.State):
@@ -43,6 +44,8 @@ class GameplayState(state.State):
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
+
+        portal.Portal.spawn_portals(self.object_manager, 5, 4, 8, 4, None)
 
     def unload_ressources(self):
         self.t.unload()
