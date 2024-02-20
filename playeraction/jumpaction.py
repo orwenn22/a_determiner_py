@@ -1,6 +1,7 @@
 import pyray
 import math
 
+import key
 from . import playeraction
 import player
 import gameplaystate
@@ -15,8 +16,8 @@ class JumpAction(playeraction.PlayerAction):
         self.action_name = "Jump\n("+str(self.action_cost)+")"
 
     def on_update(self, _player: player.Player, dt: float):
-        _player.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * dt
-        if g.is_key_pressed(pyray.KeyboardKey.KEY_SPACE) and _player.action_points >= self.action_cost:
+        _player.throw_angle += (g.is_key_down(key.jkey_right) - g.is_key_down(key.jkey_left)) * dt
+        if g.is_key_pressed(key.action_key) and _player.action_points >= self.action_cost:
             _player.action_points -= self.action_cost
             _player.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / dt,
                                               math.sin(_player.throw_angle) * _player.strength / dt))
