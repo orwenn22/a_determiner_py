@@ -29,7 +29,9 @@ class KinematicPrediction(ko.KinematicObject):
         :param other: the other object we want to "copy"
         :return: The prediction object
         """
-        return cls(other.position.x, other.position.y, other.width, other.height, other.mass, other.velocity, other.acceleration)
+        result = cls(other.position.x, other.position.y, other.width, other.height, other.mass, other.velocity, other.acceleration)
+        result.enable_gravity = other.enable_gravity
+        return result
 
     def draw_simulation(self, step: int, simulation_amount: int = 100, dt: float = 0.01):
         """

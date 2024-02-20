@@ -25,7 +25,7 @@ class Terrain(object):
         pyray.unload_image(self.image)
         print("terrain : unloaded")
 
-    def check_collision(self, position: pyray.Vector2):
+    def check_collision(self, position: pyray.Vector2, outside_solid: bool = False):
         """
 
         position: position in meter
@@ -34,10 +34,10 @@ class Terrain(object):
         pixel_y = int(position.y / self.size.y * self.image.height)
 
         if pixel_x < 0 or pixel_x >= self.image.width or pixel_y < 0 or pixel_y >= self.image.height:
-            return False
+            return outside_solid
         return self.collision_mask[pixel_x + pixel_y * self.image.width]
 
-    def check_collision_rec(self, rectangle: tuple[float, float, float, float]):
+    def check_collision_rec(self, rectangle: tuple[float, float, float, float], outside_solid: bool = False):
         """
 
         rectangle: hitbox in meter we want to check collision for
@@ -46,13 +46,15 @@ class Terrain(object):
         pixel_y = int(rectangle[1] / self.size.y * self.image.height)
         pixel_x2 = int((rectangle[0] + rectangle[2]) / self.size.x * self.image.width)
         pixel_y2 = int((rectangle[1] + rectangle[3]) / self.size.y * self.image.height)
-
         # print(pixel_x, pixel_y, pixel_x2, pixel_y2)
 
-        if pixel_x < 0: pixel_x = 0
-        if pixel_x2 >= self.image.width: pixel_x2 = self.image.width - 1
-        if pixel_y < 0: pixel_y = 0
-        if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
+        if outside_solid:
+            if pixel_x < 0 or pixel_x2 >= self.image.width or pixel_y < 0 or pixel_y2 >= self.image.height: return True
+        else:
+            if pixel_x < 0: pixel_x = 0
+            if pixel_x2 >= self.image.width: pixel_x2 = self.image.width - 1
+            if pixel_y < 0: pixel_y = 0
+            if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
 
         for y in range(pixel_y, pixel_y2 + 1):
             for x in range(pixel_x, pixel_x2 + 1):
@@ -86,10 +88,13 @@ class Terrain(object):
         pixel_x = int(center.x / self.size.x * self.image.width)
         pixel_y = int(center.y / self.size.y * self.image.height)
 
-        step_count = int(radius_pixel * 3.0)
+        step_count = int(radius_pixel * 3.14)
 
+        previous_xpos = -99999
         for i in range(0, step_count):
             x_pos = pixel_x + int(math.cos(i * math.pi / step_count) * radius_pixel)  # x position
+            if x_pos == previous_xpos: continue
+            previous_xpos = x_pos
 
             if x_pos < 0:
                 continue
@@ -118,6 +123,7 @@ class Terrain(object):
 
     def draw(self):
         gr.draw_sprite_scale(self.texture, (0, 0, self.size.x, self.size.y))
+        gr.draw_rectangle(0, 0, self.size.x, self.size.y, pyray.Color(255, 0, 0, 255), False)
 
     def update_sprite(self):
         pyray.unload_texture(self.texture)

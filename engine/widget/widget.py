@@ -44,3 +44,19 @@ class Widget(object):
         pyray.draw_rectangle_pro(pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
                                  pyray.Vector2(0, 0), 0,
                                  pyray.Color(255, 0, 0, 255))
+
+    def set_x(self, x: int):
+        self.origin.x = x
+        self.reload_placement()
+        return self
+
+    def set_y(self, y: int):
+        self.origin.y = y
+        self.reload_placement()
+        return self
+
+    def set_position(self, x: int, y: int):
+        self.origin.x = x
+        self.origin.y = y
+        self.reload_placement()
+        return self
