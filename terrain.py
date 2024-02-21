@@ -60,14 +60,16 @@ class Terrain(object):
             if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
 
         # Left & right
-        for y in range(pixel_y, pixel_y2+1):
-            if self.collision_mask[pixel_x + y * self.image.width] or self.collision_mask[pixel_x2 + y * self.image.width]:
-                return True
+        if not (pixel_x >= self.image.width or pixel_x2 < 0):
+            for y in range(pixel_y, pixel_y2+1):
+                if self.collision_mask[pixel_x + y * self.image.width] or self.collision_mask[pixel_x2 + y * self.image.width]:
+                    return True
 
         # Top & bottom
-        for x in range(pixel_x, pixel_x2+1):
-            if self.collision_mask[x + pixel_y * self.image.width] or self.collision_mask[x + pixel_y2 * self.image.width]:
-                return True
+        if not (pixel_y >= self.image.height or pixel_y2 < 0):
+            for x in range(pixel_x, pixel_x2+1):
+                if self.collision_mask[x + pixel_y * self.image.width] or self.collision_mask[x + pixel_y2 * self.image.width]:
+                    return True
 
         # Center    (only check 1/9 of the pixels to save time)
         for y in range(pixel_y+1, pixel_y2, 3):
