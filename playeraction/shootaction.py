@@ -17,8 +17,8 @@ class ShootAction(playeraction.PlayerAction):
         self.action_name = "Shoot\n("+str(self.action_cost)+")"
 
     def on_update(self, _player: player.Player, dt: float):
-        _player.throw_angle += (g.is_key_down(key.jkey_right) - g.is_key_down(key.jkey_left)) * dt
-        if g.is_key_pressed(key.action_key) and _player.action_points >= self.action_cost:
+        _player.throw_angle += (g.is_key_down(key.key_binds["right"]) - g.is_key_down(key.key_binds["left"])) * dt
+        if g.is_key_pressed(key.key_binds["action"]) and _player.action_points >= self.action_cost:
             b = bullet.Bullet(_player.position.x, _player.position.y, _player.parent_state, _player, True)
             b.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / dt,
                                         math.sin(_player.throw_angle) * _player.strength / dt))
