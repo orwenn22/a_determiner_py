@@ -1,6 +1,6 @@
 import pyray
 from engine.state import state
-from engine.widget import button, widgetmanager
+from engine.widget import button, widgetmanager, label
 import menustate
 import key
 
@@ -13,12 +13,11 @@ class OptionState(state.State):
             self.manager.set_state(menustate.MenuState())
 
         self.widget_manager = widgetmanager.WidgetManager()
-        self.title = button.Button(50, -200, 250, 80, "MC", label="Options :")
-        self.title.set_font_size(40).set_color(pyray.Color(0, 0, 0, 0)).set_font_color(pyray.Color(127, 127, 127, 255))
+        title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(127, 127, 127, 255))
 
         self.returntomenu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
 
-        # TODO : these are not buttons
+        # TODO : these should not be buttons
         self.key_left = button.Button(-50, -50, 140, 40, "MC", label="Left Key :")
         self.key_right = button.Button(-50, 0, 140, 40, "MC", label="Right Key :")
         self.key_action = button.Button(-50, 50, 140, 40, "MC", label="Action Key :")
@@ -34,7 +33,7 @@ class OptionState(state.State):
         self.rebinding = ""
 
         self.widget_manager.add_widget(self.returntomenu)
-        self.widget_manager.add_widget(self.title)
+        self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(self.key_left)
         self.widget_manager.add_widget(self.rebind_buttons["left"])
         self.widget_manager.add_widget(self.key_right)

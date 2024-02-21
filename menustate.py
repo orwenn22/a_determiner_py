@@ -25,20 +25,20 @@ class MenuState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
 
-        self.play = button.Button(0, -100, 150, 40, "MC", play_action, "Play Game")
-        self.options = button.Button(0, -50, 150, 40, "MC", options_action, "Options")
-        self.credits = button.Button(0, 0, 150, 40, "MC", credits_action, "Credits")
-        self.quit = button.Button(0, 50, 150, 40, "MC", quit_action, "Quit")
+        play_button = button.Button(0, -100, 150, 40, "MC", play_action, "Play Game")
+        options_button = button.Button(0, -50, 150, 40, "MC", options_action, "Options")
+        credits_button = button.Button(0, 0, 150, 40, "MC", credits_action, "Credits")
+        quit_button = button.Button(0, 50, 150, 40, "MC", quit_action, "Quit")
 
-        self.title = label.Label(0, -200, "MC", "À déterminer", 40, pyray.Color(127, 127, 127, 255))
-        self.tm = label.Label(140, -210, "MC", "TM", 10, pyray.Color(127, 127, 127, 255))
+        title = label.Label(0, -200, "MC", "À déterminer", 40, pyray.Color(127, 127, 127, 255))
+        tm = label.Label(140, -210, "MC", "TM", 10, pyray.Color(127, 127, 127, 255))
 
-        self.widget_manager.add_widget(self.play)
-        self.widget_manager.add_widget(self.options)
-        self.widget_manager.add_widget(self.credits)
-        self.widget_manager.add_widget(self.quit)
-        self.widget_manager.add_widget(self.title)
-        self.widget_manager.add_widget(self.tm)
+        self.widget_manager.add_widget(play_button)
+        self.widget_manager.add_widget(options_button)
+        self.widget_manager.add_widget(credits_button)
+        self.widget_manager.add_widget(quit_button)
+        self.widget_manager.add_widget(title)
+        self.widget_manager.add_widget(tm)
 
     def update(self, dt):
         self.widget_manager.update()
