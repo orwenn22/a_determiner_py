@@ -12,7 +12,7 @@ class OptionState(state.State):
         def return_action():
             self.manager.set_state(menustate.MenuState())
 
-            # TODO : instead of chr(temp put something to traduce it into the name of the key)
+
             # if you even let me do that, we should add another stop condition to the while loop (in the case we do it properly we should also create a class inputbutton)
         def newleftkey():
             pyray.poll_input_events()
@@ -22,7 +22,9 @@ class OptionState(state.State):
                 pyray.poll_input_events()
             if temp != 0 and temp != key.jkey_right:
                 key.jkey_left = temp
-                self.choice_key_left.label = chr(temp)
+                self.choice_key_left.label = list(pyray.KeyboardKey.__members__.keys())[
+                    list(pyray.KeyboardKey.__members__.values()).index(pyray.KeyboardKey(temp))][4:]
+
 
         def newrightkey():
             pyray.poll_input_events()
@@ -32,7 +34,8 @@ class OptionState(state.State):
                 pyray.poll_input_events()
             if temp != 0 and temp != key.jkey_left:
                 key.jkey_right = temp
-                self.choice_key_right.label = chr(temp)
+                self.choice_key_right.label = list(pyray.KeyboardKey.__members__.keys())[
+                    list(pyray.KeyboardKey.__members__.values()).index(pyray.KeyboardKey(temp))][4:]
 
         def newactionkey():
             pyray.poll_input_events()
@@ -42,7 +45,9 @@ class OptionState(state.State):
                 pyray.poll_input_events()
             if temp != 0 and temp != key.action_key:
                 key.action_key = temp
-                self.choice_key_action.label = chr(temp) if temp != 32 else "Space"
+                self.choice_key_action.label = list(pyray.KeyboardKey.__members__.keys())[
+                    list(pyray.KeyboardKey.__members__.values()).index(pyray.KeyboardKey(temp))][4:]
+
 
         self.widget_manager = widgetmanager.WidgetManager()
         self.title = button.Button(50, -200, 250, 80, "MC", label="Options :")
@@ -50,13 +55,12 @@ class OptionState(state.State):
 
         self.returntomenu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
 
-        self.key_left = button.Button(-50, -50, 130, 40, "MC", label="Left Key :")
-        self.key_right = button.Button(-50, 0, 130, 40, "MC", label="Right Key :")
-        self.key_action = button.Button(-50, 50, 130, 40, "MC", label="Action Key :")
-        self.choice_key_left = button.Button(90, -50, 100, 40, "MC", newleftkey, chr(key.jkey_left))
-        self.choice_key_right = button.Button(90, 0, 100, 40, "MC", newrightkey, chr(key.jkey_right))
-        self.choice_key_action = button.Button(90, 50, 100, 40, "MC", newactionkey, chr(
-            key.action_key) if key.action_key != 32 else "space")
+        self.key_left = button.Button(-50, -50, 140, 40, "MC", label="Left Key :")
+        self.key_right = button.Button(-50, 0, 140, 40, "MC", label="Right Key :")
+        self.key_action = button.Button(-50, 50, 140, 40, "MC", label="Action Key :")
+        self.choice_key_left = button.Button(110, -50, 170, 40, "MC", newleftkey, "Q")
+        self.choice_key_right = button.Button(110, 0, 170, 40, "MC", newrightkey, "D")
+        self.choice_key_action = button.Button(110, 50, 170, 40, "MC", newactionkey, "SPACE")
 
         self.widget_manager.add_widget(self.returntomenu)
         self.widget_manager.add_widget(self.title)
