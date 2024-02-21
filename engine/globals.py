@@ -7,10 +7,12 @@ FPS: int = 120
 zoom_changed: bool = False
 mouse_wheel: int = 0
 mouse_used: bool = False
+running: bool = True
 
 
 def init_window(w, h, game_name) -> None:
-    global deltatime
+    global deltatime, running
+    running = True  # just in case
     pyray.set_config_flags(pyray.ConfigFlags.FLAG_WINDOW_RESIZABLE)
     pyray.init_window(w, h, game_name)
     pyray.set_target_fps(240)
@@ -20,7 +22,7 @@ def init_window(w, h, game_name) -> None:
 def handle_event() -> bool:
     global keys_pressed, zoom_changed, mouse_wheel, mouse_used
     mouse_used = False
-    r = not pyray.window_should_close()
+    r = not pyray.window_should_close() and running
     zoom_changed = False
     mouse_wheel = int(pyray.get_mouse_wheel_move())
     return r

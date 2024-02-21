@@ -1,4 +1,5 @@
 import pyray
+from engine import globals as g
 from engine.state import state
 from engine.widget import button, widgetmanager
 import gameplaystate
@@ -20,9 +21,7 @@ class MenuState(state.State):
             self.manager.set_state(creditstate.CreditState())
 
         def quit_action():
-            # TODO : unload state_manager from here or juste add a condition in the main loop
-            self.manager.unload()
-            pyray.close_window()
+            g.running = False
 
         self.widget_manager = widgetmanager.WidgetManager()
 
