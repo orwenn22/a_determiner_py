@@ -22,7 +22,7 @@ class PlacePortalsAction(playeraction.PlayerAction):
         mouse_meters = m.window_position_to_meters_position(mouse_x, mouse_y)
 
         p = portal.Portal(mouse_meters.x, mouse_meters.y)
-        if len(_player.manager.get_collision(p)) == 0 and not _player.parent_state.t.check_collision_rec(p.get_rectangle()):
+        if len(_player.manager.get_collision(p)) == 0 and not _player.parent_state.t.check_collision_rec(p.get_rectangle(), True):
             _player.manager.add_object(p)
             if self.first_portal is None:
                 self.first_portal = p
