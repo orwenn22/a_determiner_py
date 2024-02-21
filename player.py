@@ -43,7 +43,7 @@ class Player(ko.KinematicObject):
         if not self.grounded():
             self.enable_physics = True
 
-        if self.current_action >= 0:
+        if 0 <= self.current_action < len(self.actions):
             self.actions[self.current_action].on_update(self, dt)
 
         self.update_physics(dt)
@@ -65,7 +65,7 @@ class Player(ko.KinematicObject):
             (0, 255, 255, 255)
         )
 
-        if self.current_action >= 0:
+        if 0 <= self.current_action < len(self.actions):
             self.actions[self.current_action].on_draw(self)
 
     def update_physics(self, dt: float) -> None:
@@ -119,7 +119,7 @@ class Player(ko.KinematicObject):
             self.action_points += 10                # Increase points
             self.current_action = -1                # Cancel any action
             self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip\n(0)"))
+        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip\n(+10)"))
         return result
 
     def make_action_callback(self, index: int):
@@ -131,6 +131,17 @@ class Player(ko.KinematicObject):
         def local_action_onclick():  # create the callback (the index variable is kept in the scope of this function)
             self.actions[index].on_click(self, index)
         return local_action_onclick  # return it
+
+    def add_action(self, action):
+        # TODO : assertion if action is not an action ?
+        self.actions.append(action)
+
+    def remove_action(self, action):
+        """
+        Intended for actions with limited use, so they can remove themselves.
+        """
+        if action in self.actions:
+            self.actions.remove(action)
 
     def get_rectangle(self) -> tuple[float, float, float, float]:
         if not self.use_small_hitbox:

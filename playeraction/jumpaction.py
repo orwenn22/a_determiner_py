@@ -12,7 +12,7 @@ class JumpAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.action_cost = 20
-        self.action_name = "Jump\n("+str(self.action_cost)+")"
+        self.action_name = f"Jump\n(-{self.action_cost})"
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * dt
@@ -23,7 +23,7 @@ class JumpAction(playeraction.PlayerAction):
             _player.enable_physics = True
             _player.use_small_hitbox = True
             _player.current_action = -1
-            _player.parent_state.actions_widgets.clear()
+            _player.parent_state.hide_action_widgets()
 
     def on_draw(self, _player: player.Player):
         # 0.01 is the default dt for kinematic predictions

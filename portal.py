@@ -2,7 +2,7 @@ import pyray
 
 import bullet
 import player
-from engine import graphics as gr
+from engine import graphics as gr, globals as g, metrics as m, utils
 from engine.object import entityobject, objectmanager
 
 
@@ -12,8 +12,17 @@ class Portal(entityobject.EntityObject):
         self.destination: Portal | None = None
         self.whitelisted_types = [player.Player, bullet.Bullet]
         self.cooldown = 1.0
+        self.mouse_overing = False
 
     def update(self, dt: float):
+        self.mouse_overing = False
+        mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
+        mouse_meters = m.window_position_to_meters_position(mouse_x, mouse_y)
+
+        if not g.mouse_used and utils.check_collision_point_rect((mouse_meters.x, mouse_meters.y), self.get_rectangle()):
+            g.mouse_used = True
+            self.mouse_overing = True
+
         if self.destination is None:
             return
 
@@ -34,7 +43,21 @@ class Portal(entityobject.EntityObject):
             gr.draw_circle(self.position, self.width/2, (200, 122, 255, 127 if self.cooldown > 0 else 255))
         else:
             gr.draw_sprite_rot(self.sprite, self.position, pyray.Vector2(self.width, self.height), 0.0)
-        pass
+
+        # If there are no destination draw a red dot and stop drawing here
+        if self.destination is None:
+            gr.draw_circle(self.position, 0.05, (255, 0, 0, 255))
+            return
+
+        # Draw a line between this portal and its destinations if overed
+        elif self.mouse_overing or self.destination.mouse_overing:
+            vec_step = pyray.vector2_subtract(self.destination.position, self.position)
+            vec_step = pyray.vector2_scale(vec_step, 1.0/15.0)
+            painter_pos = pyray.Vector2(self.position.x, self.position.y)
+            for i in range(15):
+                gr.draw_circle(painter_pos, 0.05, (150, 92, 191, 255))
+                painter_pos = pyray.vector2_add(painter_pos, vec_step)
+            gr.draw_line(self.position, self.destination.position, (150, 92, 191, 255))
 
     def set_destination(self, destination):
         self.destination = destination

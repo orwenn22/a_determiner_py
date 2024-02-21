@@ -6,6 +6,7 @@ import pyray
 import player
 import terrain
 import portal
+import portalgun
 
 
 class GameplayState(state.State):
@@ -20,6 +21,7 @@ class GameplayState(state.State):
 
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
+        self.show_actions = False
 
         # We put all the players in here. This is to keep track of the order are the turns.
         # If a player dies, its entry in here should be set to None.
@@ -45,7 +47,9 @@ class GameplayState(state.State):
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
 
-        portal.Portal.spawn_portals(self.object_manager, 5, 4, 8, 4, None)
+        portal.Portal.spawn_portals(self.object_manager, 5, 4, 9, 5, None)
+        portal.Portal.spawn_portals(self.object_manager, 4, 2, 12, 4, None)
+        self.object_manager.add_object(portalgun.PortalGun(13, 10))
 
     def unload_ressources(self):
         self.t.unload()
@@ -53,7 +57,13 @@ class GameplayState(state.State):
 
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
-        self.actions_widgets.update()                   # Check if we are clicking on an action
+        if self.show_actions:
+            # -1 because skip is not a player action
+            if len(self.actions_widgets.list_widget)-1 != len(self.players[self.current_player].actions):
+                print("gameplay update : refreshing actions")
+                self.show_action_widgets()                  # This will refresh the actions
+            self.actions_widgets.update()                   # Check if we are clicking on an action
+
         self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
 
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
@@ -67,7 +77,8 @@ class GameplayState(state.State):
         self.t.draw()
         gr.draw_grid()
         self.object_manager.draw()
-        self.actions_widgets.draw()
+        if self.show_actions:
+            self.actions_widgets.draw()
 
         if self.current_player != -1:
             # Display green marker on top of current player
@@ -143,11 +154,12 @@ class GameplayState(state.State):
 
     def next_player_turn(self):
         """
-        This will go to the next player's turn
+        This will go to the next player's turn and display his actions
         """
         self.current_player += 1
         self.current_player %= len(self.players)
 
+        # We don't want to give the turn to a dead player
         while self.players[self.current_player] is None:
             self.current_player += 1
             self.current_player %= len(self.players)
@@ -165,6 +177,7 @@ class GameplayState(state.State):
         This will display the on-screen control buttons for the current object
         """
         self.actions_widgets.clear()
+        self.show_actions = True
         marge = 10
 
         current_player = self.players[self.current_player]
@@ -189,3 +202,7 @@ class GameplayState(state.State):
             x_pos += (widgets[i].width + widgets[i+1].width)//2 + marge
         widgets[-1].set_position(x_pos, marge)
         self.actions_widgets.add_widget(widgets[-1])
+
+    def hide_action_widgets(self):
+        self.actions_widgets.clear()
+        self.show_actions = False

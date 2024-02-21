@@ -1,5 +1,6 @@
 from engine import metrics as m, globals as g
 from engine.state import statemanager
+import globalresources as res
 import pyray
 import gameplaystate
 
@@ -7,6 +8,7 @@ import gameplaystate
 def main():
     show_debug = False
     g.init_window(960, 540, "À déterminer™")
+    res.init_resources()
 
     state_manager = statemanager.StateManager(gameplaystate.GameplayState())
 
@@ -37,6 +39,7 @@ def main():
         g.game_loop_end()
 
     state_manager.unload()
+    res.unload_resources()
     pyray.close_window()
 
 
