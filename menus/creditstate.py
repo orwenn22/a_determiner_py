@@ -14,9 +14,9 @@ class CreditState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
 
-        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.BLACK)
-        tm = label.Label(140, -160, "MC", "TM", 10, pyray.BLACK)
-        group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.BLACK)
+        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.WHITE)
+        tm = label.Label(140, -160, "MC", "TM", 10, pyray.WHITE)
+        group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.WHITE)
 
         people = button.Button(0, 0, 250, 150, "MC",
                                label="- Ewenn Baudet\n\n- Alexis Delavis\n\n- Jude Aybalen\n\n- Adrian Noyes\n\n- Maxime Duret")
@@ -26,7 +26,12 @@ class CreditState(state.State):
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)
         self.widget_manager.add_widget(group)
-        self.widget_manager.add_widget(people)
+        # self.widget_manager.add_widget(people)
+        self.widget_manager.add_widget(label.Label(0, -60, "MC", "Ewenn Baudet", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, -30, "MC", "Alexis Delavis", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, 0, "MC", "Jude Aybalen", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, 30, "MC", "Adrian Noyes", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, 60, "MC", "Maxime Duret", 20, pyray.WHITE))
         self.widget_manager.add_widget(return_to_menu)
 
         self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_credits_sprite.width, res.menu_bg_credits_sprite.height)

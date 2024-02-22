@@ -10,7 +10,7 @@ def init_resources():
     portal_gun_sprite = pyray.load_texture("res/portal_gun.png")
     menu_bg_sprite = pyray.load_texture("res/menubg.png")
     menu_bg_option_sprite = pyray.load_texture("res/menubg_option.png")
-    menu_bg_credits_sprite = pyray.load_texture("res/menubg_credits.png")
+    menu_bg_credits_sprite = pyray.load_texture("res/menubg_credits_alt.png")
 
 def unload_resources():
     pyray.unload_texture(menu_bg_credits_sprite)

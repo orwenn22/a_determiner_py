@@ -55,6 +55,16 @@ class Widget(object):
         self.reload_placement()
         return self
 
+    def set_width(self, width: int):
+        self.width = width
+        self.reload_placement()
+        return self
+
+    def set_height(self, height: int):
+        self.height = height
+        self.reload_placement()
+        return self
+
     def set_position(self, x: int, y: int):
         self.origin.x = x
         self.origin.y = y
