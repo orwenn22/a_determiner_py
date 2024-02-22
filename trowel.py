@@ -8,7 +8,7 @@ from terrain import Terrain
 
 class Trowel(entityobject.EntityObject):
     def __init__(self, x: float, y: float,t : Terrain):
-        super().__init__(x, y, 0.6, 0.4, res.portal_gun_sprite)
+        super().__init__(x, y, 0.6, 0.4, res.trowel_sprite)
         self.terrain = t
 
     def update(self, dt: float):

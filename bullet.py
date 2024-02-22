@@ -2,7 +2,7 @@ import pyray
 
 from engine.object import kinematicobject
 from engine import graphics as gr
-
+import wall
 
 class Bullet(kinematicobject.KinematicObject):
     def __init__(self, x: float, y: float, parent_state, thrower: kinematicobject.KinematicObject, enable_gravity: bool = False):
@@ -22,6 +22,11 @@ class Bullet(kinematicobject.KinematicObject):
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):   # collide with terrain
             # TODO : instead of exploding rn, maybe we could create an "explosion" object that would handle an animation ?
             need_explosion = True
+        wall_collisions = self.manager.get_collision(self,wall.Wall)
+        if len(wall_collisions)>=1:
+            need_explosion = True
+            for wall_obj in wall_collisions:
+                self.parent_state.object_manager.remove_object(wall_obj)
 
         collisions = self.manager.get_collision(self, player.Player)
         if len(collisions) >= 1:

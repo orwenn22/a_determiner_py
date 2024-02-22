@@ -7,6 +7,7 @@ import terrain
 class Wall(kinematicobject.KinematicObject):
     def __init__(self,x:float,y:float,width:float,height:float,t : terrain.Terrain):
         sprite = ges.portal_gun_sprite #(only for testing)
+
         super().__init__(x,y,width,height,10000,sprite) # wall is really heavy and as such should fall really fast
         self.grounded = False
         self.terrain = t
