@@ -25,7 +25,10 @@ class TexturedButton(button.Button):
         self.sprite = sprite
 
     def draw(self):
-        pyray.draw_texture_pro(self.sprite, pyray.Rectangle(0, 0, self.sprite.width, self.sprite.height), pyray.Rectangle(
-            self.coordinate.x, self.coordinate.y, self.height, self.width), pyray.Vector2(0, 0), 0, pyray.Color(255, 255, 255, 255))
+        pyray.draw_texture_pro(self.sprite,
+                               pyray.Rectangle(0, 0, self.sprite.width, self.sprite.height),
+                               pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
+                               pyray.Vector2(0, 0), 0,
+                               pyray.Color(255, 255, 255, 255))
         if self.label != "":
             pyray.draw_text(self.label, int(self.coordinate.x+2), int(self.coordinate.y), self.fontsize, self.fontcolor)
