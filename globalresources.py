@@ -9,6 +9,7 @@ tiled_button_sprite: pyray.Texture = None
 tiled_button_left_sprite: pyray.Texture = None
 tiled_button_right_sprite: pyray.Texture = None
 trowel_sprite: pyray.Texture = None
+wall_sprite: pyray.Texture = None
 
 def init_resources():
     global portal_gun_sprite, menu_bg_sprite, menu_bg_option_sprite, menu_bg_credits_sprite, cool_transition_sprite, \
@@ -34,3 +35,4 @@ def unload_resources():
     pyray.unload_texture(menu_bg_sprite)
     pyray.unload_texture(portal_gun_sprite)
     pyray.unload_texture(trowel_sprite)
+    pyray.unload_texture(wall_sprite)
