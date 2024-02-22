@@ -135,13 +135,19 @@ class Player(ko.KinematicObject):
     def add_action(self, action):
         # TODO : assertion if action is not an action ?
         self.actions.append(action)
+        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+            self.parent_state.show_action_widgets()    # refresh
 
     def remove_action(self, action):
         """
         Intended for actions with limited use, so they can remove themselves.
         """
-        if action in self.actions:
-            self.actions.remove(action)
+        if action not in self.actions:
+            return
+
+        self.actions.remove(action)
+        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+            self.parent_state.show_action_widgets()  # refresh
 
     def get_rectangle(self) -> tuple[float, float, float, float]:
         if not self.use_small_hitbox:

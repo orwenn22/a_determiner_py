@@ -58,10 +58,6 @@ class GameplayState(state.State):
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         if self.show_actions:
-            # -1 because skip is not a player action
-            if len(self.actions_widgets.list_widget)-1 != len(self.players[self.current_player].actions):
-                print("gameplay update : refreshing actions")
-                self.show_action_widgets()                  # This will refresh the actions
             self.actions_widgets.update()                   # Check if we are clicking on an action
 
         self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
