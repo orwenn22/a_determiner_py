@@ -42,8 +42,10 @@ class Terrain(object):
 
         rectangle: hitbox in meter we want to check collision for
         """
+        # Top left
         pixel_x = int(rectangle[0] / self.size.x * self.image.width)
         pixel_y = int(rectangle[1] / self.size.y * self.image.height)
+        # Bottom right
         pixel_x2 = int((rectangle[0] + rectangle[2]) / self.size.x * self.image.width)
         pixel_y2 = int((rectangle[1] + rectangle[3]) / self.size.y * self.image.height)
         # print(pixel_x, pixel_y, pixel_x2, pixel_y2)
@@ -51,15 +53,30 @@ class Terrain(object):
         if outside_solid:
             if pixel_x < 0 or pixel_x2 >= self.image.width or pixel_y < 0 or pixel_y2 >= self.image.height: return True
         else:
+            # We want to only check pixels that are in bounce
             if pixel_x < 0: pixel_x = 0
             if pixel_x2 >= self.image.width: pixel_x2 = self.image.width - 1
             if pixel_y < 0: pixel_y = 0
             if pixel_y2 >= self.image.height: pixel_y2 = self.image.height - 1
 
-        for y in range(pixel_y, pixel_y2 + 1):
-            for x in range(pixel_x, pixel_x2 + 1):
+        # Left & right
+        if not (pixel_x >= self.image.width or pixel_x2 < 0):
+            for y in range(pixel_y, pixel_y2+1):
+                if self.collision_mask[pixel_x + y * self.image.width] or self.collision_mask[pixel_x2 + y * self.image.width]:
+                    return True
+
+        # Top & bottom
+        if not (pixel_y >= self.image.height or pixel_y2 < 0):
+            for x in range(pixel_x, pixel_x2+1):
+                if self.collision_mask[x + pixel_y * self.image.width] or self.collision_mask[x + pixel_y2 * self.image.width]:
+                    return True
+
+        # Center    (only check 1/9 of the pixels to save time)
+        for y in range(pixel_y+1, pixel_y2, 3):
+            for x in range(pixel_x+1, pixel_x2, 3):
                 if self.collision_mask[x + y * self.image.width]:
                     return True
+
         return False
 
     def destroy_rectangle(self, rectangle: tuple[float, float, float, float]):

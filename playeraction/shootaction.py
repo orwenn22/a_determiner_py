@@ -13,7 +13,7 @@ class ShootAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.action_cost = 25
-        self.action_name = "Shoot\n("+str(self.action_cost)+")"
+        self.action_name = f"Shoot\n(-{str(self.action_cost)})"
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(pyray.KeyboardKey.KEY_D) - g.is_key_down(pyray.KeyboardKey.KEY_Q)) * dt

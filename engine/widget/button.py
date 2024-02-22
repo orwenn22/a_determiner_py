@@ -34,7 +34,7 @@ class Button(widget.Widget):
             return
 
         pos: tuple[int, int] = (pyray.get_mouse_x(), pyray.get_mouse_y())
-        if utils.check_collision_mouse_rect(pos, (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height)):
+        if utils.check_collision_point_rect(pos, (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height)):
             if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
                 self.action()
             g.mouse_used = True
