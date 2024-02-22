@@ -18,15 +18,11 @@ class CreditState(state.State):
         tm = label.Label(140, -160, "MC", "TM", 10, pyray.WHITE)
         group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.WHITE)
 
-        people = button.Button(0, 0, 250, 150, "MC",
-                               label="- Ewenn Baudet\n\n- Alexis Delavis\n\n- Jude Aybalen\n\n- Adrian Noyes\n\n- Maxime Duret")
-
         return_to_menu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
 
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)
         self.widget_manager.add_widget(group)
-        # self.widget_manager.add_widget(people)
         self.widget_manager.add_widget(label.Label(0, -60, "MC", "Ewenn Baudet", 20, pyray.WHITE))
         self.widget_manager.add_widget(label.Label(0, -30, "MC", "Alexis Delavis", 20, pyray.WHITE))
         self.widget_manager.add_widget(label.Label(0, 0, "MC", "Jude Aybalen", 20, pyray.WHITE))
