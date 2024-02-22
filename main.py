@@ -3,6 +3,7 @@ from engine.state import statemanager
 import globalresources as res
 import pyray
 import gameplaystate
+import menustate
 
 
 def main():
@@ -10,8 +11,8 @@ def main():
     g.init_window(960, 540, "À déterminer™")
     res.init_resources()
 
-    state_manager = statemanager.StateManager(gameplaystate.GameplayState())
-
+    # state_manager = statemanager.StateManager(gameplaystate.GameplayState())
+    state_manager = statemanager.StateManager(menustate.MenuState())
     while g.handle_event():
         # Getting the mouse position, for both absolute and world coordinates.
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
@@ -32,8 +33,10 @@ def main():
         if show_debug:
             pyray.draw_fps(10, 10)
             pyray.draw_text("DT: " + str(g.deltatime) + "s", 10, 30, 20, pyray.Color(255, 0, 0, 255))
-            pyray.draw_text(f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}", 10, 50, 20, pyray.Color(255, 255, 255, 255))
-            pyray.draw_text("Cam center: (" + str(cam_center.x) + ", " + str(cam_center.y) + ")", 10, 70, 20, pyray.Color(255, 255, 255, 255))
+            pyray.draw_text(f"Mouse : px : {mouse_x} {mouse_y} | m : {mouse_pos_meter.x} {mouse_pos_meter.y}", 10, 50, 20, pyray.Color(
+                255, 255, 255, 255))
+            pyray.draw_text("Cam center: (" + str(cam_center.x) + ", " + str(cam_center.y) + ")",
+                            10, 70, 20, pyray.Color(255, 255, 255, 255))
 
         pyray.end_drawing()
         g.game_loop_end()
