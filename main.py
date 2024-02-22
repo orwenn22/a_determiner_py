@@ -2,8 +2,7 @@ from engine import metrics as m, globals as g
 from engine.state import statemanager
 import globalresources as res
 import pyray
-import gameplaystate
-import menustate
+from menus import menustate
 
 
 def main():

@@ -1,21 +1,22 @@
 import pyray
 from engine.state import state
 from engine.widget import button, widgetmanager, label
-import menustate
+import globalresources as res
 import key
 
 
 class OptionState(state.State):
     def __init__(self):
+        from menus import menustate
         super().__init__()
 
         def return_action():
             self.manager.set_state(menustate.MenuState())
 
         self.widget_manager = widgetmanager.WidgetManager()
-        title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(127, 127, 127, 255))
+        title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(0, 0, 0, 255))
 
-        self.returntomenu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
+        self.return_to_menu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
 
         # TODO : these should not be buttons
         self.key_left = button.Button(-50, -50, 140, 40, "MC", label="Left Key :")
@@ -32,7 +33,7 @@ class OptionState(state.State):
         # the key that is currently being rebinded
         self.rebinding = ""
 
-        self.widget_manager.add_widget(self.returntomenu)
+        self.widget_manager.add_widget(self.return_to_menu)
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(self.key_left)
         self.widget_manager.add_widget(self.rebind_buttons["left"])
@@ -40,10 +41,13 @@ class OptionState(state.State):
         self.widget_manager.add_widget(self.rebind_buttons["right"])
         self.widget_manager.add_widget(self.key_action)
         self.widget_manager.add_widget(self.rebind_buttons["action"])
-
         self.refresh_rebinding_buttons_labels()
 
+        self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_option_sprite.width, res.menu_bg_option_sprite.height)
+
     def update(self, dt):
+        self.bg_rect.x += 12 * dt
+        self.bg_rect.y += 12 * dt
         if self.rebinding != "":
             for i in range(pyray.KeyboardKey.KEY_APOSTROPHE, pyray.KeyboardKey.KEY_PAUSE+1):
                 if pyray.is_key_pressed(i):
@@ -55,6 +59,9 @@ class OptionState(state.State):
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
+        for y in range(0, pyray.get_render_height(), res.menu_bg_sprite.height):
+            for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
+                pyray.draw_texture_rec(res.menu_bg_option_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
         self.widget_manager.draw()
 
     def make_newkey_callback(self, key_to_change: str):
