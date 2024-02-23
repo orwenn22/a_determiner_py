@@ -1,4 +1,5 @@
 import pyray
+from .. import utils
 
 
 class Widget(object):
@@ -45,6 +46,10 @@ class Widget(object):
                                  pyray.Vector2(0, 0), 0,
                                  pyray.Color(255, 0, 0, 255))
 
+    def is_hovered(self) -> bool:
+        return utils.check_collision_point_rect((pyray.get_mouse_x(), pyray.get_mouse_y()),
+                                                (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height))
+
     def set_x(self, x: int):
         self.origin.x = x
         self.reload_placement()
@@ -52,6 +57,16 @@ class Widget(object):
 
     def set_y(self, y: int):
         self.origin.y = y
+        self.reload_placement()
+        return self
+
+    def set_width(self, width: int):
+        self.width = width
+        self.reload_placement()
+        return self
+
+    def set_height(self, height: int):
+        self.height = height
         self.reload_placement()
         return self
 

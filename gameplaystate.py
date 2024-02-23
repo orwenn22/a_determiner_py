@@ -41,7 +41,7 @@ class GameplayState(state.State):
         self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
 
         # Small marker for the current player
-        self.green_marker = pyray.load_texture("green_marker.png")
+        self.green_marker = pyray.load_texture("res/green_marker.png")
 
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False

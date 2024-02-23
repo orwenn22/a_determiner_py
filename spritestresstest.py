@@ -14,7 +14,7 @@ class SpriteStressTest(state.State):
         m.set_camera_center(pyray.Vector2(0, 0))
 
         # This is the sprite for the stress test
-        self.my_sprite = pyray.load_texture("./testsprite.png")
+        self.my_sprite = pyray.load_texture("res/testsprite.png")
         self.rot = 0.0
 
     def __del__(self):

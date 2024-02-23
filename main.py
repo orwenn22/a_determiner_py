@@ -2,8 +2,7 @@ from engine import metrics as m, globals as g
 from engine.state import statemanager
 import globalresources as res
 import pyray
-import gameplaystate
-import menustate
+from menus import menustate
 
 
 def main():
@@ -37,6 +36,8 @@ def main():
                 255, 255, 255, 255))
             pyray.draw_text("Cam center: (" + str(cam_center.x) + ", " + str(cam_center.y) + ")",
                             10, 70, 20, pyray.Color(255, 255, 255, 255))
+            pyray.draw_text(f"Current state : {type(state_manager.state).__name__} ({type(state_manager.state)})",
+                            10, 90, 20, pyray.WHITE)
 
         pyray.end_drawing()
         g.game_loop_end()
