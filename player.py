@@ -6,6 +6,7 @@ from engine.object import kinematicobject as ko
 from engine.widget import button, widget
 import wall
 
+
 class Player(ko.KinematicObject):
     def __init__(self, x, y, team: int, parent_state, mass=10):
         """
@@ -176,7 +177,7 @@ class Player(ko.KinematicObject):
 
     def collide_with_solid_object(self) -> bool:
         for solid in self.solid_types:
-            col = self.manager.get_collision(self,solid)
-            if len(col)>=1:
+            col = self.manager.get_collision(self, solid)
+            if len(col) >= 1:
                 return True
         return False

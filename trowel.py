@@ -6,6 +6,7 @@ from playeraction import spawnwall
 import globalresources as res
 from terrain import Terrain
 
+
 class Trowel(entityobject.EntityObject):
     def __init__(self, x: float, y: float,t : Terrain):
         super().__init__(x, y, 0.6, 0.4, res.trowel_sprite)
