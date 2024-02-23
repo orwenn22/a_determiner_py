@@ -1,6 +1,6 @@
 import pyray
 from engine.state import state
-from engine.widget import button, widgetmanager, label
+from engine.widget import tiledbutton, widgetmanager, label
 import globalresources as res
 
 
@@ -18,7 +18,10 @@ class CreditState(state.State):
         tm = label.Label(140, -160, "MC", "TM", 10, pyray.WHITE)
         group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.WHITE)
 
-        return_to_menu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
+        return_to_menu = tiledbutton.TiledButton(0, 200, 250, 40, "MC",
+                                                 res.tiled_button_sprite, 8, 2,
+                                                 "Return to main menu", return_action)
+        return_to_menu.center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
 
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)

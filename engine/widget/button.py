@@ -24,30 +24,52 @@ class Button(widget.Widget):
         """
         super().__init__(x, y, width, height, placement)
         self.color = pyray.Color(100, 100, 100, 255)
+        self.hovering_color = self.color
         self.label = label
         self.action = act
         self.fontsize = 20
         self.fontcolor = pyray.Color(0, 0, 0, 255)
 
+        # Internal offset of the text
+        self.text_offset_x = 2
+        self.text_offset_y = 0
+
+        # If the button is hovered then its drawing position will be shifted by this amount
+        self.hover_offset_x = 0
+        self.hover_offset_y = 3
+
+        # True if the button is hovered, mostly intended for subclasses
+        self.hovered = False
+
     def update(self):
+        self.hovered = False
         if g.mouse_used:
             return
 
-        pos: tuple[int, int] = (pyray.get_mouse_x(), pyray.get_mouse_y())
-        if utils.check_collision_point_rect(pos, (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height)):
+        if self.is_hovered():
+            self.hovered = True
             if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
                 self.action()
             g.mouse_used = True
 
     def draw(self):
-        pyray.draw_rectangle_pro(pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
-                                 pyray.Vector2(0, 0), 0, self.color)
+        position_x = self.coordinate.x + self.hover_offset_x*self.hovered
+        position_y = self.coordinate.y + self.hover_offset_y*self.hovered
+        pyray.draw_rectangle_pro(pyray.Rectangle(position_x, position_y, self.width, self.height),
+                                 pyray.Vector2(0, 0), 0, self.hovering_color if self.hovered else self.color)
 
         if self.label != "":
-            pyray.draw_text(self.label, int(self.coordinate.x+2), int(self.coordinate.y), self.fontsize, self.fontcolor)
+            pyray.draw_text(self.label, int(position_x+self.text_offset_x), int(position_y+self.text_offset_y),
+                            self.fontsize, self.fontcolor)
 
-    def set_color(self, color: pyray.Color):
+    def set_color(self, color: pyray.Color, replace_hovering: bool):
         self.color = color
+        if replace_hovering:
+            self.hovering_color = color
+        return self
+
+    def set_hovering_color(self, color: pyray.Color):
+        self.hovering_color = color
         return self
 
     def set_font_color(self, color: pyray.Color):
@@ -56,4 +78,14 @@ class Button(widget.Widget):
 
     def set_font_size(self, font_size: int):
         self.fontsize = font_size
+        return self
+
+    def set_text_offset(self, x: int, y: int):
+        self.text_offset_x = x
+        self.text_offset_y = y
+        return self
+
+    def center_text(self):
+        self.text_offset_x = (self.width - pyray.measure_text(self.label, self.fontsize))//2
+        self.text_offset_y = (self.height - self.fontsize)//2
         return self

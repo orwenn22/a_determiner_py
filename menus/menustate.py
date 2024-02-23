@@ -1,7 +1,7 @@
 import pyray
 from engine import globals as g
 from engine.state import state
-from engine.widget import button, widgetmanager, label
+from engine.widget import widgetmanager, label, tiledbutton
 import globalresources as res
 
 
@@ -18,7 +18,7 @@ class MenuState(state.State):
             self.manager.set_state(optionstate.OptionState())
 
         def credits_action():
-            #self.manager.set_state(creditstate.CreditState())
+            # self.manager.set_state(creditstate.CreditState())
             self.manager.set_state(transitionstate.TransitonState(self, creditstate.CreditState()))
 
         def quit_action():
@@ -26,13 +26,24 @@ class MenuState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
 
-        play_button = button.Button(0, -100, 150, 40, "MC", play_action, "Play Game")
-        options_button = button.Button(0, -50, 150, 40, "MC", options_action, "Options")
-        credits_button = button.Button(0, 0, 150, 40, "MC", credits_action, "Credits")
-        quit_button = button.Button(0, 50, 150, 40, "MC", quit_action, "Quit")
+        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.Color(0, 0, 0, 255))
+        tm = label.Label(140, -160, "MC", "TM", 10, pyray.Color(0, 0, 0, 255))
 
-        title = label.Label(0, -200, "MC", "À déterminer", 40, pyray.Color(0, 0, 0, 255))
-        tm = label.Label(140, -210, "MC", "TM", 10, pyray.Color(0, 0, 0, 255))
+        play_button = tiledbutton.TiledButton(0, -50, 150, 40, "MC",
+                                              res.tiled_button_sprite, 8, 2,
+                                              "Play Game", play_action).center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
+
+        options_button = tiledbutton.TiledButton(0, 0, 150, 40, "MC",
+                                                 res.tiled_button_sprite, 8, 2,
+                                                 "Options", options_action).center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
+
+        credits_button = tiledbutton.TiledButton(0, 50, 150, 40, "MC",
+                                                 res.tiled_button_sprite, 8, 2,
+                                                 "Credits", credits_action).center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
+
+        quit_button = tiledbutton.TiledButton(0, 100, 150, 40, "MC",
+                                              res.tiled_button_sprite, 8, 2,
+                                              "Quit", quit_action).center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.RED)
 
         self.widget_manager.add_widget(play_button)
         self.widget_manager.add_widget(options_button)

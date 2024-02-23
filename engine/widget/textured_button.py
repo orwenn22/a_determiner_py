@@ -23,12 +23,17 @@ class TexturedButton(button.Button):
         """
         super().__init__(x, y, width, height, placement, act, label)
         self.sprite = sprite
+        self.color = pyray.WHITE
+        self.hovering_color = self.color
 
     def draw(self):
+        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
+        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+
         pyray.draw_texture_pro(self.sprite,
                                pyray.Rectangle(0, 0, self.sprite.width, self.sprite.height),
-                               pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
+                               pyray.Rectangle(position_x, position_y, self.width, self.height),
                                pyray.Vector2(0, 0), 0,
-                               pyray.Color(255, 255, 255, 255))
+                               self.hovering_color if self.hovered else self.color)
         if self.label != "":
-            pyray.draw_text(self.label, int(self.coordinate.x+2), int(self.coordinate.y), self.fontsize, self.fontcolor)
+            pyray.draw_text(self.label, int(position_x+self.text_offset_x), int(position_y+self.text_offset_y), self.fontsize, self.fontcolor)

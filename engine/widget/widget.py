@@ -1,4 +1,5 @@
 import pyray
+from .. import utils
 
 
 class Widget(object):
@@ -44,6 +45,10 @@ class Widget(object):
         pyray.draw_rectangle_pro(pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
                                  pyray.Vector2(0, 0), 0,
                                  pyray.Color(255, 0, 0, 255))
+
+    def is_hovered(self) -> bool:
+        return utils.check_collision_point_rect((pyray.get_mouse_x(), pyray.get_mouse_y()),
+                                                (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height))
 
     def set_x(self, x: int):
         self.origin.x = x

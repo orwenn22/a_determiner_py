@@ -1,6 +1,6 @@
 import pyray
 from engine.state import state
-from engine.widget import button, widgetmanager, label
+from engine.widget import tiledbutton, widgetmanager, label
 import globalresources as res
 import key
 
@@ -16,40 +16,62 @@ class OptionState(state.State):
         self.widget_manager = widgetmanager.WidgetManager()
         title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(0, 0, 0, 255))
 
-        self.return_to_menu = button.Button(0, 200, 250, 40, "MC", return_action, "Return to main menu")
+        key_left = tiledbutton.TiledButton(-85, -50, 140, 40, "MC",
+                                           res.tiled_button_left_sprite, 8, 2,
+                                           "Left Key :", self.make_newkey_callback("left"))
+        key_left.center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
 
-        # TODO : these should not be buttons
-        self.key_left = button.Button(-50, -50, 140, 40, "MC", label="Left Key :")
-        self.key_right = button.Button(-50, 0, 140, 40, "MC", label="Right Key :")
-        self.key_action = button.Button(-50, 50, 140, 40, "MC", label="Action Key :")
+        key_right = tiledbutton.TiledButton(-85, 0, 140, 40, "MC",
+                                            res.tiled_button_left_sprite, 8, 2,
+                                            "Right Key :", self.make_newkey_callback("right"))
+        key_right.center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
+
+        key_action = tiledbutton.TiledButton(-85, 50, 140, 40, "MC",
+                                             res.tiled_button_left_sprite, 8, 2,
+                                             "Action Key :", self.make_newkey_callback("action"))
+        key_action.center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
 
         # All rebinds button should go here, and the key should be the same than the one in key.py
         self.rebind_buttons = {
-            "left": button.Button(110, -50, 170, 40, "MC", self.make_newkey_callback("left"), "Q"),
-            "right": button.Button(110, 0, 170, 40, "MC", self.make_newkey_callback("right"), "D"),
-            "action": button.Button(110, 50, 170, 40, "MC", self.make_newkey_callback("action"), "SPACE")
+            "left": tiledbutton.TiledButton(70, -50, 170, 40, "MC",
+                                            res.tiled_button_right_sprite, 8, 2,
+                                            "Q", self.make_newkey_callback("left")),
+            "right": tiledbutton.TiledButton(70, 0, 170, 40, "MC",
+                                             res.tiled_button_right_sprite, 8, 2,
+                                             "D", self.make_newkey_callback("right")),
+            "action": tiledbutton.TiledButton(70, 50, 170, 40, "MC",
+                                              res.tiled_button_right_sprite, 8, 2,
+                                              "SPACE", self.make_newkey_callback("action"))
         }
 
-        # the key that is currently being rebinded
-        self.rebinding = ""
+        for _, b in self.rebind_buttons.items():
+            b.set_hovering_color(pyray.YELLOW)
 
-        self.widget_manager.add_widget(self.return_to_menu)
+        return_to_menu = tiledbutton.TiledButton(0, 200, 250, 40, "MC",
+                                                 res.tiled_button_sprite, 8, 2,
+                                                 "Return to main menu", return_action)
+        return_to_menu.center_text().set_font_color(pyray.WHITE).set_hovering_color(pyray.YELLOW)
+
         self.widget_manager.add_widget(title)
-        self.widget_manager.add_widget(self.key_left)
+        self.widget_manager.add_widget(key_left)
         self.widget_manager.add_widget(self.rebind_buttons["left"])
-        self.widget_manager.add_widget(self.key_right)
+        self.widget_manager.add_widget(key_right)
         self.widget_manager.add_widget(self.rebind_buttons["right"])
-        self.widget_manager.add_widget(self.key_action)
+        self.widget_manager.add_widget(key_action)
         self.widget_manager.add_widget(self.rebind_buttons["action"])
+        self.widget_manager.add_widget(return_to_menu)
         self.refresh_rebinding_buttons_labels()
 
         self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_option_sprite.width, res.menu_bg_option_sprite.height)
+
+        # the key that is currently being rebinded
+        self.rebinding = ""
 
     def update(self, dt):
         self.bg_rect.x += 12 * dt
         self.bg_rect.y += 12 * dt
         if self.rebinding != "":
-            for i in range(pyray.KeyboardKey.KEY_APOSTROPHE, pyray.KeyboardKey.KEY_PAUSE+1):
+            for i in range(pyray.KeyboardKey.KEY_SPACE, pyray.KeyboardKey.KEY_PAUSE+1):
                 if pyray.is_key_pressed(i):
                     key.key_binds[self.rebinding] = i
                     self.refresh_rebinding_buttons_labels()
@@ -72,11 +94,15 @@ class OptionState(state.State):
                 print("local_newkey_callback : no button with key", key_to_change)
                 return
             self.rebind_buttons[key_to_change].label = ">PRESS<"
+            self.rebind_buttons[key_to_change].set_font_color(pyray.YELLOW).center_text()
         return local_newkey_callback
 
     def refresh_rebinding_buttons_labels(self):
         for k, v in self.rebind_buttons.items():
             if k not in key.key_binds.keys():
                 v.label = "N/A"
+                v.set_font_color(pyray.RED)
             else:
                 v.label = list(pyray.KeyboardKey.__members__.keys())[list(pyray.KeyboardKey.__members__.values()).index(pyray.KeyboardKey(key.key_binds[k]))][4:]
+                v.set_font_color(pyray.WHITE)
+            v.center_text()
