@@ -5,9 +5,13 @@ from . import widget as w
 class WidgetManager(object):
     def __init__(self):
         self.list_widget: list[w.Widget] = []
+        self.width = pyray.get_render_width()
+        self.heigth = pyray.get_render_height()
 
     def update(self):
-        if pyray.is_window_resized():
+        if self.width != pyray.get_render_width() or self.heigth != pyray.get_render_height():
+            self.width = pyray.get_render_width()
+            self.heigth = pyray.get_render_width()
             for i in self.list_widget:
                 i.reload_placement()
 

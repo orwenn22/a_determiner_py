@@ -8,7 +8,7 @@ import globalresources as res
 class MenuState(state.State):
     def __init__(self):
         import gameplaystate
-        from menus import optionstate, creditstate
+        from menus import optionstate, creditstate, transitionstate
         super().__init__()
 
         def play_action():
@@ -18,7 +18,8 @@ class MenuState(state.State):
             self.manager.set_state(optionstate.OptionState())
 
         def credits_action():
-            self.manager.set_state(creditstate.CreditState())
+            #self.manager.set_state(creditstate.CreditState())
+            self.manager.set_state(transitionstate.TransitonState(self, creditstate.CreditState()))
 
         def quit_action():
             g.running = False
