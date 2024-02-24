@@ -6,14 +6,12 @@ from engine import globals as g
 import key
 from engine import graphics as gr
 import math
-from terrain import Terrain
 
 
 class PlaceWallAction(playeraction.PlayerAction):
-    def __init__(self, t: Terrain):
+    def __init__(self):
         super().__init__()
         self.action_name = "Wall\n(item)"
-        self.terrain = t
         
     def on_click(self, _player: player.Player, action_index: int):
         super().on_click(_player, action_index)
@@ -27,7 +25,7 @@ class PlaceWallAction(playeraction.PlayerAction):
 
         if g.is_key_pressed(key.key_binds["action"]):
             wall_height = 1     # Put this to 2 ?
-            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, self.terrain)
+            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, _player.parent_state.t)
 
             # If the wall is clipping with the terrain then make it go up
             total_vertical_offset = 0

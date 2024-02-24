@@ -2,6 +2,7 @@ import pyray
 
 import bullet
 import player
+import wall
 from engine import graphics as gr, globals as g, metrics as m, utils
 from engine.object import entityobject, objectmanager
 
@@ -10,7 +11,7 @@ class Portal(entityobject.EntityObject):
     def __init__(self, x: float, y: float, sprite: pyray.Texture = None):
         super().__init__(x, y, 1.0, 1.0, sprite)
         self.destination: Portal | None = None
-        self.whitelisted_types = [player.Player, bullet.Bullet]
+        self.whitelisted_types = [player.Player, bullet.Bullet, wall.Wall]
         self.cooldown = 1.0
         self.mouse_overing = False
 
