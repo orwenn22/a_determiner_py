@@ -27,6 +27,9 @@ class Button(widget.Widget):
         self.hovering_color = self.color
         self.label = label
         self.action = act
+
+        self.font: pyray.Font | None = None
+        self.font_spacing = 2.0
         self.fontsize = 20
         self.fontcolor = pyray.Color(0, 0, 0, 255)
 
@@ -58,9 +61,21 @@ class Button(widget.Widget):
         pyray.draw_rectangle_pro(pyray.Rectangle(position_x, position_y, self.width, self.height),
                                  pyray.Vector2(0, 0), 0, self.hovering_color if self.hovered else self.color)
 
-        if self.label != "":
+        self._draw_text()
+
+    def _draw_text(self):
+        if self.label == "":
+            return
+        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
+        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+
+        if self.font is None:
             pyray.draw_text(self.label, int(position_x+self.text_offset_x), int(position_y+self.text_offset_y),
                             self.fontsize, self.fontcolor)
+        else:
+            pyray.draw_text_ex(self.font, self.label,
+                               pyray.Vector2(position_x+self.text_offset_x, position_y+self.text_offset_y),
+                               self.fontsize, self.font_spacing, self.color)
 
     def set_color(self, color: pyray.Color, replace_hovering: bool):
         self.color = color
@@ -85,7 +100,18 @@ class Button(widget.Widget):
         self.text_offset_y = y
         return self
 
+    def set_font(self, font: pyray.Font, spacing: float = 2):
+        self.font = font
+        self.font_spacing = spacing
+        return self
+
     def center_text(self):
-        self.text_offset_x = (self.width - pyray.measure_text(self.label, self.fontsize))//2
+        if self.font is None:
+            text_width = pyray.measure_text(self.label, self.fontsize)
+        else:
+            text_size = pyray.measure_text_ex(self.font, self.label, self.fontsize, self.font_spacing)
+            text_width = text_size.x
+
+        self.text_offset_x = (self.width - text_width)//2
         self.text_offset_y = (self.height - self.fontsize)//2
         return self

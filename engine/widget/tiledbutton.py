@@ -87,9 +87,7 @@ class TiledButton(button.Button):
 
         # Wow, this is long, pls send help.
         # Now we draw the text
-        if self.label != "":
-            pyray.draw_text(self.label, int(position_x + self.text_offset_x), int(position_y + self.text_offset_y),
-                            self.fontsize, self.fontcolor)
+        super()._draw_text()
 
     def set_tile_set(self, tile_set: pyray.Texture, replace_hovering=False):
         if tile_set is not None:

@@ -35,5 +35,4 @@ class TexturedButton(button.Button):
                                pyray.Rectangle(position_x, position_y, self.width, self.height),
                                pyray.Vector2(0, 0), 0,
                                self.hovering_color if self.hovered else self.color)
-        if self.label != "":
-            pyray.draw_text(self.label, int(position_x+self.text_offset_x), int(position_y+self.text_offset_y), self.fontsize, self.fontcolor)
+        super()._draw_text()
