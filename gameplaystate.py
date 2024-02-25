@@ -7,7 +7,7 @@ import player
 import terrain
 import portal
 import portalgun
-
+import trowel
 
 class GameplayState(state.State):
     def __init__(self):
@@ -49,7 +49,8 @@ class GameplayState(state.State):
 
         portal.Portal.spawn_portals(self.object_manager, 5, 4, 9, 5, None)
         portal.Portal.spawn_portals(self.object_manager, 4, 2, 12, 4, None)
-        self.object_manager.add_object(portalgun.PortalGun(13, 10))
+        self.object_manager.add_object(portalgun.PortalGun(23.3, 7.1))
+        self.object_manager.add_object(trowel.Trowel(23.3, 6.1))
 
     def unload_ressources(self):
         self.t.unload()

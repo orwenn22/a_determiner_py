@@ -4,6 +4,7 @@ import math
 from engine import graphics as gr
 from engine.object import kinematicobject as ko
 from engine.widget import button, widget
+import wall
 
 
 class Player(ko.KinematicObject):
@@ -38,6 +39,8 @@ class Player(ko.KinematicObject):
         self.action_points = 20
 
         self.use_small_hitbox = False
+
+        self.solid_types = [wall.Wall]
 
     def update(self, dt: float):
         if not self.grounded():
@@ -74,18 +77,18 @@ class Player(ko.KinematicObject):
         """
         # Horizontal
         self.process_physics_x(dt)
-        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
+        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             self.use_small_hitbox = False
-            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
+            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
                 self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
             self.velocity.x = 0
 
         # Vertical
         self.process_physics_y(dt)
-        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
+        if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             self.use_small_hitbox = False
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
-            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True):
+            while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
                 self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
 
             if self.velocity.y > 0:  # going down (collision with ground)
@@ -171,3 +174,10 @@ class Player(ko.KinematicObject):
         result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True)
         self.position.y = old_y
         return result
+
+    def collide_with_solid_object(self) -> bool:
+        for solid in self.solid_types:
+            col = self.manager.get_collision(self, solid)
+            if len(col) >= 1:
+                return True
+        return False
