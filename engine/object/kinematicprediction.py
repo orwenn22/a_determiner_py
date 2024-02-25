@@ -33,11 +33,12 @@ class KinematicPrediction(ko.KinematicObject):
         result.enable_gravity = other.enable_gravity
         return result
 
-    def draw_simulation(self, step: int, simulation_amount: int = 100, dt: float = 0.01):
+    def draw_simulation(self, step: int, simulation_amount: int = 100, dt: float = 0.01, c: pyray.Color = (100, 100, 255, 255)):
         """
         :param step: if this is 5 this will draw every 5 points of the simulation
         :param simulation_amount: the number of time we want to simulate
         :param dt: the deltatime we want to simulate (can/should be something else than the ont calculated from FPS, default of 0.01, but can be smaller for higher accuracy)
+        :param c: color of the dots
         :return:
         """
         # Backup all physics state
@@ -49,7 +50,7 @@ class KinematicPrediction(ko.KinematicObject):
             self.process_physics(dt)
             if i % step != 0:
                 continue
-            gr.draw_circle(self.position, 0.1, (100, 100, 255, 255))
+            gr.draw_circle(self.position, 0.1, c)
 
         self.acceleration = a
         self.velocity = v

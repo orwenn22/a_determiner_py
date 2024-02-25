@@ -124,12 +124,11 @@ def draw_circle(center: pyray.Vector2, radius: float, c):
 #     g.window.blit(sprite, (x, y), (offset_x, offset_y, area_w, area_h))
 
 
-def draw_sprite_scale(sprite: pyray.Texture, rect_to_draw: tuple[float, float, float, float]):
+def draw_sprite_scale(sprite: pyray.Texture, rect_to_draw: tuple[float, float, float, float], c=pyray.WHITE):
     """
     This will scale the sprite to fill the rectangle
     """
-    origin_vec = m.meters_position_to_window_position(
-        pyray.Vector2(rect_to_draw[0], rect_to_draw[1]))
+    origin_vec = m.meters_position_to_window_position(pyray.Vector2(rect_to_draw[0], rect_to_draw[1]))
     x = int(origin_vec.x)
     y = int(origin_vec.y)
     width = m.meters_to_pixels(rect_to_draw[2])
@@ -140,16 +139,17 @@ def draw_sprite_scale(sprite: pyray.Texture, rect_to_draw: tuple[float, float, f
     space_to_draw = pyray.Rectangle(x, y, width, height)
     pyray.draw_texture_pro(sprite, pyray.Rectangle(0, 0, sprite.width, sprite.height),
                            space_to_draw, pyray.Vector2(0, 0),
-                           0, pyray.Color(255, 255, 255, 255))
+                           0, c)
 
 
-def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.Vector2, rotation: float):
+def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.Vector2, rotation: float, c=pyray.WHITE):
     """
     Draw a sprite using a position and rotation
     :param sprite: the sprite we want to draw
     :param position: center of where we want to draw the sprite (in m position)
     :param size: size at which we want to draw the sprite (in m)
     :param rotation: angle
+    :param c: color applied to texture
     :return:
     """
     pixel_pos = m.meters_position_to_window_position(position)
@@ -166,4 +166,4 @@ def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.
     pyray.draw_texture_pro(sprite, pyray.Rectangle(0, 0, sprite.width, sprite.height),
                            pyray.Rectangle(x, y, width, height),
                            pyray.Vector2(width/2, height/2),
-                           rotation, pyray.Color(255, 255, 255, 255))
+                           rotation, c)
