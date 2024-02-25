@@ -5,13 +5,16 @@ import player
 from engine import globals as g
 import key
 from engine import graphics as gr
+from engine.object import kinematicprediction
 import math
+import globalresources as res
 
 
 class PlaceWallAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.action_name = "Wall\n(item)"
+        self.wall_height = 1        # Put this to 2 ?
         
     def on_click(self, _player: player.Player, action_index: int):
         super().on_click(_player, action_index)
@@ -24,7 +27,7 @@ class PlaceWallAction(playeraction.PlayerAction):
             _player.throw_angle = math.pi
 
         if g.is_key_pressed(key.key_binds["action"]):
-            wall_height = 1     # Put this to 2 ?
+            wall_height = self.wall_height
             w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, _player.parent_state.t)
 
             # If the wall is clipping with the terrain then make it go up
@@ -47,5 +50,10 @@ class PlaceWallAction(playeraction.PlayerAction):
             _player.throw_angle = 0
 
     def on_draw(self, _player: player.Player):
-        gr.draw_circle(pyray.Vector2(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y),
-                       0.1, pyray.Color(0, 0, 255, 255))
+        w = wall.Wall(_player.position.x + math.cos(_player.throw_angle) * 2,
+                      _player.position.y, 0.5, self.wall_height,
+                      _player.parent_state.t)
+
+        wall_prediction = kinematicprediction.KinematicPrediction.from_other_object(w)
+        wall_prediction.draw_simulation(10, c=(255, 100, 100, 255))
+        gr.draw_sprite_scale(res.wall_sprite, w.get_rectangle(), (255, 255, 255, 127))
