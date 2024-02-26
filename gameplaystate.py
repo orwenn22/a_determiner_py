@@ -6,8 +6,7 @@ import pyray
 import player
 import terrain
 import portal
-import portalgun
-import trowel
+from items import trowel, portalgun
 
 class GameplayState(state.State):
     def __init__(self):
