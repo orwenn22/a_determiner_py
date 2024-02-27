@@ -5,3 +5,18 @@ def check_collision_rectangles(rect1: tuple[any, any, any, any], rect2: tuple[an
 
 def check_collision_point_rect(point: tuple[any, any], rectangle: tuple[any, any, any, any]):
     return ((rectangle[0] <= point[0] < rectangle[0] + rectangle[2]) and (rectangle[1] <= point[1] < rectangle[1] + rectangle[3]))
+
+
+def map_parser(map_name:str = "level1.txt") -> list:
+    """
+
+    :param map_name: the name of the file containing the map layout (only include the txt file name but remind to put it in maps)
+    """
+    map_name="maps/"+map_name
+    map_list = []
+    with open(map_name,"r") as map:
+        line=map.readline().split()
+        while line:
+            map_list.append(line)
+            line = map.readline().split()
+    return map_list
