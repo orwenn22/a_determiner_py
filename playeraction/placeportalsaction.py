@@ -4,6 +4,7 @@ from engine import metrics as m, graphics as gr, globals as g
 import player
 import pyray
 import portal
+from globalresources import portal_sprite
 
 class PlacePortalsAction(playeraction.PlayerAction):
     def __init__(self):
@@ -21,7 +22,7 @@ class PlacePortalsAction(playeraction.PlayerAction):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         mouse_meters = m.window_position_to_meters_position(mouse_x, mouse_y)
 
-        p = portal.Portal(mouse_meters.x, mouse_meters.y)
+        p = portal.Portal(mouse_meters.x, mouse_meters.y,portal_sprite)
         if len(_player.manager.get_collision(p)) == 0 and not _player.parent_state.t.check_collision_rec(p.get_rectangle(), True):
             _player.manager.add_object(p)
             if self.first_portal is None:

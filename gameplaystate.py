@@ -7,6 +7,7 @@ import player
 import terrain
 import portal
 from items import trowel, portalgun
+import globalresources as res
 
 class GameplayState(state.State):
     def __init__(self, map_file:str = "level1.txt"):
@@ -56,7 +57,7 @@ class GameplayState(state.State):
                 case "mapsize":
                     mapsize = pyray.Vector2(float(line[1]),float(line[2]))
                 case "portal":
-                    portal.Portal.spawn_portals(self.object_manager, float(line[1]), float(line[2]), float(line[3]), float(line[4]), None)
+                    portal.Portal.spawn_portals(self.object_manager, float(line[1]), float(line[2]), float(line[3]), float(line[4]), res.portal_sprite)
                 case "portal_gun":
                     self.object_manager.add_object(portalgun.PortalGun(float(line[1]),float(line[2])))
                 case "trowel":

@@ -11,10 +11,12 @@ tiled_button_right_sprite: pyray.Texture = None
 trowel_sprite: pyray.Texture = None
 wall_sprite: pyray.Texture = None
 default_void_sprite: pyray.Texture = None
+portal_sprite: pyray.Texture = None
 
 def init_resources():
     global portal_gun_sprite, menu_bg_sprite, menu_bg_option_sprite, menu_bg_credits_sprite, cool_transition_sprite, \
-           tiled_button_sprite, tiled_button_left_sprite, tiled_button_right_sprite, trowel_sprite, wall_sprite, default_void_sprite
+            tiled_button_sprite, tiled_button_left_sprite, tiled_button_right_sprite, trowel_sprite, wall_sprite, \
+            default_void_sprite, portal_sprite
 
     wall_sprite = pyray.load_texture("res/wall.png")
     portal_gun_sprite = pyray.load_texture("res/portal_gun.png")
@@ -27,6 +29,7 @@ def init_resources():
     tiled_button_left_sprite = pyray.load_texture("res/tiled_button_left.png")
     tiled_button_right_sprite = pyray.load_texture("res/tiled_button_right.png")
     default_void_sprite = pyray.load_texture("res/default.png")
+    portal_sprite = pyray.load_texture("res/portal.png")
 
 def unload_resources():
     pyray.unload_texture(tiled_button_right_sprite)
