@@ -56,7 +56,7 @@ import myobject
 import engine.object.objectmanager as objectmanager
 
 object_manager = objectmanager.ObjectManager()
-object_manager.add_object(myobject.MyObject())
+object_manager.add_object(myobject.MyObject([...]))
 
 # Dans l'event loop
 object_manager.update(dt)
