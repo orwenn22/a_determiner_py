@@ -9,10 +9,10 @@ import portal
 from items import trowel, portalgun
 
 class GameplayState(state.State):
-    def __init__(self):
+    def __init__(self, map_file:str = "level1.txt"):
         super().__init__()
 
-        map_init:list =u.map_parser("level1.txt")
+        map_init:list =self.map_parser(map_file)
 
         # Set the unit/zoom
         m.set_pixels_per_meter(50)
@@ -65,6 +65,8 @@ class GameplayState(state.State):
                     self.blue_start :tuple[float,float,float,float] = (float(line[1]),float(line[2]),float(line[3]),float(line[4]))
                 case "red_start":
                     self.red_start :tuple[float,float,float,float] = (float(line[1]),float(line[2]),float(line[3]),float(line[4]))
+                case "background":
+                    pass  # we haven't already defined how the background will be placed
 
         if mapsize.x != 0 and mapsize.y != 0:
             self.t=terrain.Terrain(map_image,mapsize)
@@ -237,3 +239,17 @@ class GameplayState(state.State):
     def hide_action_widgets(self):
         self.actions_widgets.clear()
         self.show_actions = False
+
+    def map_parser(self,map_name:str)-> list:
+        """
+
+        :param map_name: the name of the file containing the map layout (only include the txt file name but remind to put it in maps)
+        """
+        map_name="maps/"+map_name
+        map_list = []
+        with open(map_name,"r") as map:
+            line=map.readline().split()
+            while line:
+                map_list.append(line)
+                line = map.readline().split()
+        return map_list

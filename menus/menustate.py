@@ -8,11 +8,12 @@ import globalresources as res
 class MenuState(state.State):
     def __init__(self):
         import gameplaystate
-        from menus import optionstate, creditstate, transitionstate
+        from menus import optionstate, creditstate, transitionstate, choicelevelstate
         super().__init__()
 
         def play_action():
-            self.manager.set_state(gameplaystate.GameplayState())
+            #self.manager.set_state(gameplaystate.GameplayState())
+            self.manager.set_state(choicelevelstate.ChoiceLevelState())
 
         def options_action():
             self.manager.set_state(optionstate.OptionState())
