@@ -12,29 +12,55 @@ prêt (ou bien pour avoir le feedback des autres plus facilement), vous pouvez f
 sur github.
 
 
-## Terrain bitmap destructible (compliqué, mais sûrement nécessaire)
-
-TODO : se mettre d'accord et rédiger exactement comment on veut faire ici.
-
-
-## Toolkit de widget (moyen, bon à avoir)
-
-On pourrait peut-être faire un système de widgets (boutons, labels, etc) afin de réaliser les menus et 
-interfaces du jeu plus facilement. Ça fonctionnerait surement de manière similaire aux objets, donc il y
-a peut-être moyen de réutiser une grande partie du code existant dans ce cas ?
+À l'origine ce fichier contenait une liste de tâches à faire, mais la plupart ont été réalisés. Du
+coup à la place, voici une liste non exhaustive d'endroits/modules importants dans la codebase
 
 
-## Différentes formes de hitbox (ex : cercle) ("très" compliqué et probablement pas nécessaire)
+| Chemin/module   | Diminutif | Bût                                                                                              |
+|-----------------|-----------|:-------------------------------------------------------------------------------------------------|
+| engine.globals  | g         | - Stocker des variables globales pour le bon fonctionnement du jeu. (DT) - Fonctions pour l'I/O. |
+| engine.graphics | gr        | - Fonctions de dessins qui prennent des mètres en entrée.                                        |
+| engine.metrics  | m         | - Variables globales + fonction pour gérer les coordonnées en mètres.                            |
+| engine.object.* | N/A       | - Contient toutes les classes liées aux objets et à la physique.                                 |
+| engine.state.*  | N/A       | - Contient toutes les classes pour le management des states.                                     |
+| gameplaystate   | N/A       | - Contient la state du gameplay principale.                                                      |
+| playeraction.*  | N/A       | - Contient toutes les actions que peut réaliser le joueur.                                       |
+| items.*         | N/A       | - Contient les classes de tous les items du jeu.                                                 |
+| globalresources | res       | - Contient toutes les ressources (textures) devant être stocker durant l'exécution du programme. |
+| menus.*         | N/A       | - Contient toutes les states des menus du jeu hors gameplay.                                     |
 
-Actuellement, les hitbox des objets, implémentés dans le EntityObject, sont forcément rectangulaires.
-Peut-être qu'on pourrait créer un système de collisions plus complexes afin qu'une hitbox puisse être 
-d'autres formes """simples""" tel que des cercles, triangles, etc.
 
-Une autre chose qui pourrait possiblement être utile serait de prendre en compte les rotations dans les
-hitbox, mais là encore, c'est très complexe de le faire de manière clean.
+## Créer un objet
 
+Pour ajouter un nouvel objet dans le jeu, il existe les classes EntityObject et KinematicObject pour faire cela.
 
-## Gameplay (duh)
+```py
+import engine.object.entityobject as entityobject
 
-Pour tout ce qui est gameplay, je pense que ce serait mieux qu'on en parle irl ou en visio pour déterminer
-avec précision comment se déroule une partie.
+class MyObject(entityobject.EntityObject):
+    def __init__(self, x: float, y: float, w: float, h: float, sprite):
+        super().__init__(x, y, w, h, sprite)
+        # Placez votre propre logique d'initialisation ici (si nécessaire).
+    
+    def update(self, dt: float):
+        pass    # Placez votre propre logique ici
+
+    def draw(self):
+        pass    # Placez votre propre logique de rendu ici (en utilisant les fonctions de engine.graphics)
+```
+
+Une fois l'objet créer, il est possible de l'ajouter à un object manager.
+
+```py
+import myobject
+import engine.object.objectmanager as objectmanager
+
+object_manager = objectmanager.ObjectManager()
+object_manager.add_object(myobject.MyObject())
+
+# Dans l'event loop
+object_manager.update(dt)
+# ...
+object_manager.draw()
+
+```
