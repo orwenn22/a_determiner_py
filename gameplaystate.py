@@ -86,7 +86,7 @@ class GameplayState(state.State):
     def update(self, dt):
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         if self.show_actions:
-            self.actions_widgets.update()                   # Check if we are clicking on an action
+            self.actions_widgets.update(dt)                     # Check if we are clicking on an action
 
         self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
 

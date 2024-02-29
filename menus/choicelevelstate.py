@@ -45,7 +45,7 @@ class ChoiceLevelState(state.State):
             pyray.unload_texture(i)
 
     def update(self, dt):
-        self.widget_manager.update()
+        self.widget_manager.update(dt)
         if g.mouse_wheel < 0 and self.down_button_y > pyray.get_screen_height():
             self.top_button_y -= 120
             self.down_button_y -= 120
@@ -56,7 +56,7 @@ class ChoiceLevelState(state.State):
             self.down_button_y += 120
             for i in self.widget_manager.list_widget:
                 i.coordinate.y += 120
-        self.title_widget_manager.update() 
+        self.title_widget_manager.update(dt)
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)

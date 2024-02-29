@@ -58,7 +58,7 @@ class MenuState(state.State):
     def update(self, dt):
         self.bg_rect.x += 12*dt
         self.bg_rect.y += 12*dt
-        self.widget_manager.update()
+        self.widget_manager.update(dt)
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
