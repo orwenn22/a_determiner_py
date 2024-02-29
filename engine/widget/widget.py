@@ -81,3 +81,7 @@ class Widget(object):
         self.origin.y = y
         self.reload_placement()
         return self
+
+    def set_scrollable(self, scrollable: bool):
+        self.scrollable = scrollable
+        return self

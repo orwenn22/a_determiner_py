@@ -22,7 +22,7 @@ class WidgetManager(object):
         # Minimum and maximum scrolling positions
         self.h_scrolling_min = 0.0
         self.h_scrolling_max = 0.0
-        self.v_scrolling_min = -100.0
+        self.v_scrolling_min = 0.0
         self.v_scrolling_max = 0.0
 
         # This is used for the scrolling animation

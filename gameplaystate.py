@@ -46,7 +46,7 @@ class GameplayState(state.State):
         self.cam_mouse_offset = (0, 0)
          
         map_image = "level2.png" # here to avoid crash if map not defined in the txt file
-        mapsize :pyray.Vector2 = pyray.Vector2(0,0)
+        map_size: pyray.Vector2 = pyray.Vector2(0,0)
         for line in map_init:
             match line[0]:
                 # Put the cam at the center of the world
@@ -55,7 +55,7 @@ class GameplayState(state.State):
                 case "map":
                     map_image = line[1]
                 case "mapsize":
-                    mapsize = pyray.Vector2(float(line[1]),float(line[2]))
+                    map_size = pyray.Vector2(float(line[1]),float(line[2]))
                 case "portal":
                     portal.Portal.spawn_portals(self.object_manager, float(line[1]), float(line[2]), float(line[3]), float(line[4]), res.portal_sprite)
                 case "portal_gun":
@@ -63,21 +63,16 @@ class GameplayState(state.State):
                 case "trowel":
                     self.object_manager.add_object(trowel.Trowel(float(line[1]), float(line[2])))
                 case "blue_start":
-                    self.blue_start :tuple[float,float,float,float] = (float(line[1]),float(line[2]),float(line[3]),float(line[4]))
+                    self.blue_start: tuple[float, float, float, float] = (float(line[1]), float(line[2]),float(line[3]), float(line[4]))
                 case "red_start":
-                    self.red_start :tuple[float,float,float,float] = (float(line[1]),float(line[2]),float(line[3]),float(line[4]))
+                    self.red_start: tuple[float, float, float, float] = (float(line[1]), float(line[2]), float(line[3]), float(line[4]))
                 case "background":
                     pass  # we haven't already defined how the background will be placed
 
-        if mapsize.x != 0 and mapsize.y != 0:
-            self.t=terrain.Terrain(map_image,mapsize)
-        else :
+        if map_size.x != 0 and map_size.y != 0:
+            self.t = terrain.Terrain(map_image,map_size)
+        else:
             exit(1)
-
-
-
-
-
 
     def unload_ressources(self):
         self.t.unload()
