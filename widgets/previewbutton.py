@@ -26,7 +26,7 @@ class PreviewButton(tiledbutton.TiledButton):
         pyray.draw_text(self.label,
                         int(pos_x+self.width//2 + self.text_offset_x),
                         int(pos_y + self.text_offset_y),
-                        self.fontsize, pyray.Color(128, 128, 128, 255))
+                        self.fontsize, self.fontcolor)
 
     def center_text(self):
         self.text_offset_x = (self.width/2 - pyray.measure_text(self.label, self.fontsize)) // 2
