@@ -22,7 +22,6 @@ class Bullet(kinematicobject.KinematicObject):
 
         self.process_physics(dt)
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):   # collide with terrain
-            # TODO : instead of exploding rn, maybe we could create an "explosion" object that would handle an animation ?
             need_explosion = True
 
         wall_collisions = self.manager.get_collision(self,wall.Wall)
@@ -39,8 +38,7 @@ class Bullet(kinematicobject.KinematicObject):
                     need_explosion = True
 
         if need_explosion:
-            self.parent_state.t.destroy_circle(self.position, self.power)
-            self.parent_state.object_manager.add_object(explosion.Explosion(self.position.x, self.position.y, self.power))
+            self.parent_state.object_manager.add_object(explosion.Explosion(self.position.x, self.position.y, self.power, self.parent_state))
             self.parent_state.object_manager.remove_object(self)
 
     def draw(self):
