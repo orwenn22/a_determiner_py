@@ -18,7 +18,7 @@ class Explosion(entityobject.EntityObject):
         self.anim_timer += dt
 
         animation_frame = self.get_current_animation_frame()
-        if animation_frame == 6:
+        if animation_frame >= 6:
             self.explode_terrain(dt)
 
         if self.anim_timer >= self.anim_duration:
