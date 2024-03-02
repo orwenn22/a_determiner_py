@@ -1,23 +1,19 @@
 from engine.state import state
 from engine.object import objectmanager
-from engine.widget import widgetmanager, button
+from engine.widget import widgetmanager
 from engine import metrics as m, graphics as gr, globals as g, utils as u
 import pyray
 import player
 import terrain
-import portal
-from items import trowel, portalgun
-import globalresources as res
+import mapparsing
+
 
 class GameplayState(state.State):
-    def __init__(self, map_file:str = "level1.txt"):
+    def __init__(self):
         super().__init__()
-
-        map_init:list =self.map_parser(map_file)
 
         # Set the unit/zoom
         m.set_pixels_per_meter(50)
-
 
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
@@ -45,40 +41,22 @@ class GameplayState(state.State):
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
          
-        map_image = "level2.png" # here to avoid crash if map not defined in the txt file
-        map_size: pyray.Vector2 = pyray.Vector2(0,0)
-        for line in map_init:
-            match line[0]:
-                # Put the cam at the center of the world
-                case "camera_center": 
-                    m.set_camera_center(pyray.Vector2(float(line[1]),float(line[2])))
-                case "map":
-                    map_image = line[1]
-                case "mapsize":
-                    map_size = pyray.Vector2(float(line[1]),float(line[2]))
-                case "portal":
-                    portal.Portal.spawn_portals(self.object_manager, float(line[1]), float(line[2]), float(line[3]), float(line[4]), res.portal_sprite)
-                case "portal_gun":
-                    self.object_manager.add_object(portalgun.PortalGun(float(line[1]),float(line[2])))
-                case "trowel":
-                    self.object_manager.add_object(trowel.Trowel(float(line[1]), float(line[2])))
-                case "blue_start":
-                    self.blue_start: tuple[float, float, float, float] = (float(line[1]), float(line[2]),float(line[3]), float(line[4]))
-                case "red_start":
-                    self.red_start: tuple[float, float, float, float] = (float(line[1]), float(line[2]), float(line[3]), float(line[4]))
-                case "background":
-                    pass  # we haven't already defined how the background will be placed
-
-        if map_size.x != 0 and map_size.y != 0:
-            self.t = terrain.Terrain(map_image,map_size)
-        else:
-            exit(1)
+        self.t: terrain.Terrain | None = None
+        self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+        self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
 
     def unload_ressources(self):
         self.t.unload()
         pyray.unload_texture(self.green_marker)
 
     def update(self, dt):
+        if self.t is None:
+            print("Terrain not initialised, loading default")
+            self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
+            self.blue_start = (0, 0, 25, 12)
+            self.red_start = (0, 0, 25, 12)
+            return
+
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         if self.show_actions:
             self.actions_widgets.update(dt)                     # Check if we are clicking on an action
@@ -95,6 +73,10 @@ class GameplayState(state.State):
 
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
+        if self.t is None:
+            pyray.draw_text("Terrain not initialised", 50, 50, 40, pyray.RED)
+            return
+
         self.t.draw()
         #gr.draw_grid()
         self.object_manager.draw()
@@ -139,7 +121,6 @@ class GameplayState(state.State):
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
         """
-        # TODO : implement spawn regions for each teams ?
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             return
 
@@ -147,13 +128,11 @@ class GameplayState(state.State):
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
         if team == 0:
-            if not u.check_collision_rectangles(p.get_rectangle(),self.blue_start):
+            if not u.check_collision_rectangles(p.get_rectangle(), self.blue_start):
                 return
-        else :
-            if not u.check_collision_rectangles(p.get_rectangle(),self.red_start):
+        else:
+            if not u.check_collision_rectangles(p.get_rectangle(), self.red_start):
                 return
-
-
 
         self.players.append(p)              # Add new player to player list
         self.object_manager.add_object(p)   # Add new player to objects
@@ -236,16 +215,8 @@ class GameplayState(state.State):
         self.actions_widgets.clear()
         self.show_actions = False
 
-    def map_parser(self,map_name:str)-> list:
-        """
-
-        :param map_name: the name of the file containing the map layout (only include the txt file name but remind to put it in maps)
-        """
-        map_name="maps/"+map_name
-        map_list = []
-        with open(map_name,"r") as map:
-            line=map.readline().split()
-            while line:
-                map_list.append(line)
-                line = map.readline().split()
-        return map_list
+    @classmethod
+    def from_level_file(cls, level_file: str):
+        r = cls()
+        mapparsing.parse_map_file(r, level_file)
+        return r

@@ -35,7 +35,7 @@ class ChoiceLevelState(state.State):
 
         self.widget_manager.set_scrolling_proportions(0, 0, -len(self.list_level_file)*120, 0)
         self.widget_manager.set_scrolling_flags(False, True)
-        #TODO: maybe change the background to something like in the other parts of the menu
+        # TODO: maybe change the background to something like in the other parts of the menu
 
     def unload_ressources(self):
         for i in self.list_preview:
@@ -50,6 +50,6 @@ class ChoiceLevelState(state.State):
 
     def make_play_action(self, map_number: int = 0):
         def local_play_action():
-            self.manager.set_state(gameplaystate.GameplayState(self.list_level_file[map_number]))
+            self.manager.set_state(gameplaystate.GameplayState.from_level_file(self.list_level_file[map_number]))
         return local_play_action
 

@@ -5,10 +5,11 @@ import player
 import wall
 from engine import graphics as gr, globals as g, metrics as m, utils
 from engine.object import entityobject, objectmanager
+import globalresources as res
 
 
 class Portal(entityobject.EntityObject):
-    def __init__(self, x: float, y: float, sprite: pyray.Texture = None):
+    def __init__(self, x: float, y: float, sprite: pyray.Texture = res.portal_sprite):
         super().__init__(x, y, 1.0, 1.0, sprite)
         self.destination: Portal | None = None
         self.whitelisted_types = [player.Player, bullet.Bullet, wall.Wall]
@@ -64,7 +65,7 @@ class Portal(entityobject.EntityObject):
         self.destination = destination
 
     @classmethod
-    def spawn_portals(cls, manager: objectmanager.ObjectManager, x1: float, y1: float, x2: float, y2: float, sprite: pyray.Texture):
+    def spawn_portals(cls, manager: objectmanager.ObjectManager, x1: float, y1: float, x2: float, y2: float, sprite: pyray.Texture = res.portal_sprite):
         p1 = cls(x1, y1, sprite)
         p2 = cls(x2, y2, sprite)
         p1.set_destination(p2)
