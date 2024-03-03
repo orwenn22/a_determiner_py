@@ -24,7 +24,7 @@ class Bullet(kinematicobject.KinematicObject):
         if self.parent_state.t.check_collision_rec(self.get_rectangle()):   # collide with terrain
             need_explosion = True
 
-        wall_collisions = self.manager.get_collision(self,wall.Wall)
+        wall_collisions = self.manager.get_collision(self, wall.Wall)
         if len(wall_collisions) >= 1:
             need_explosion = True
             for wall_obj in wall_collisions:
