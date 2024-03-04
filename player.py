@@ -171,7 +171,7 @@ class Player(ko.KinematicObject):
         """
         old_y = self.position.y
         self.position.y += 0.1
-        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True)
+        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object()
         self.position.y = old_y
         return result
 
