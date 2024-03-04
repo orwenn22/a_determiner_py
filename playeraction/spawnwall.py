@@ -28,11 +28,11 @@ class PlaceWallAction(playeraction.PlayerAction):
 
         if g.is_key_pressed(key.key_binds["action"]):
             wall_height = self.wall_height
-            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, _player.parent_state.t)
+            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, _player.parent_state)
 
             # If the wall is clipping with the terrain then make it go up
             total_vertical_offset = 0
-            while w.is_grounded():
+            while _player.parent_state.t.check_collision_rec(w.get_rectangle()):
                 w.position.y -= 0.1
                 total_vertical_offset += 0.1
                 # Cancel, because in this case it would be wierd to spawn the wall too high
@@ -44,7 +44,7 @@ class PlaceWallAction(playeraction.PlayerAction):
                 return
 
             _player.manager.add_object(w)
-            _player.remove_action(self)
+            # _player.remove_action(self)
             _player.current_action = -1
             _player.parent_state.show_action_widgets()
             _player.throw_angle = 0
@@ -52,7 +52,7 @@ class PlaceWallAction(playeraction.PlayerAction):
     def on_draw(self, _player: player.Player):
         w = wall.Wall(_player.position.x + math.cos(_player.throw_angle) * 2,
                       _player.position.y, 0.5, self.wall_height,
-                      _player.parent_state.t)
+                      _player.parent_state)
 
         wall_prediction = kinematicprediction.KinematicPrediction.from_other_object(w)
         wall_prediction.draw_simulation(10, c=(255, 100, 100, 255))
