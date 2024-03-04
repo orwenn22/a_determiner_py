@@ -44,7 +44,7 @@ class PlaceWallAction(playeraction.PlayerAction):
                 return
 
             _player.manager.add_object(w)
-            # _player.remove_action(self)
+            _player.remove_action(self)
             _player.current_action = -1
             _player.parent_state.show_action_widgets()
             _player.throw_angle = 0
