@@ -17,10 +17,10 @@ class Explosion(entityobject.EntityObject):
         self.anim_duration = 1      # in second
         self.exploded_terrain = False
         self.exploded_enemies = False
-      
+
     def update(self, dt: float):
         self.anim_timer += dt
-    
+
         # This is executed only once
         self.explode_nearby_enemies(dt)
 

@@ -3,13 +3,13 @@ from engine.object import kinematicobject
 import globalresources as ges
 from engine import graphics
 import terrain
-import math
+
 
 class Wall(kinematicobject.KinematicObject):
     def __init__(self, x: float, y: float, width: float, height: float, t: terrain.Terrain):
         sprite = ges.wall_sprite
 
-        super().__init__(x, y, width, height, 10, sprite) # wall is really heavy and as such should fall really fast | it's false but this commentary will stay like that because it's fun
+        super().__init__(x, y, width, height, 10000, sprite) # wall is really heavy and as such should fall really fast | it's false but this commentary will stay like that because it's fun
         self.grounded = False
         self.terrain = t
 
@@ -33,17 +33,8 @@ class Wall(kinematicobject.KinematicObject):
         # Currently when the wall reaches the wall for the first time it will never fall again.
         # Maybe this shouldn't be the case ?
         # If so we should uncomment this :
-        elif not self.is_grounded():
-            self.grounded = False
-
-        self.process_physics_x(dt)
-        if self.terrain.check_collision_rec(self.get_rectangle(), True): 
-            self.use_small_hitbox = False
-            while self.terrain.check_collision_rec(self.get_rectangle(), True):
-                self.position.x -= math.copysign(self.terrain.pixel_width() / 2, self.velocity.x)
-            self.velocity.x = 0
-
-
+        # elif not self.is_grounded():
+        #     self.grounded = False
 
     def draw(self):
         graphics.draw_sprite_scale(self.sprite, self.get_rectangle())
