@@ -3,6 +3,7 @@ from engine.object import kinematicobject
 import globalresources as ges
 from engine import graphics
 import math
+import engine.utils as utils
 
 
 class Wall(kinematicobject.KinematicObject):
@@ -29,22 +30,29 @@ class Wall(kinematicobject.KinematicObject):
 
         cols: list[player.Player] = self.manager.get_collision(self, player.Player)
         for p in cols:
-            p.velocity.x = self.velocity.x
+            # Make ture the player fall if it is pushed in the void by the wall
             p.enable_physics = True
-            p.use_small_hitbox = True       # ????
 
-            # the thing below is currently broken
-            """# Backup current pos and simulate one tick of physics
-            old_player_pos = pyray.Vector2(p.position.x, p.position.y)
-            p.position.x += p.velocity.x * dt
-            p.position.y += p.velocity.y * dt
-            if self.parent_state.t.check_collision_rec(p.get_rectangle()) or p.collide_with_solid_object():      # Crushed by wall and terrain
+            # Shift the player in the opposite direction
+            while utils.check_collision_rectangles(self.get_rectangle(), p.get_rectangle()):
+                p.position.x += math.copysign(0.02, self.velocity.x)
+
+            # After pushing the player, if we are on a slope, it is possible that it is clipping in the floor,
+            # so move it up if it is the case
+            it = 0          # (it = iterations)
+            while self.parent_state.t.check_collision_rec(p.get_rectangle()):
+                p.position.y -= self.parent_state.t.pixel_height() / 2      # maybe this needs to be replaced by 0.02 ?
+                it += 1
+                if it > 20:
+                    break       # If we are still colliding after all of this then we should definitely kill the player
+
+            # Crushed by wall and terrain
+            if self.parent_state.t.check_collision_rec(p.get_rectangle()) or p.collide_with_solid_object():
                 self.parent_state.kill_player(p)
-                continue
+                continue        # just in case wa add more stuff in the future :)
 
-            # Restore backup (we don't restore the
-            p.position = pyray.Vector2(old_player_pos.x, old_player_pos.y)"""
-
+        # If the wall itself if colliding with the terrain or another solid object then we shift it
+        # to the opposite direction
         if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
                 self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
@@ -53,17 +61,18 @@ class Wall(kinematicobject.KinematicObject):
         # Vertical
         self.process_physics_y(dt)
 
-        # If the wall crush players then we need to kill them
+        # If the wall crush players then we need to kill them.
+        # If the player is on the wall however, we need to move it with the wall. | TODO : stress test this
         cols: list[player.Player] = self.manager.get_collision(self, player.Player)
         for p in cols:
             if self.velocity.y > 0:     # going down
                 p.parent_state.kill_player(p)
             else:                       # going up
                 p.velocity.y = self.velocity.y
-                p.velocity.x = self.velocity.x      # ???
+                p.velocity.x = self.velocity.x      # maybe ???
                 p.enable_physics = True
 
-        # If the wall is clipping with the terrain then we make it go back up
+        # If the wall is clipping with the terrain then we make it go in the opposite direction of its velocity
         if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
                 self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
@@ -76,14 +85,14 @@ class Wall(kinematicobject.KinematicObject):
     def is_grounded(self) -> bool:
         old_y = self.position.y
         self.position.y += 0.01
-        if self.manager is None:
-            result = self.parent_state.t.check_collision_rec(self.get_rectangle())
-        else:
-            result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object()
+        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object()
         self.position.y = old_y
         return result
 
     def collide_with_solid_object(self) -> bool:
+        if self.manager is None:
+            return False
+
         for solid in self.solid_types:
             col = self.manager.get_collision(self, solid)
             if len(col) >= 1:
