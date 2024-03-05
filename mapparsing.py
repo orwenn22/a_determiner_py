@@ -1,6 +1,6 @@
 import pyray
 import terrain
-import portal
+from objects import portal
 import items.portalgun as portalgun
 import items.trowel as trowel
 from engine import metrics as m

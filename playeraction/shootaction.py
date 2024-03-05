@@ -5,11 +5,10 @@ import key
 from . import playeraction      # TODO : fix this
 from engine import globals as g
 from engine.object import kinematicprediction
-import bullet
+from objects import bullet, player
 
 
 class ShootAction(playeraction.PlayerAction):
-    import player
 
     def __init__(self):
         super().__init__()

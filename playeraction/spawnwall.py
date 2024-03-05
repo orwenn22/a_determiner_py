@@ -1,7 +1,5 @@
 from . import playeraction
-import pyray
-import wall
-import player
+from objects import wall, player
 from engine import globals as g
 import key
 from engine import graphics as gr
@@ -28,7 +26,7 @@ class PlaceWallAction(playeraction.PlayerAction):
 
         if g.is_key_pressed(key.key_binds["action"]):
             wall_height = self.wall_height
-            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle)*2, _player.position.y, 0.5, wall_height, _player.parent_state)
+            w = wall.Wall(_player.position.x + math.cos(_player.throw_angle) * 2, _player.position.y, 0.5, wall_height, _player.parent_state)
 
             # If the wall is clipping with the terrain then make it go up
             total_vertical_offset = 0

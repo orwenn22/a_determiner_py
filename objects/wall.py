@@ -1,4 +1,4 @@
-import player
+from objects import player
 from engine.object import kinematicobject
 import globalresources as ges
 from engine import graphics

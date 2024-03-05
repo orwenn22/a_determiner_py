@@ -3,7 +3,7 @@ from engine.object import objectmanager
 from engine.widget import widgetmanager
 from engine import metrics as m, graphics as gr, globals as g, utils as u
 import pyray
-import player
+from objects import player
 import terrain
 import mapparsing
 

@@ -3,8 +3,7 @@ import math
 
 import key
 from . import playeraction
-import player
-import gameplaystate
+from objects import player
 from engine import globals as g
 from engine.object import kinematicprediction
 
