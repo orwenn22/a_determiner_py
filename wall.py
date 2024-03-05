@@ -40,11 +40,9 @@ class Wall(kinematicobject.KinematicObject):
             # After pushing the player, if we are on a slope, it is possible that it is clipping in the floor,
             # so move it up if it is the case
             it = 0          # (it = iterations)
-            while self.parent_state.t.check_collision_rec(p.get_rectangle()):
+            while self.parent_state.t.check_collision_rec(p.get_rectangle()) and it <= 20:
                 p.position.y -= self.parent_state.t.pixel_height() / 2      # maybe this needs to be replaced by 0.02 ?
                 it += 1
-                if it > 20:
-                    break       # If we are still colliding after all of this then we should definitely kill the player
 
             # Crushed by wall and terrain
             if self.parent_state.t.check_collision_rec(p.get_rectangle()) or p.collide_with_solid_object():
