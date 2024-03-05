@@ -143,6 +143,7 @@ class GameplayState(state.State):
         if p_index == -1:
             return      # Object not found
 
+        print("Killing player", p_index)
         self.players[p_index] = None
         self.object_manager.remove_object(player_object)
         if p_index == self.current_player:
