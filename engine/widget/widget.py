@@ -17,6 +17,8 @@ class Widget(object):
         self.width = width
         self.height = height
         self.placement = placement
+        self.manager = None
+        self.scrollable = True
         self.reload_placement()
 
     def reload_placement(self):
@@ -37,6 +39,10 @@ class Widget(object):
                 self.coordinate.x = pyray.get_screen_width() - self.width - self.origin.x
             case _:
                 self.coordinate.x = self.origin.x
+
+        if self.manager is not None and self.scrollable:
+            self.coordinate.x += int(self.manager.h_scrolling_offset)
+            self.coordinate.y += int(self.manager.v_scrolling_offset)
 
     def update(self):
         pass
@@ -74,4 +80,8 @@ class Widget(object):
         self.origin.x = x
         self.origin.y = y
         self.reload_placement()
+        return self
+
+    def set_scrollable(self, scrollable: bool):
+        self.scrollable = scrollable
         return self
