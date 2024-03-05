@@ -167,3 +167,31 @@ def draw_sprite_rot(sprite: pyray.Texture, position: pyray.Vector2, size: pyray.
                            pyray.Rectangle(x, y, width, height),
                            pyray.Vector2(width/2, height/2),
                            rotation, c)
+
+
+def draw_sprite_rot_ex(sprite: pyray.Texture, source: pyray.Rectangle, position: pyray.Vector2, size: pyray.Vector2, rotation: float, c=pyray.WHITE):
+    """
+    Draw a region of a sprite using a position and rotation
+    :param sprite: the sprite we want to draw
+    :param source: the region of the sprite we want to draw
+    :param position: center of where we want to draw the sprite (in m position)
+    :param size: size at which we want to draw the sprite (in m)
+    :param rotation: angle
+    :param c: color applied to texture
+    :return:
+    """
+    pixel_pos = m.meters_position_to_window_position(position)
+    x = int(pixel_pos.x)
+    y = int(pixel_pos.y)
+    width = m.meters_to_pixels(size.x)
+    height = m.meters_to_pixels(size.y)
+
+    # This is efficient because we check this before applying transformations
+    half_diagonal = math.sqrt(width*width + height*height) / 2
+    if x+half_diagonal < 0 or y+half_diagonal < 0 or x-half_diagonal >= pyray.get_screen_width() or y-half_diagonal >= pyray.get_screen_height():
+        return
+
+    pyray.draw_texture_pro(sprite, source,
+                           pyray.Rectangle(x, y, width, height),
+                           pyray.Vector2(width/2, height/2),
+                           rotation, c)

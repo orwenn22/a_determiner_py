@@ -170,8 +170,8 @@ class Player(ko.KinematicObject):
         so we can re-enable it.
         """
         old_y = self.position.y
-        self.position.y += 0.1
-        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True)
+        self.position.y += 0.02
+        result = self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object()
         self.position.y = old_y
         return result
 
