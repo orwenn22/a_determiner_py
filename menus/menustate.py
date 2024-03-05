@@ -12,8 +12,10 @@ class MenuState(state.State):
         super().__init__()
 
         def play_action():
-            #self.manager.set_state(gameplaystate.GameplayState())
-            self.manager.set_state(choicelevelstate.ChoiceLevelState())
+            choice_level_state = choicelevelstate.ChoiceLevelState()
+            choice_level_state.bg_rect.x = self.bg_rect.x   # Make sure the background is kept in sync
+            choice_level_state.bg_rect.y = self.bg_rect.y
+            self.manager.set_state(choice_level_state)
 
         def options_action():
             self.manager.set_state(optionstate.OptionState())
