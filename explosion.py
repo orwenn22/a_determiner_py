@@ -75,7 +75,7 @@ class Explosion(entityobject.EntityObject):
         # total_force = pyray.Vector2(normalised_vector.x*total_coefficient/dt,
         #                             normalised_vector.y*total_coefficient/dt)
         total_force = pyray.vector2_scale(normalised_vector, total_coefficient/dt)
-        print(total_force.x, total_force.y)
+        print("explosion : applying force :", total_force.x, total_force.y)
         obj.apply_force(total_force)
         # If the player is grounded, then its physics is disabled, which mean that if we don't enable it again,
         # the force will be processed when the ground is destroyed, which would cause the player to make a huuuge jump.
