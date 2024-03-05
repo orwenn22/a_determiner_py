@@ -18,6 +18,15 @@ class TiledButton(button.Button):
     def draw(self):
         position_x = self.coordinate.x + self.hover_offset_x * self.hovered
         position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        self._draw_tiles()
+
+        if self.label != "":
+            pyray.draw_text(self.label, int(position_x + self.text_offset_x), int(position_y + self.text_offset_y),
+                            self.fontsize, self.fontcolor)
+
+    def _draw_tiles(self):
+        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
+        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
         current_texture = self.hover_tile_set if self.hovered else self.tile_set
         current_color = self.hovering_color if self.hovered else self.color
 
@@ -31,65 +40,59 @@ class TiledButton(button.Button):
 
         # Top right
         pyray.draw_texture_pro(current_texture,
-                               pyray.Rectangle(self.tile_size*2, 0, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+self.width-scaled_size, position_y, scaled_size, scaled_size),
+                               pyray.Rectangle(self.tile_size * 2, 0, self.tile_size, self.tile_size),
+                               pyray.Rectangle(position_x + self.width - scaled_size, position_y, scaled_size, scaled_size),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Bottom left
         pyray.draw_texture_pro(current_texture,
-                               pyray.Rectangle(0, self.tile_size*2, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x, position_y+self.height-scaled_size, scaled_size, scaled_size),
+                               pyray.Rectangle(0, self.tile_size * 2, self.tile_size, self.tile_size),
+                               pyray.Rectangle(position_x, position_y + self.height - scaled_size, scaled_size, scaled_size),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Bottom right
         pyray.draw_texture_pro(current_texture,
-                               pyray.Rectangle(self.tile_size*2, self.tile_size*2, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+self.width-scaled_size, position_y+self.height-scaled_size, scaled_size, scaled_size),
+                               pyray.Rectangle(self.tile_size * 2, self.tile_size * 2, self.tile_size, self.tile_size),
+                               pyray.Rectangle(position_x + self.width - scaled_size, position_y + self.height - scaled_size, scaled_size, scaled_size),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Top
         pyray.draw_texture_pro(current_texture,
                                pyray.Rectangle(self.tile_size, 0, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+scaled_size, position_y, self.width-(scaled_size*2), scaled_size),
+                               pyray.Rectangle(position_x + scaled_size, position_y, self.width - (scaled_size * 2), scaled_size),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Left
         pyray.draw_texture_pro(current_texture,
                                pyray.Rectangle(0, self.tile_size, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x, position_y+scaled_size, scaled_size, self.height-(scaled_size*2)),
+                               pyray.Rectangle(position_x, position_y + scaled_size, scaled_size, self.height - (scaled_size * 2)),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Right
         pyray.draw_texture_pro(current_texture,
-                               pyray.Rectangle(self.tile_size*2, self.tile_size, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+self.width-scaled_size, position_y+scaled_size, scaled_size, self.height-(scaled_size*2)),
+                               pyray.Rectangle(self.tile_size * 2, self.tile_size, self.tile_size, self.tile_size),
+                               pyray.Rectangle(position_x + self.width - scaled_size, position_y + scaled_size, scaled_size, self.height - (scaled_size * 2)),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Bottom
         pyray.draw_texture_pro(current_texture,
-                               pyray.Rectangle(self.tile_size, self.tile_size*2, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+scaled_size, position_y+self.height-scaled_size, self.width-(scaled_size*2), scaled_size),
+                               pyray.Rectangle(self.tile_size, self.tile_size * 2, self.tile_size, self.tile_size),
+                               pyray.Rectangle(position_x + scaled_size, position_y + self.height - scaled_size, self.width - (scaled_size * 2), scaled_size),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
 
         # Center
         pyray.draw_texture_pro(current_texture,
                                pyray.Rectangle(self.tile_size, self.tile_size, self.tile_size, self.tile_size),
-                               pyray.Rectangle(position_x+scaled_size, position_y+scaled_size, self.width-(scaled_size*2), self.height-(scaled_size*2)),
+                               pyray.Rectangle(position_x + scaled_size, position_y + scaled_size, self.width - (scaled_size * 2), self.height - (scaled_size * 2)),
                                pyray.Vector2(0, 0), 0.0,
                                current_color)
-
-        # Wow, this is long, pls send help.
-        # Now we draw the text
-        if self.label != "":
-            pyray.draw_text(self.label, int(position_x + self.text_offset_x), int(position_y + self.text_offset_y),
-                            self.fontsize, self.fontcolor)
 
     def set_tile_set(self, tile_set: pyray.Texture, replace_hovering=False):
         if tile_set is not None:

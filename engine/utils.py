@@ -5,3 +5,5 @@ def check_collision_rectangles(rect1: tuple[any, any, any, any], rect2: tuple[an
 
 def check_collision_point_rect(point: tuple[any, any], rectangle: tuple[any, any, any, any]):
     return ((rectangle[0] <= point[0] < rectangle[0] + rectangle[2]) and (rectangle[1] <= point[1] < rectangle[1] + rectangle[3]))
+
+

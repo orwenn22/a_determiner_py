@@ -1,12 +1,12 @@
 from engine.state import state
 from engine.object import objectmanager
-from engine.widget import widgetmanager, button
-from engine import metrics as m, graphics as gr, globals as g
+from engine.widget import widgetmanager
+from engine import metrics as m, graphics as gr, globals as g, utils as u
 import pyray
 import player
 import terrain
-import portal
-from items import trowel, portalgun
+import mapparsing
+
 
 class GameplayState(state.State):
     def __init__(self):
@@ -14,9 +14,6 @@ class GameplayState(state.State):
 
         # Set the unit/zoom
         m.set_pixels_per_meter(50)
-
-        # Put the cam at the center of the world
-        m.set_camera_center(pyray.Vector2(0, 0))
 
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
@@ -36,29 +33,33 @@ class GameplayState(state.State):
         # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
 
-        # Terrain for collisions & stuff
-        self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
-
+        
         # Small marker for the current player
         self.green_marker = pyray.load_texture("res/green_marker.png")
 
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
-
-        portal.Portal.spawn_portals(self.object_manager, 5, 4, 9, 5, None)
-        portal.Portal.spawn_portals(self.object_manager, 4, 2, 12, 4, None)
-        self.object_manager.add_object(portalgun.PortalGun(23.3, 7.1))
-        self.object_manager.add_object(trowel.Trowel(23.3, 6.1))
+         
+        self.t: terrain.Terrain | None = None
+        self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+        self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
 
     def unload_ressources(self):
         self.t.unload()
         pyray.unload_texture(self.green_marker)
 
     def update(self, dt):
+        if self.t is None:
+            print("Terrain not initialised, loading default")
+            self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
+            self.blue_start = (0, 0, 25, 12)
+            self.red_start = (0, 0, 25, 12)
+            return
+
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
         if self.show_actions:
-            self.actions_widgets.update()                   # Check if we are clicking on an action
+            self.actions_widgets.update(dt)                     # Check if we are clicking on an action
 
         self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
 
@@ -66,12 +67,18 @@ class GameplayState(state.State):
         self.t.update()
         self.object_manager.update(dt)                  # Update all objects
         if self.placing_players:                        # Check if we are still placing players
+            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2],self.blue_start[3],pyray.Color(0,0,255,90))
+            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2],self.red_start[3],pyray.Color(255,0,0,90))
             self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
+        if self.t is None:
+            pyray.draw_text("Terrain not initialised", 50, 50, 40, pyray.RED)
+            return
+
         self.t.draw()
-        gr.draw_grid()
+        #gr.draw_grid()
         self.object_manager.draw()
         if self.show_actions:
             self.actions_widgets.draw()
@@ -114,13 +121,18 @@ class GameplayState(state.State):
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
         """
-        # TODO : implement spawn regions for each teams ?
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             return
 
         p = player.Player(dest_x, dest_y, team, self, 10)
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
+        if team == 0:
+            if not u.check_collision_rectangles(p.get_rectangle(), self.blue_start):
+                return
+        else:
+            if not u.check_collision_rectangles(p.get_rectangle(), self.red_start):
+                return
 
         self.players.append(p)              # Add new player to player list
         self.object_manager.add_object(p)   # Add new player to objects
@@ -203,3 +215,9 @@ class GameplayState(state.State):
     def hide_action_widgets(self):
         self.actions_widgets.clear()
         self.show_actions = False
+
+    @classmethod
+    def from_level_file(cls, level_file: str):
+        r = cls()
+        mapparsing.parse_map_file(r, level_file)
+        return r

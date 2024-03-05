@@ -5,6 +5,7 @@ import player
 import pyray
 import portal
 
+
 class PlacePortalsAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()

@@ -77,7 +77,7 @@ class OptionState(state.State):
                     self.refresh_rebinding_buttons_labels()
                     self.rebinding = ""
                     break
-        self.widget_manager.update()
+        self.widget_manager.update(dt)
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)

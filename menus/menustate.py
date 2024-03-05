@@ -8,11 +8,14 @@ import globalresources as res
 class MenuState(state.State):
     def __init__(self):
         import gameplaystate
-        from menus import optionstate, creditstate, transitionstate
+        from menus import optionstate, creditstate, transitionstate, choicelevelstate
         super().__init__()
 
         def play_action():
-            self.manager.set_state(gameplaystate.GameplayState())
+            choice_level_state = choicelevelstate.ChoiceLevelState()
+            choice_level_state.bg_rect.x = self.bg_rect.x   # Make sure the background is kept in sync
+            choice_level_state.bg_rect.y = self.bg_rect.y
+            self.manager.set_state(choice_level_state)
 
         def options_action():
             self.manager.set_state(optionstate.OptionState())
@@ -57,7 +60,7 @@ class MenuState(state.State):
     def update(self, dt):
         self.bg_rect.x += 12*dt
         self.bg_rect.y += 12*dt
-        self.widget_manager.update()
+        self.widget_manager.update(dt)
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
