@@ -1,8 +1,6 @@
 import pyray
 
-import bullet
-import player
-import wall
+from gameobject import bullet, player, wall
 from engine import graphics as gr, globals as g, metrics as m, utils
 from engine.object import entityobject, objectmanager
 import globalresources as res

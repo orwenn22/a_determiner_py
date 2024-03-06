@@ -1,5 +1,5 @@
 class PlayerAction(object):
-    import player
+    from gameobject import player
 
     def __init__(self):
         self.action_name = "default"        # needs to be replaced in subclasses

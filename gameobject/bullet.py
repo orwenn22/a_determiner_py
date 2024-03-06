@@ -1,9 +1,8 @@
 import pyray
 
-import explosion
+from gameobject import explosion, wall
 from engine.object import kinematicobject
 from engine import graphics as gr
-import wall
 
 
 class Bullet(kinematicobject.KinematicObject):
@@ -17,7 +16,7 @@ class Bullet(kinematicobject.KinematicObject):
         self.thrower: kinematicobject.KinematicObject = thrower
 
     def update(self, dt: float):
-        import player
+        from gameobject import player
         need_explosion = False
 
         self.process_physics(dt)
@@ -38,7 +37,8 @@ class Bullet(kinematicobject.KinematicObject):
                     need_explosion = True
 
         if need_explosion:
-            self.parent_state.object_manager.add_object(explosion.Explosion(self.position.x, self.position.y, self.power, self.parent_state))
+            self.parent_state.object_manager.add_object(
+                explosion.Explosion(self.position.x, self.position.y, self.power, self.parent_state))
             self.parent_state.object_manager.remove_object(self)
 
     def draw(self):
