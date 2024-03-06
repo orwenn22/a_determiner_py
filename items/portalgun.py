@@ -1,5 +1,5 @@
 import pyray
-import player
+from gameobject import player
 from engine.object import entityobject
 from engine import graphics as gr
 from playeraction import placeportalsaction

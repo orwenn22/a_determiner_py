@@ -4,7 +4,7 @@ import math
 from engine import graphics as gr
 from engine.object import kinematicobject as ko
 from engine.widget import button, widget
-import wall
+from gameobject import wall
 
 
 class Player(ko.KinematicObject):

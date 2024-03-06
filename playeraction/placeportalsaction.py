@@ -1,9 +1,8 @@
 from . import playeraction
 
 from engine import metrics as m, graphics as gr, globals as g
-import player
+from gameobject import player, portal
 import pyray
-import portal
 
 
 class PlacePortalsAction(playeraction.PlayerAction):
