@@ -127,7 +127,7 @@ class GameplayState(state.State):
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
         """
-        if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
+        if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT) or g.mouse_used:
             return
 
         p = player.Player(dest_x, dest_y, team, self, 10)

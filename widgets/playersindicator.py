@@ -1,5 +1,7 @@
 import pyray
 
+import engine.globals as g
+import engine.metrics as m
 import engine.widget.widget as widget
 import globalresources as res
 import playeraction.placeportalsaction as placeportalaction
@@ -9,8 +11,8 @@ import playeraction.spawnwall as spawnwall
 class PlayersIndicator(widget.Widget):
     def __init__(self, gameplay_state):
         import gameplaystate
-
-        super().__init__(0, 5, 2, 16, "TC")
+        self.scale = 2
+        super().__init__(0, 5, 2, 16*self.scale, "TC")
         self.gameplay_state: gameplaystate.GameplayState = gameplay_state
 
         self.team_textures = [
@@ -18,12 +20,22 @@ class PlayersIndicator(widget.Widget):
             res.mini_red_sprite
         ]
 
-        self.scale = 2
-
     def update(self):
         player_count = len(self.gameplay_state.players)
         #                                   marge
         self.set_width((player_count*16 + (player_count-1)*2)*self.scale)
+
+        if g.mouse_used or not self.is_hovered():
+            return
+
+        rel_mouse_x = int(pyray.get_mouse_x() - self.coordinate.x)
+        player_index = rel_mouse_x // (18*self.scale)
+        if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
+            player = self.gameplay_state.players[player_index]
+            if player is not None:
+                m.set_camera_center(player.position)
+
+        g.mouse_used = True
 
     def draw(self):
         painter_x = int(self.coordinate.x)
