@@ -7,7 +7,6 @@ import globalresources as res
 
 class MenuState(state.State):
     def __init__(self):
-        import gameplaystate
         from menus import optionstate, creditstate, transitionstate, choicelevelstate
         super().__init__()
 

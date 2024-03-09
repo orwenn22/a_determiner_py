@@ -23,6 +23,7 @@ class ShootAction(playeraction.PlayerAction):
                                         math.sin(_player.throw_angle) * _player.strength / dt))
             _player.manager.add_object(b)
             _player.action_points -= self.action_cost
+            _player.parent_state.stats["blue_shoot" if _player.team==0 else "red_shoot"] += 1
 
     def on_draw(self, _player: player.Player):
         b = bullet.Bullet(_player.position.x, _player.position.y, _player.parent_state, _player, True)

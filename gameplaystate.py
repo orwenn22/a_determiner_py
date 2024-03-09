@@ -6,6 +6,7 @@ import pyray
 from gameobject import player
 import terrain
 import mapparsing
+from menus import winstate
 
 
 class GameplayState(state.State):
@@ -14,7 +15,7 @@ class GameplayState(state.State):
 
         # Set the unit/zoom
         m.set_pixels_per_meter(50)
-
+        
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
         self.show_actions = False
@@ -40,10 +41,13 @@ class GameplayState(state.State):
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
-         
+
         self.t: terrain.Terrain | None = None
         self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
         self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+
+
+        self.stats = {"red_jump":0, "blue_jump":0, "red_shoot":0, "blue_shoot":0, "red_portal":0, "blue_portal":0, "red_wall":0, "blue_wall":0 }
 
     def unload_ressources(self):
         self.t.unload()
@@ -158,6 +162,21 @@ class GameplayState(state.State):
         print("Killing player", p_index)
         self.players[p_index] = None
         self.object_manager.remove_object(player_object)
+        
+        red, blue = 0,0
+        for i in range(len(self.players)):
+            if self.players[i] is None:
+                continue
+            if self.players[i].team == 0:
+                blue+=1
+            elif self.players[i].team == 1:
+                red+=1
+        
+        if blue <= 0:
+            self.manager.set_state(winstate.WinState(1, self.stats, red))
+        elif red <= 0:
+            self.manager.set_state(winstate.WinState(0, self.stats, blue))
+
         if p_index == self.current_player:
             self.next_player_turn()     # this is in the case the current player died :(
 

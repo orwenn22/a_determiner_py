@@ -46,6 +46,7 @@ class PlaceWallAction(playeraction.PlayerAction):
             _player.current_action = -1
             _player.parent_state.show_action_widgets()
             _player.throw_angle = 0
+            _player.parent_state.stats["blue_wall" if _player.team==0 else "red_wall"] += 1
 
     def on_draw(self, _player: player.Player):
         w = wall.Wall(_player.position.x + math.cos(_player.throw_angle) * 2,
