@@ -3,11 +3,13 @@ from . import playeraction
 from engine import metrics as m, graphics as gr, globals as g
 from gameobject import player, portal
 import pyray
+import globalresources as res
 
 
 class PlacePortalsAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
+        self.icon = res.portal_gun_sprite
         self.action_name = "Portal\n(item)"
         self.first_portal = None
 
