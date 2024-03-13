@@ -2,15 +2,19 @@ import pyray
 from engine.state import state
 from engine.widget import widgetmanager, label, tiledbutton, tiledwidget, info_widget
 import globalresources as res
+from engine.tooltip import tooltip
 
 
 class WinState(state.State):
-    def __init__(self,winning_team:int, stats: dict, winners_left: int):
+    def __init__(self,winning_team:int, stats: dict):
         from menus import menustate
         super().__init__()
 
+
         def back_to_main_menu():
             self.manager.set_state(menustate.MenuState())
+
+        self.tooltip = tooltip.Tooltip()
 
         self.widget_manager = widgetmanager.WidgetManager()
         
@@ -31,22 +35,22 @@ class WinState(state.State):
         blue_shoot_number = label.Label(-150, -100, "MC", str(stats["blue_shoot"]), 20, pyray.WHITE)
         red_shoot_number = label.Label(150, -100, "MC", str(stats["red_shoot"]), 20, pyray.WHITE)
 
-        logo_shoot = info_widget.InfoWidget(0,-100,40,40,res.default_void_sprite,"Number of shot","MC")
+        logo_shoot = info_widget.InfoWidget(0,-100,40,40,res.default_void_sprite,"Number of shot",self.tooltip,"MC")
         
         blue_jump_number = label.Label(-150, -50, "MC", str(stats["blue_jump"]), 20, pyray.WHITE)
         red_jump_number = label.Label(150, -50, "MC", str(stats["red_jump"]), 20, pyray.WHITE)
 
-        logo_jump = info_widget.InfoWidget(0, -50, 40, 40, res.default_void_sprite, "Number of jump", "MC")
+        logo_jump = info_widget.InfoWidget(0, -50, 40, 40, res.default_void_sprite, "Number of jump",self.tooltip ,"MC")
         
         blue_portal_number = label.Label(-150, 0, "MC", str(stats["blue_portal"]), 20, pyray.WHITE)
         red_portal_number = label.Label(150, 0, "MC", str(stats["red_portal"]), 20, pyray.WHITE)
 
-        logo_portal = info_widget.InfoWidget(0, 0, 40, 40, res.portal_gun_sprite,"Number of portal gun used", "MC")
-        
+        logo_portal = info_widget.InfoWidget(0, 0, 40, 40, res.portal_gun_sprite,"Number of portal gun used",self.tooltip, "MC")
+
         blue_wall_number = label.Label(-150, 50, "MC", str(stats["blue_wall"]), 20, pyray.WHITE)
         red_wall_number = label.Label(150, 50, "MC", str(stats["red_wall"]), 20, pyray.WHITE)
 
-        logo_wall = info_widget.InfoWidget(0, 50, 40, 40, res.trowel_sprite, "Number of trowel used","MC")
+        logo_wall = info_widget.InfoWidget(0, 50, 40, 40, res.trowel_sprite, "Number of trowel used",self.tooltip,"MC")
 
         self.widget_manager.add_widget(return_menu)
         self.widget_manager.add_widget(winner_text)
@@ -67,11 +71,11 @@ class WinState(state.State):
         self.widget_manager.add_widget(logo_wall)
 
         self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_sprite.width, res.menu_bg_sprite.height)
-        print(stats)
 
     def update(self, dt):
         self.bg_rect.x += 12*dt
         self.bg_rect.y += 12*dt
+        self.tooltip.clear_elements()
         self.widget_manager.update(dt)
 
     def draw(self):
@@ -80,3 +84,5 @@ class WinState(state.State):
             for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
                 pyray.draw_texture_rec(res.menu_bg_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
         self.widget_manager.draw()
+        self.tooltip.draw(pyray.get_mouse_x(),pyray.get_mouse_y() )
+        

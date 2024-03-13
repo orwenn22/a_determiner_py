@@ -173,9 +173,9 @@ class GameplayState(state.State):
                 red+=1
         
         if blue <= 0:
-            self.manager.set_state(winstate.WinState(1, self.stats, red))
+            self.manager.set_state(winstate.WinState(1, self.stats))
         elif red <= 0:
-            self.manager.set_state(winstate.WinState(0, self.stats, blue))
+            self.manager.set_state(winstate.WinState(0, self.stats))
 
         if p_index == self.current_player:
             self.next_player_turn()     # this is in the case the current player died :(
