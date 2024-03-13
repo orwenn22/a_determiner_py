@@ -60,15 +60,7 @@ class PlayersIndicator(widget.Widget):
 
             # Items
             for act in p.actions:
-                # TODO : better system for these icons ? Store textures in the actions themselves ?
-                match type(act):
-                    case placeportalaction.PlacePortalsAction:
-                        texture = res.portal_gun_sprite
-                    case spawnwall.PlaceWallAction:
-                        texture = res.trowel_sprite
-                    case _:
-                        texture = None
-
+                texture = act.icon
                 if texture is None:
                     continue
                 pyray.draw_texture_pro(texture, pyray.Rectangle(0, 0, texture.width, texture.height),
