@@ -44,7 +44,7 @@ def init_resources():
 
 
 def unload_resources():
-    pyray.load_texture(green_marker_sprite)
+    pyray.unload_texture(green_marker_sprite)
     pyray.unload_texture(mini_red_sprite)
     pyray.unload_texture(mini_blue_sprite)
     pyray.unload_texture(mini_ded_sprite)
