@@ -1,8 +1,9 @@
 import pyray
 from engine.state import state
-from engine.widget import widgetmanager, label, tiledbutton, tiledwidget, info_widget
+from engine.widget import widgetmanager, label, tiledbutton, info_widget
 import globalresources as res
 from engine.tooltip import tooltip
+from widgets import tiledwidget
 
 
 class WinState(state.State):
