@@ -10,14 +10,13 @@ class InfoWidget(widget.Widget):
         self.info = info_text
         self.fontsize = fontsize
         self.text_size = pyray.measure_text_ex(pyray.get_font_default(), self.info, self.fontsize + 10, 2)
-        # Using top left for the widget as we use directly where the mouse is
         self.tooltip = tooltip
-        
 
     def update(self):
-        if self.is_hovered():
-            self.tooltip.add_elements(tooltiptext.TooltipText(self.info, self.fontsize, pyray.WHITE))
+        if not self.is_hovered() or g.mouse_used:
+            return
+        self.tooltip.add_elements(tooltiptext.TooltipText(self.info, self.fontsize, pyray.WHITE))
+        g.mouse_used = True
              
     def draw(self):
        pyray.draw_texture_pro(self.image, pyray.Rectangle(0, 0, self.image.width, self.image.height), pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),pyray.Vector2(0, 0),0,pyray.WHITE) 
-
