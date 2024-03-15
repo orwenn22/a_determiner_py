@@ -238,15 +238,29 @@ class GameplayState(state.State):
         self.show_actions = False
 
     def check_victory(self):
+        # Count the number of remaining players in each team
         team_counts = [0, 0]
         for i in range(len(self.players)):
             if self.players[i] is None:
                 continue
             team_counts[self.players[i].team] += 1
+        print(team_counts)
 
+        # Look if there is only one team where there are players alive
+        # (this is like this to make it easier in the case we add more teams)
+        victory_index = -1
         for i in range(len(team_counts)):
-            if team_counts[i] <= 0:
-                self.manager.set_state(winstate.WinState(1, self.stats))
+            if team_counts[i] > 0:
+                if victory_index == -1:
+                    victory_index = i
+                else:       # 2 teams have players alive, stop here
+                    victory_index = -1
+                    break
+
+        # Display end screen if necessary
+        if victory_index != -1:
+            print("Victory of team", victory_index)
+            self.manager.set_state(winstate.WinState(victory_index, self.stats))
 
     @classmethod
     def from_level_file(cls, level_file: str):

@@ -1,13 +1,14 @@
 import pyray
 from engine.state import state
 from engine.widget import widgetmanager, label, tiledbutton, info_widget
+from utils import tiledbackground
 import globalresources as res
 from engine.tooltip import tooltip
 from widgets import tiledwidget
 
 
 class WinState(state.State):
-    def __init__(self,winning_team:int, stats: dict):
+    def __init__(self, winning_team: int, stats: dict):
         from menus import menustate
         super().__init__()
 
@@ -24,7 +25,7 @@ class WinState(state.State):
         winner_str = "Victory of blue team" if winning_team == 0 else "Victory of red team"
         winner_text = label.Label(0, -200, "MC", winner_str, 30, pyray.BLACK)
 
-        stats_window = tiledwidget.TiledWidget(0, 0, 600, 350, "MC", res.tiled_button_sprite,8,2, label="Statistics")
+        stats_window = tiledwidget.TiledWidget(0, 0, 600, 350, "MC", res.tiled_button_sprite, 8, 2, label="Statistics")
         stats_window.set_offset_text(250, 20)
         # sprite will need to be changed when player indicator get merged | for now defaults will be used
         # now the interior of the stats window
@@ -70,19 +71,16 @@ class WinState(state.State):
         self.widget_manager.add_widget(return_menu)
         self.widget_manager.add_widget(winner_text)
 
-        self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_sprite.width, res.menu_bg_sprite.height)
+        team_colors = [(50, 50, 255, 255), (255, 50, 50, 255)]
+        self.bg = tiledbackground.TiledBackground(res.menu_bg_grayscale_sprite, team_colors[winning_team])
 
     def update(self, dt):
-        self.bg_rect.x += 12*dt
-        self.bg_rect.y += 12*dt
+        self.bg.update(dt)
         self.tooltip.clear_elements()
         self.widget_manager.update(dt)
 
     def draw(self):
-        pyray.clear_background(pyray.BLACK)
-        for y in range(0, pyray.get_render_height(), res.menu_bg_sprite.height):
-            for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
-                pyray.draw_texture_rec(res.menu_bg_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
+        self.bg.draw()
         self.widget_manager.draw()
         self.tooltip.draw(pyray.get_mouse_x(), pyray.get_mouse_y())
         

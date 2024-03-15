@@ -2,6 +2,7 @@ import pyray
 from engine import globals as g
 from engine.state import state
 from engine.widget import widgetmanager, label, tiledbutton
+from utils import tiledbackground
 import globalresources as res
 
 
@@ -12,8 +13,7 @@ class MenuState(state.State):
 
         def play_action():
             choice_level_state = choicelevelstate.ChoiceLevelState()
-            choice_level_state.bg_rect.x = self.bg_rect.x   # Make sure the background is kept in sync
-            choice_level_state.bg_rect.y = self.bg_rect.y
+            choice_level_state.bg.set_scrolling(self.bg.scrolling.x, self.bg.scrolling.y)   # Make sure the background is kept in sync
             self.manager.set_state(choice_level_state)
 
         def options_action():
@@ -54,16 +54,13 @@ class MenuState(state.State):
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)
 
-        self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_sprite.width, res.menu_bg_sprite.height)
+        self.bg = tiledbackground.TiledBackground(res.menu_bg_sprite)
 
     def update(self, dt):
-        self.bg_rect.x += 12*dt
-        self.bg_rect.y += 12*dt
+        self.bg.update(dt)
         self.widget_manager.update(dt)
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
-        for y in range(0, pyray.get_render_height(), res.menu_bg_sprite.height):
-            for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
-                pyray.draw_texture_rec(res.menu_bg_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
+        self.bg.draw()
         self.widget_manager.draw()

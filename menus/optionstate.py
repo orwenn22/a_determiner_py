@@ -1,6 +1,7 @@
 import pyray
 from engine.state import state
 from engine.widget import tiledbutton, widgetmanager, label
+from utils import tiledbackground
 import globalresources as res
 import key
 
@@ -62,14 +63,13 @@ class OptionState(state.State):
         self.widget_manager.add_widget(return_to_menu)
         self.refresh_rebinding_buttons_labels()
 
-        self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_option_sprite.width, res.menu_bg_option_sprite.height)
+        self.bg = tiledbackground.TiledBackground(res.menu_bg_option_sprite)
 
         # the key that is currently being rebinded
         self.rebinding = ""
 
     def update(self, dt):
-        self.bg_rect.x += 12 * dt
-        self.bg_rect.y += 12 * dt
+        self.bg.update(dt)
         if self.rebinding != "":
             for i in range(pyray.KeyboardKey.KEY_SPACE, pyray.KeyboardKey.KEY_PAUSE+1):
                 if pyray.is_key_pressed(i):
@@ -80,10 +80,7 @@ class OptionState(state.State):
         self.widget_manager.update(dt)
 
     def draw(self):
-        pyray.clear_background(pyray.BLACK)
-        for y in range(0, pyray.get_render_height(), res.menu_bg_sprite.height):
-            for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
-                pyray.draw_texture_rec(res.menu_bg_option_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
+        self.bg.draw()
         self.widget_manager.draw()
 
     def make_newkey_callback(self, key_to_change: str):
