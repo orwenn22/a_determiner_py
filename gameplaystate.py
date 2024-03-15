@@ -2,11 +2,13 @@ from engine.state import state
 from engine.object import objectmanager
 from engine.widget import widgetmanager
 from engine import metrics as m, graphics as gr, globals as g, utils as u
+from widgets import playersindicator
 import pyray
 from gameobject import player
 import terrain
 import mapparsing
 from menus import winstate
+import globalresources as res
 
 
 class GameplayState(state.State):
@@ -15,7 +17,11 @@ class GameplayState(state.State):
 
         # Set the unit/zoom
         m.set_pixels_per_meter(50)
-        
+
+        # This is where we put permanent ui elements
+        self.overlay = widgetmanager.WidgetManager()
+        self.overlay.add_widget(playersindicator.PlayersIndicator(self))
+
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
         self.show_actions = False
@@ -34,10 +40,6 @@ class GameplayState(state.State):
         # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
 
-        
-        # Small marker for the current player
-        self.green_marker = pyray.load_texture("res/green_marker.png")
-
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
@@ -51,7 +53,6 @@ class GameplayState(state.State):
 
     def unload_ressources(self):
         self.t.unload()
-        pyray.unload_texture(self.green_marker)
 
     def update(self, dt):
         if self.t is None:
@@ -62,6 +63,9 @@ class GameplayState(state.State):
             return
 
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
+
+        self.overlay.update(dt)
+
         if self.show_actions:
             self.actions_widgets.update(dt)                     # Check if we are clicking on an action
 
@@ -87,12 +91,14 @@ class GameplayState(state.State):
         if self.show_actions:
             self.actions_widgets.draw()
 
+        self.overlay.draw()
+
         if self.current_player != -1:
             # Display green marker on top of current player
             player_pos = self.players[self.current_player].position
             arrow_pos = pyray.Vector2(player_pos.x, player_pos.y)
             arrow_pos.y -= 1
-            gr.draw_sprite_rot(self.green_marker, arrow_pos, pyray.Vector2(0.5, 0.5), 0.0)
+            gr.draw_sprite_rot(res.green_marker_sprite, arrow_pos, pyray.Vector2(0.5, 0.5), 0.0)
 
             # Display action points (this is temporary, we need to find a way to do this in a better way)
             arrow_pos.y -= 1
@@ -125,7 +131,7 @@ class GameplayState(state.State):
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
         """
-        if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
+        if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT) or g.mouse_used:
             return
 
         p = player.Player(dest_x, dest_y, team, self, 10)
