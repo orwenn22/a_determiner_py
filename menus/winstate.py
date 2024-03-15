@@ -67,7 +67,7 @@ class WinState(state.State):
         self.widget_manager.add_widget(blue_wall_number)
         self.widget_manager.add_widget(red_wall_number)
         self.widget_manager.add_widget(logo_wall)
-        self.widget_manager.add_widget(return_button)
+        self.widget_manager.add_widget(return_menu)
         self.widget_manager.add_widget(winner_text)
 
         self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_sprite.width, res.menu_bg_sprite.height)
