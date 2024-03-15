@@ -11,6 +11,10 @@ from menus import winstate
 import globalresources as res
 
 
+# Team indexes :
+#  1 : blue
+#  2 : red
+
 class GameplayState(state.State):
     def __init__(self):
         super().__init__()
@@ -48,8 +52,12 @@ class GameplayState(state.State):
         self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
         self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
 
-
-        self.stats = {"red_jump":0, "blue_jump":0, "red_shoot":0, "blue_shoot":0, "red_portal":0, "blue_portal":0, "red_wall":0, "blue_wall":0 }
+        self.stats = {
+            "jump": [0, 0],
+            "shoot": [0, 0],
+            "portal": [0, 0],
+            "wall": [0, 0]
+        }
 
     def unload_ressources(self):
         self.t.unload()
@@ -75,8 +83,8 @@ class GameplayState(state.State):
         self.t.update()
         self.object_manager.update(dt)                  # Update all objects
         if self.placing_players:                        # Check if we are still placing players
-            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2],self.blue_start[3],pyray.Color(0,0,255,90))
-            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2],self.red_start[3],pyray.Color(255,0,0,90))
+            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2], self.blue_start[3], pyray.Color(0, 0, 255, 90))
+            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2], self.red_start[3], pyray.Color(255, 0, 0, 90))
             self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
     def draw(self):
@@ -169,19 +177,7 @@ class GameplayState(state.State):
         self.players[p_index] = None
         self.object_manager.remove_object(player_object)
         
-        red, blue = 0,0
-        for i in range(len(self.players)):
-            if self.players[i] is None:
-                continue
-            if self.players[i].team == 0:
-                blue+=1
-            elif self.players[i].team == 1:
-                red+=1
-        
-        if blue <= 0:
-            self.manager.set_state(winstate.WinState(1, self.stats))
-        elif red <= 0:
-            self.manager.set_state(winstate.WinState(0, self.stats))
+        self.check_victory()
 
         if p_index == self.current_player:
             self.next_player_turn()     # this is in the case the current player died :(
@@ -240,6 +236,17 @@ class GameplayState(state.State):
     def hide_action_widgets(self):
         self.actions_widgets.clear()
         self.show_actions = False
+
+    def check_victory(self):
+        team_counts = [0, 0]
+        for i in range(len(self.players)):
+            if self.players[i] is None:
+                continue
+            team_counts[self.players[i].team] += 1
+
+        for i in range(len(team_counts)):
+            if team_counts[i] <= 0:
+                self.manager.set_state(winstate.WinState(1, self.stats))
 
     @classmethod
     def from_level_file(cls, level_file: str):
