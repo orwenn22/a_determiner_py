@@ -19,7 +19,7 @@ class WinState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
         
-        return_menu = tiledbutton.TiledButton(0, 150, 270, 70, "MC", res.tiled_button_sprite, 8, 2, label="Return to main menu", act=back_to_main_menu)
+        return_menu = tiledbutton.TiledButton(0, 170, 270, 70, "MC", res.tiled_button_sprite, 8, 2, label="Return to main menu", act=back_to_main_menu)
         return_menu.set_font_color(pyray.WHITE).set_scrollable(False).center_text().set_hovering_color(pyray.YELLOW)
 
         winner_str = "Victory of blue team" if winning_team == 0 else "Victory of red team"
