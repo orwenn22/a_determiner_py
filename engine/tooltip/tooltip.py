@@ -16,8 +16,8 @@ class Tooltip():
         width = 0
         height = 0
         for e in self.elements:
-            height = e.m_height + 2
-            w = e.m_width
+            height = e.height + 2
+            w = e.width
             if w > width:
                 width = w
 
@@ -38,4 +38,4 @@ class Tooltip():
         painter_y = 2
         for e in self.elements:
             e.draw(x+2, y + painter_y)
-            painter_y += e.m_height + 2
+            painter_y += e.height + 2
