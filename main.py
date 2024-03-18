@@ -27,7 +27,7 @@ def main():
         # Draw
         pyray.begin_drawing()
         state_manager.draw()
-
+        
         # Some debug infos
         if show_debug:
             pyray.draw_fps(10, 10)

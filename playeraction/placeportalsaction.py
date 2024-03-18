@@ -35,6 +35,7 @@ class PlacePortalsAction(playeraction.PlayerAction):
                 _player.remove_action(self)
                 _player.current_action = -1
                 _player.parent_state.show_action_widgets()
+                _player.parent_state.stats["portal"][_player.team] += 1
 
         g.mouse_used = True
 

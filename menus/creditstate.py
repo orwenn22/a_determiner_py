@@ -1,6 +1,7 @@
 import pyray
 from engine.state import state
 from engine.widget import tiledbutton, widgetmanager, label
+from utils import tiledbackground
 import globalresources as res
 
 
@@ -33,16 +34,12 @@ class CreditState(state.State):
         self.widget_manager.add_widget(label.Label(0, 60, "MC", "Maxime Duret", 20, pyray.WHITE))
         self.widget_manager.add_widget(return_to_menu)
 
-        self.bg_rect = pyray.Rectangle(0, 0, res.menu_bg_credits_sprite.width, res.menu_bg_credits_sprite.height)
+        self.bg = tiledbackground.TiledBackground(res.menu_bg_credits_sprite)
 
     def update(self, dt):
-        self.bg_rect.x += 12 * dt
-        self.bg_rect.y += 12 * dt
+        self.bg.update(dt)
         self.widget_manager.update(dt)
 
     def draw(self):
-        pyray.clear_background(pyray.BLACK)
-        for y in range(0, pyray.get_render_height(), res.menu_bg_sprite.height):
-            for x in range(0, pyray.get_render_width(), res.menu_bg_sprite.width):
-                pyray.draw_texture_rec(res.menu_bg_credits_sprite, self.bg_rect, pyray.Vector2(x, y), pyray.WHITE)
+        self.bg.draw()
         self.widget_manager.draw()

@@ -7,8 +7,13 @@ import pyray
 from gameobject import player
 import terrain
 import mapparsing
+from menus import winstate
 import globalresources as res
 
+
+# Team indexes :
+#  1 : blue
+#  2 : red
 
 class GameplayState(state.State):
     def __init__(self):
@@ -42,10 +47,17 @@ class GameplayState(state.State):
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
-         
+
         self.t: terrain.Terrain | None = None
         self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
         self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+
+        self.stats = {
+            "jump": [0, 0],
+            "shoot": [0, 0],
+            "portal": [0, 0],
+            "wall": [0, 0]
+        }
 
     def unload_ressources(self):
         self.t.unload()
@@ -71,8 +83,8 @@ class GameplayState(state.State):
         self.t.update()
         self.object_manager.update(dt)                  # Update all objects
         if self.placing_players:                        # Check if we are still placing players
-            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2],self.blue_start[3],pyray.Color(0,0,255,90))
-            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2],self.red_start[3],pyray.Color(255,0,0,90))
+            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2], self.blue_start[3], pyray.Color(0, 0, 255, 90))
+            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2], self.red_start[3], pyray.Color(255, 0, 0, 90))
             self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
     def draw(self):
@@ -164,6 +176,9 @@ class GameplayState(state.State):
         print("Killing player", p_index)
         self.players[p_index] = None
         self.object_manager.remove_object(player_object)
+        
+        self.check_victory()
+
         if p_index == self.current_player:
             self.next_player_turn()     # this is in the case the current player died :(
 
@@ -221,6 +236,31 @@ class GameplayState(state.State):
     def hide_action_widgets(self):
         self.actions_widgets.clear()
         self.show_actions = False
+
+    def check_victory(self):
+        # Count the number of remaining players in each team
+        team_counts = [0, 0]
+        for i in range(len(self.players)):
+            if self.players[i] is None:
+                continue
+            team_counts[self.players[i].team] += 1
+        print(team_counts)
+
+        # Look if there is only one team where there are players alive
+        # (this is like this to make it easier in the case we add more teams)
+        victory_index = -1
+        for i in range(len(team_counts)):
+            if team_counts[i] > 0:
+                if victory_index == -1:
+                    victory_index = i
+                else:       # 2 teams have players alive, stop here
+                    victory_index = -1
+                    break
+
+        # Display end screen if necessary
+        if victory_index != -1:
+            print("Victory of team", victory_index)
+            self.manager.set_state(winstate.WinState(victory_index, self.stats))
 
     @classmethod
     def from_level_file(cls, level_file: str):

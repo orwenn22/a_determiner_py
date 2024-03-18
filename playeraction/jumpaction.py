@@ -24,6 +24,7 @@ class JumpAction(playeraction.PlayerAction):
             _player.use_small_hitbox = True
             _player.current_action = -1
             _player.parent_state.hide_action_widgets()
+            _player.parent_state.stats["jump"][_player.team] += 1
 
     def on_draw(self, _player: player.Player):
         # 0.01 is the default dt for kinematic predictions
