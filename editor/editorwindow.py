@@ -22,6 +22,7 @@ class EditorWindow:
         self.title_bar_color = pyray.BLUE
         self.title_color = pyray.WHITE
         self.title = "Window"
+        self.closable = True
 
         # used for dragging the window
         self.follow_mouse = False
@@ -55,7 +56,8 @@ class EditorWindow:
         # Clicking on title bar
         if relative_mouse_y < self.title_bar_height and g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             if relative_mouse_x >= self.width - self.title_bar_height:      # Use title bar height as close button width
-                self._close()
+                if self.closable:
+                    self._close()
                 # g.mouse_used = True; return
             else:       # Dragging winow
                 self.mouse_offset_x = relative_mouse_x
@@ -68,6 +70,7 @@ class EditorWindow:
         pyray.draw_rectangle(self.x, self.y, self.width, self.height, self.background_color)
         pyray.draw_rectangle(self.x, self.y, self.width, self.title_bar_height, self.title_bar_color)
         pyray.draw_text(self.title, self.x + 2, self.y + 2, 10, self.title_color)
+        pyray.draw_rectangle(self.x+self.width-self.title_bar_height, self.y, self.title_bar_height, self.title_bar_height, pyray.RED if self.closable else pyray.GRAY)
         self.widget_manager.draw()
         pyray.draw_rectangle_lines(self.x, self.y, self.width, self.height, self.outline_color)
 
