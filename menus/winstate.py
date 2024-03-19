@@ -59,7 +59,7 @@ class WinState(state.State):
         self.widget_manager.add_widget(winner_text)
 
         team_colors = [(100, 100, 255, 255), (255, 50, 50, 255)]
-        self.bg = tiledbackground.TiledBackground(res.menu_bg_grayscale_sprite, team_colors[winning_team])
+        self.bg = tiledbackground.TiledBackground(res.menu_bg_grayscale_sprite, color=team_colors[winning_team])
 
     def update(self, dt):
         self.bg.update(dt)
