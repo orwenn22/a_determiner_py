@@ -4,6 +4,7 @@ from .. import utils
 
 class Widget(object):
     def __init__(self, x: int, y: int, width: int, height: int, placement: str = "TL"):
+        from . import widgetmanager as widgetmanager
         """
         Base constructor of a widget
         :param x: placement of the widget in the window (relatively to the placement given as a string if given)
@@ -17,7 +18,7 @@ class Widget(object):
         self.width = width
         self.height = height
         self.placement = placement
-        self.manager = None
+        self.manager: widgetmanager.WidgetManager = None
         self.scrollable = True
         self.reload_placement()
 
@@ -25,20 +26,32 @@ class Widget(object):
         """
         function used only in case of window resizing to keep widgets to the right spot
         """
+        if self.manager is None:
+            container_x = 0
+            container_y = 0
+            container_w = pyray.get_screen_width()
+            container_h = pyray.get_screen_height()
+        else:
+            container_x = self.manager.x
+            container_y = self.manager.y
+            container_w = self.manager.width
+            container_h = self.manager.height
+
+
         match(self.placement[0]):
             case "M":
-                self.coordinate.y = int(pyray.get_screen_height()/2) + self.origin.y - int(self.height/2)
+                self.coordinate.y = container_y + container_h//2 + (self.origin.y-self.height//2)
             case "B":
-                self.coordinate.y = pyray.get_screen_height() - self.height - self.origin.y
+                self.coordinate.y = container_y + container_h - self.height - self.origin.y
             case _:
-                self.coordinate.y = self.origin.y
+                self.coordinate.y = container_y + self.origin.y
         match(self.placement[1]):
             case "C":
-                self.coordinate.x = int(pyray.get_screen_width()/2) + self.origin.x - int(self.width/2)
+                self.coordinate.x = container_x + container_w//2 + (self.origin.x-self.width//2)
             case "R":
-                self.coordinate.x = pyray.get_screen_width() - self.width - self.origin.x
+                self.coordinate.x = container_x + container_w - self.width - self.origin.x
             case _:
-                self.coordinate.x = self.origin.x
+                self.coordinate.x = container_x + self.origin.x
 
         if self.manager is not None and self.scrollable:
             self.coordinate.x += int(self.manager.h_scrolling_offset)
