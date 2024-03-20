@@ -4,9 +4,9 @@ from engine.widget import widgetmanager
 from engine import globals as g
 
 
-class EditorWindow:
+class Window:
     def __init__(self, x: int, y: int, w: int, h: int):
-        from editor import windowmanager
+        from engine.windows import windowmanager
 
         self.title_bar_height = 15
         self.x = x
