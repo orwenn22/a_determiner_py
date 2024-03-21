@@ -2,11 +2,12 @@ import pyray
 
 from engine import metrics as m
 from engine.state import state
-from engine.widget import label
-from editor import editorlevel
+from engine.widget import label, widgetmanager
+from editor import editorlevel, editortabprovider
+from editor.pages import editorpage, mapsettingspage
 from engine.windows import window, windowmanager
 from utils import tiledbackground
-from widgets import valuelabel
+from widgets import valuelabel, tabbar
 import globalresources as res
 
 
@@ -55,10 +56,26 @@ class EditorState(state.State):
         self.bg = tiledbackground.TiledBackground(res.menu_bg_grayscale_sprite, color=(20, 20, 20, 255))
         self.window_manager.add_window(make_info_window(self))
 
+        self.widget_manager = widgetmanager.WidgetManager()
+        self.widget_manager.add_widget(tabbar.TabBar(editortabprovider.EditorTabProvider(self)))
+
+        self.pages: list[editorpage.EditorPage] = [
+            mapsettingspage.MapSettingsPage(self),
+            mapsettingspage.MapSettingsPage(self),
+            mapsettingspage.MapSettingsPage(self)
+        ]
+        self.current_page = 0
+
     def update(self, dt: float):
         self.bg.update(dt)
+
+        # Update from top to bottom
+        self.widget_manager.update(dt)
         self.window_manager.update(dt)
 
     def draw(self):
         self.bg.draw()
+
+        # Draw from bottom to top
         self.window_manager.draw()
+        self.widget_manager.draw()
