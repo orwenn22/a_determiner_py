@@ -80,7 +80,8 @@ class Player(ko.KinematicObject):
         if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             self.use_small_hitbox = False
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
-                self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
+                 #self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
+                 self.position.x -= math.copysign(0.01, self.velocity.x)
             self.velocity.x = 0
 
         # Vertical
@@ -89,7 +90,8 @@ class Player(ko.KinematicObject):
             self.use_small_hitbox = False
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
-                self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                #self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                self.position.y -= math.copysign(0.01, self.velocity.y)
 
             if self.velocity.y > 0:  # going down (collision with ground)
                 self.velocity.x = 0
