@@ -3,9 +3,9 @@ import math
 
 from engine import graphics as gr
 from engine.object import kinematicobject as ko
-from engine.widget import tiledbutton, widget
+from engine.widget import widget
 from gameobject import wall
-from widgets import actionbutton
+from widgets import actionbutton, fakeactionbutton
 import globalresources as res
 
 
@@ -121,10 +121,7 @@ class Player(ko.KinematicObject):
             self.current_action = -1                # Cancel any action
             self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
 
-        skip_button = tiledbutton.TiledButton(0, 0, 80, 80, "BC",
-                                              res.tiled_button_sprite, 8, 2,
-                                              "Skip\n\n(+10)", local_skip_turn)
-        skip_button.set_text_offset(8, 8).set_font_color(pyray.YELLOW).set_hovering_color(pyray.YELLOW)
+        skip_button = fakeactionbutton.FakeActionButton("Skip", "(+10)", local_skip_turn)
         result.append(skip_button)
         return result
 

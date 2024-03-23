@@ -12,6 +12,7 @@ class PlacePortalsAction(playeraction.PlayerAction):
         self.icon = res.portal_gun_sprite
         self.action_name = "Portal"
         self.first_portal = None
+        self.is_item = True
 
     def on_update(self, _player: player.Player, dt: float):
         if g.mouse_used: return
