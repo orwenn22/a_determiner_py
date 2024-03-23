@@ -12,7 +12,7 @@ class PlaceWallAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.icon = res.trowel_sprite
-        self.action_name = "Wall\n(item)"
+        self.action_name = "Wall"
         self.wall_height = 1        # Put this to 2 ?
         
     def on_click(self, _player: player.Player, action_index: int):

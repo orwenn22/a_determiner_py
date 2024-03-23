@@ -10,7 +10,7 @@ class PlacePortalsAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.icon = res.portal_gun_sprite
-        self.action_name = "Portal\n(item)"
+        self.action_name = "Portal"
         self.first_portal = None
 
     def on_update(self, _player: player.Player, dt: float):
