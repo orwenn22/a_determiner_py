@@ -8,3 +8,4 @@ portal 5 4 9 5
 portal 4 2 12 4
 portal_gun 23.3 7.1
 trowel 23.3 6.1
+spdiamond 10.5 10.9
