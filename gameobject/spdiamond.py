@@ -4,7 +4,7 @@ import globalresources as res
 from engine import graphics as gr
 from . import player
 
-class XPDiamond(entityobject.EntityObject):
+class SPDiamond(entityobject.EntityObject):
     def __init__(self, x:float, y:float):
         super().__init__(x, y, 0.3, 0.5, res.spdiamond_sprite)       # change xpdiamond_sprite with jude battery sprite
         self.action_points = 25
