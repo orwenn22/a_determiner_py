@@ -61,7 +61,7 @@ class PlayersIndicator(widget.Widget):
             # Items
             for act in p.actions:
                 texture = act.icon
-                if texture is None:
+                if texture is None or (not act.is_item):
                     continue
                 pyray.draw_texture_pro(texture, pyray.Rectangle(0, 0, texture.width, texture.height),
                                        pyray.Rectangle(painter_x, painter_y, 16*self.scale, 16*self.scale),

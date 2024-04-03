@@ -3,8 +3,10 @@ import math
 
 from engine import graphics as gr
 from engine.object import kinematicobject as ko
-from engine.widget import button, widget
+from engine.widget import widget
 from gameobject import wall
+from widgets import actionbutton, fakeactionbutton
+import globalresources as res
 
 
 class Player(ko.KinematicObject):
@@ -107,35 +109,21 @@ class Player(ko.KinematicObject):
         #     print("collision detected")
 
     def get_action_widgets(self) -> list[widget.Widget]:
-        button_size = 64
         result = []
-
-        # We don't need to set the positions of the widgets here because they
-        # are calculated in GameplayState.show_action_widgets()
 
         # Create a button for each actions
         for i in range(len(self.actions)):
-            action_name = self.actions[i].action_name
-            result.append(button.Button(0, 0, button_size, button_size,
-                          "BC", self.make_action_callback(i), action_name))
+            result.append(actionbutton.ActionButton(self, i))
 
         # Add the skip button
         def local_skip_turn():
             self.action_points += 10                # Increase points
             self.current_action = -1                # Cancel any action
             self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip\n(+10)"))
+
+        skip_button = fakeactionbutton.FakeActionButton("Skip", "(+10)", local_skip_turn)
+        result.append(skip_button)
         return result
-
-    def make_action_callback(self, index: int):
-        """
-        Creates a callback that will trigger the action's onclick
-        """
-        assert 0 <= index < len(self.actions), "Player : trying to create a callback to an action that does not exit !"
-
-        def local_action_onclick():  # create the callback (the index variable is kept in the scope of this function)
-            self.actions[index].on_click(self, index)
-        return local_action_onclick  # return it
 
     def add_action(self, action):
         # TODO : assertion if action is not an action ?

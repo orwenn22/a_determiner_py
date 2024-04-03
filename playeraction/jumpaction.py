@@ -6,13 +6,15 @@ from . import playeraction
 from gameobject import player
 from engine import globals as g
 from engine.object import kinematicprediction
+import globalresources as res
 
 
 class JumpAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.action_cost = 20
-        self.action_name = f"Jump\n(-{self.action_cost})"
+        self.action_name = "Jump"
+        self.icon = res.jump_action_sprite
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(key.key_binds["right"]) - g.is_key_down(key.key_binds["left"])) * dt
