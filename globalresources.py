@@ -52,6 +52,9 @@ def init_resources():
     spdiamond_sprite = pyray.load_texture("res/spdiamond_sprite.png")
 
 def unload_resources():
+    pyray.unload_texture(spdiamond_sprite)
+    pyray.unload_texture(jumping_sprite)
+    pyray.unload_texture(cannon_sprite)
     pyray.unload_texture(green_marker_sprite)
     pyray.unload_texture(mini_red_sprite)
     pyray.unload_texture(mini_blue_sprite)
@@ -70,6 +73,3 @@ def unload_resources():
     pyray.unload_texture(trowel_sprite)
     pyray.unload_texture(portal_gun_sprite)
     pyray.unload_texture(wall_sprite)
-    pyray.unload_texture(cannon_sprite)
-    pyray.unload_texture(jumping_sprite)
-    pyray.unload_texture(spdiamond_sprite)
