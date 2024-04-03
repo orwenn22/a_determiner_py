@@ -6,6 +6,7 @@ from . import playeraction      # TODO : fix this
 from engine import globals as g
 from engine.object import kinematicprediction
 from gameobject import bullet, player
+import globalresources as res
 
 
 class ShootAction(playeraction.PlayerAction):
@@ -14,6 +15,7 @@ class ShootAction(playeraction.PlayerAction):
         super().__init__()
         self.action_cost = 25
         self.action_name = "Shoot"
+        self.icon = res.shoot_action_sprite
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(key.key_binds["right"]) - g.is_key_down(key.key_binds["left"])) * dt
