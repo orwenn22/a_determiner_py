@@ -1,6 +1,6 @@
 import pyray
 import terrain
-from gameobject import portal
+from gameobject import portal, spdiamond
 import items.portalgun as portalgun
 import items.trowel as trowel
 from engine import metrics as m
@@ -44,6 +44,8 @@ def parse_map_file(gameplay_state, map_file: str):
                 gameplay_state.object_manager.add_object(portalgun.PortalGun(float(line[1]), float(line[2])))
             case "trowel":
                 gameplay_state.object_manager.add_object(trowel.Trowel(float(line[1]), float(line[2])))
+            case "spdiamond":
+                gameplay_state.object_manager.add_object(spdiamond.SPDiamond(float(line[1]), float(line[2])))
             case "blue_start":
                 gameplay_state.blue_start: tuple[float, float, float, float] = (
                 float(line[1]), float(line[2]), float(line[3]), float(line[4]))
