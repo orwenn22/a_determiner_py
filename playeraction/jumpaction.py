@@ -4,7 +4,7 @@ import math
 import key
 from . import playeraction
 from gameobject import player
-from engine import globals as g
+from engine import globals as g, graphics as gr
 from engine.object import kinematicprediction
 import globalresources as res
 
@@ -18,6 +18,13 @@ class JumpAction(playeraction.PlayerAction):
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(key.key_binds["right"]) - g.is_key_down(key.key_binds["left"])) * dt
+
+        # keep the angle between pi and -pi.
+        if _player.throw_angle > math.pi:
+            _player.throw_angle -= math.pi*2
+        elif _player.throw_angle < -math.pi:
+            _player.throw_angle += math.pi*2
+
         if g.is_key_pressed(key.key_binds["action"]) and _player.action_points >= self.action_cost:
             _player.action_points -= self.action_cost
             _player.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / dt,
@@ -34,3 +41,14 @@ class JumpAction(playeraction.PlayerAction):
         a.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / 0.01,
                                     math.sin(_player.throw_angle) * _player.strength / 0.01))
         a.draw_simulation(10)
+
+        # Draw player
+        _player.block_default_sprite = True
+        jumping_sprite = res.player_jump_blue_sprite if _player.team == 0 else res.player_jump_red_sprite
+        flip_factor = -1 if (_player.throw_angle > math.pi/2 or _player.throw_angle < -math.pi/2) else 1
+        gr.draw_sprite_rot_ex(jumping_sprite,
+                              pyray.Rectangle(0, 0, flip_factor*jumping_sprite.width, jumping_sprite.height),
+                              _player.position,
+                              pyray.Vector2(1.0, 1.0),
+                              0.0,
+                              (255, 255, 255, 255))

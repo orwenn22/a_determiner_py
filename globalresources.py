@@ -21,13 +21,24 @@ green_marker_sprite: pyray.Texture = None
 shoot_action_sprite: pyray.Texture = None
 jump_action_sprite: pyray.Texture = None
 spdiamond_sprite: pyray.Texture = None
+player_jump_blue_sprite: pyray.Texture = None
+player_jump_red_sprite: pyray.Texture = None
+player_in_jump_blue_sprite: pyray.Texture = None
+player_in_jump_red_sprite: pyray.Texture = None
+player_blue_sprite: pyray.Texture = None
+player_red_sprite: pyray.Texture = None
+player_shooting_blue_sprite: pyray.Texture = None
+player_shooting_red_sprite: pyray.Texture = None
+
 
 def init_resources():
     global portal_gun_sprite, menu_bg_sprite, menu_bg_option_sprite, menu_bg_credits_sprite, cool_transition_sprite, \
            tiled_button_sprite, tiled_button_left_sprite, tiled_button_right_sprite, trowel_sprite, wall_sprite, \
            explosion_spritesheet, default_void_sprite, portal_sprite, mini_blue_sprite, mini_red_sprite, \
            mini_ded_sprite, green_marker_sprite, menu_bg_grayscale_sprite, shoot_action_sprite, jump_action_sprite, \
-           spdiamond_sprite
+           spdiamond_sprite, player_jump_blue_sprite, player_jump_red_sprite, player_in_jump_blue_sprite, \
+           player_in_jump_red_sprite, player_blue_sprite, player_red_sprite, player_shooting_blue_sprite, \
+           player_shooting_red_sprite
 
     wall_sprite = pyray.load_texture("res/wall.png")
     portal_gun_sprite = pyray.load_texture("res/portal_gun.png")
@@ -50,8 +61,25 @@ def init_resources():
     shoot_action_sprite = pyray.load_texture("res/cannon_sprite.png")
     jump_action_sprite = pyray.load_texture("res/jumping_sprite.png")
     spdiamond_sprite = pyray.load_texture("res/spdiamond_sprite.png")
+    player_jump_blue_sprite = pyray.load_texture("res/player_jump_blue.png")
+    player_jump_red_sprite = pyray.load_texture("res/player_jump_red.png")
+    player_in_jump_blue_sprite = pyray.load_texture("res/player_injump_blue.png")
+    player_in_jump_red_sprite = pyray.load_texture("res/player_injump_red.png")
+    player_blue_sprite = pyray.load_texture("res/player_blue.png")
+    player_red_sprite = pyray.load_texture("res/player_red.png")
+    player_shooting_blue_sprite = pyray.load_texture("res/player_shooting_blue.png")
+    player_shooting_red_sprite = pyray.load_texture("res/player_shooting_red.png")
+
 
 def unload_resources():
+    pyray.unload_texture(player_shooting_red_sprite)
+    pyray.unload_texture(player_shooting_blue_sprite)
+    pyray.unload_texture(player_red_sprite)
+    pyray.unload_texture(player_blue_sprite)
+    pyray.unload_texture(player_in_jump_red_sprite)
+    pyray.unload_texture(player_in_jump_blue_sprite)
+    pyray.unload_texture(player_jump_red_sprite)
+    pyray.unload_texture(player_jump_blue_sprite)
     pyray.unload_texture(spdiamond_sprite)
     pyray.unload_texture(jump_action_sprite)
     pyray.unload_texture(shoot_action_sprite)

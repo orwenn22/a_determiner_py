@@ -44,6 +44,9 @@ class Player(ko.KinematicObject):
 
         self.solid_types = [wall.Wall]
 
+        # This can be set to true by the current action in case we need to draw a custom sprite
+        self.block_default_sprite = False
+
     def update(self, dt: float):
         if not self.grounded():
             self.enable_physics = True
@@ -54,15 +57,9 @@ class Player(ko.KinematicObject):
         self.update_physics(dt)
 
     def draw(self):
-        # TODO : replace with player sprite
-        gr.draw_rectangle(self.position.x - 0.5,
-                          self.position.y - 0.5,
-                          1, 1,
-                          (0, 0, 255, 255) if self.team == 0 else (255, 0, 0, 255))
+        self.block_default_sprite = False
 
-        self.draw_hitbox()  # debuggging
-
-        # Throw angle
+        # Throw angle  TODO : remove this (or put this
         gr.draw_line(
             self.position,
             pyray.vector2_add(self.position, pyray.Vector2(
@@ -70,8 +67,29 @@ class Player(ko.KinematicObject):
             (0, 255, 255, 255)
         )
 
+        # Draw action (this can set block_default_sprite to True)
         if 0 <= self.current_action < len(self.actions):
             self.actions[self.current_action].on_draw(self)
+
+        # Player sprite
+        if not self.block_default_sprite:
+            if self.enable_physics:
+                injump_sprite = res.player_in_jump_blue_sprite if self.team == 0 else res.player_in_jump_red_sprite
+                flip_factor = -1 if self.velocity.x < 0 else 1
+                gr.draw_sprite_rot_ex(injump_sprite,
+                                      pyray.Rectangle(0, 0, flip_factor*injump_sprite.width, injump_sprite.height),
+                                      pyray.Vector2(self.position.x, self.position.y + 0.15625/2),
+                                      pyray.Vector2(1.0, 1.15625),      # 37/32 = 1.5625 (from size of sprite in pixe)
+                                      0.0)
+            else:
+                player_sprite = res.player_blue_sprite if self.team == 0 else res.player_red_sprite
+                gr.draw_sprite_rot_ex(player_sprite,
+                                      pyray.Rectangle(0, 0, player_sprite.width, player_sprite.height),
+                                      self.position,
+                                      pyray.Vector2(1.0, 1.0),
+                                      0.0)
+
+        self.draw_hitbox()  # debuggging  TODO : remove this
 
     def update_physics(self, dt: float) -> None:
         """
