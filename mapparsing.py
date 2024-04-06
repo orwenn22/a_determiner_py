@@ -26,7 +26,7 @@ def parse_map_file(gameplay_state, map_file: str):
     gameplay_state: gameplaystate.GameplayState
 
     map_init: list = read_map_file(map_file)
-    map_image = ""
+    map_image_path = ""
     map_size: pyray.Vector2 = pyray.Vector2(0, 0)
     for line in map_init:
         match line[0]:
@@ -34,7 +34,7 @@ def parse_map_file(gameplay_state, map_file: str):
             case "camera_center":
                 m.set_camera_center(pyray.Vector2(float(line[1]), float(line[2])))
             case "map":
-                map_image = line[1]
+                map_image_path = line[1]
             case "mapsize":
                 map_size = pyray.Vector2(float(line[1]), float(line[2]))
             case "portal":
@@ -55,10 +55,11 @@ def parse_map_file(gameplay_state, map_file: str):
             case "background":
                 pass  # we haven't already defined how the background will be placed
 
-    if map_image == "":
+    if map_image_path == "":
         assert "Image not specified in level file"
 
     if map_size.x != 0 and map_size.y != 0:
-        gameplay_state.t = terrain.Terrain(map_image, map_size)
+        # TODO URGENT : handle the case where the file don't exist
+        gameplay_state.t = terrain.Terrain("maps/" + map_image_path, map_size)
     else:
         assert f"Error while loading map : invalid size {map_size.x} {map_size.y}"

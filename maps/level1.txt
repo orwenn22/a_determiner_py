@@ -1,6 +1,6 @@
 camera_center 12.5 6
 background None
-map level2.png 
+map level1.png
 mapsize 25 12
 blue_start 0 0 12.5 12
 red_start 12.5 0 12.5 12

@@ -65,7 +65,7 @@ class GameplayState(state.State):
     def update(self, dt):
         if self.t is None:
             print("Terrain not initialised, loading default")
-            self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
+            self.t = terrain.Terrain("maps/level1.png", pyray.Vector2(25, 12))
             self.blue_start = (0, 0, 25, 12)
             self.red_start = (0, 0, 25, 12)
             return
