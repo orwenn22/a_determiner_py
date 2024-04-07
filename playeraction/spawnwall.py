@@ -45,8 +45,7 @@ class PlaceWallAction(playeraction.PlayerAction):
 
             _player.manager.add_object(w)
             _player.remove_action(self)
-            _player.current_action = -1
-            _player.parent_state.show_action_widgets()
+            _player.parent_state.show_action_widgets()      # This shouldn't be necessary, but let's do it just in case
             _player.throw_angle = 0
             _player.parent_state.stats["wall"][_player.team] += 1
 

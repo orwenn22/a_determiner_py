@@ -34,7 +34,6 @@ class PlacePortalsAction(playeraction.PlayerAction):
                 p.set_destination(self.first_portal)
                 self.first_portal.set_destination(p)
                 _player.remove_action(self)
-                _player.current_action = -1
                 _player.parent_state.show_action_widgets()
                 _player.parent_state.stats["portal"][_player.team] += 1
 
