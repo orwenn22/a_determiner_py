@@ -14,7 +14,18 @@ class PlacePortalsAction(playeraction.PlayerAction):
         self.first_portal = None
         self.is_item = True
 
+        # For the character animation
+        self.animation_time = 0             # Time since the beginning of the animation cycle (in seconds)
+        self.animation_current_frame = 0    # Current frame being displayed
+        self.animation_frame_count = 3      # Number of frames in the animation
+        self.animation_duration = 1         # The time it take in second to loop through all the frames
+
     def on_update(self, _player: player.Player, dt: float):
+        # Update character animation
+        self.animation_time += dt
+        self.animation_time %= self.animation_duration
+        self.animation_current_frame = int((self.animation_time/self.animation_duration) * self.animation_frame_count)
+
         if g.mouse_used: return
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT): return
 
@@ -40,6 +51,14 @@ class PlacePortalsAction(playeraction.PlayerAction):
         g.mouse_used = True
 
     def on_draw(self, _player: player.Player):
+        _player.block_default_sprite = True
+        gr.draw_sprite_rot_ex(res.player_portal_sprite,
+                              pyray.Rectangle(self.animation_current_frame*32, _player.team * 47, 32, 47),      # Sprite is 32*47
+                              pyray.Vector2(_player.position.x, _player.position.y - 0.46875 / 2),      # The last part is to make sure the portal part is right above the hitbox
+                              pyray.Vector2(1, 1.46875),  # 47/32 = 1,46875
+                              0)
+
+        # If the mouse is on a UI element then we don't draw the portal preview
         if g.mouse_used: return
 
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
