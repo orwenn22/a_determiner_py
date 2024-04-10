@@ -1,8 +1,7 @@
 import pyray
 
-from engine import globals as g
-from engine.widget import widget
-from utils import tabbarprovider
+from .. import globals as g
+from . import widget as widget, tabbarprovider as tabbarprovider
 
 
 class TabBar(widget.Widget):
