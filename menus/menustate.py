@@ -1,5 +1,4 @@
 import pyray
-from editor import editorstate
 from engine import globals as g
 from engine.state import state
 from engine.widget import widgetmanager, label, tiledbutton
@@ -60,8 +59,6 @@ class MenuState(state.State):
     def update(self, dt):
         self.bg.update(dt)
         self.widget_manager.update(dt)
-        if g.is_key_down(pyray.KeyboardKey.KEY_E):
-            self.manager.set_state(editorstate.EditorState())
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
