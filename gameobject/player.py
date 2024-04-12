@@ -3,8 +3,10 @@ import math
 
 from engine import graphics as gr
 from engine.object import kinematicobject as ko
-from engine.widget import button, widget
+from engine.widget import widget
 from gameobject import wall
+from widgets import actionbutton, fakeactionbutton
+import globalresources as res
 
 
 class Player(ko.KinematicObject):
@@ -25,11 +27,6 @@ class Player(ko.KinematicObject):
         self.enable_physics = False
         self.parent_state: gameplaystate.GameplayState = parent_state
 
-        # This determines what this player is currently playing.
-        # 0 : it's not this object's turn.
-        # 1 : it's this object's turn.
-        self.is_playing = 0
-
         # Contain all the actions the player can do
         from playeraction import playeraction, jumpaction, shootaction
         self.actions: list[playeraction.PlayerAction] = [jumpaction.JumpAction(), shootaction.ShootAction()]
@@ -42,6 +39,9 @@ class Player(ko.KinematicObject):
 
         self.solid_types = [wall.Wall]
 
+        # This can be set to true by the current action in case we need to draw a custom sprite
+        self.block_default_sprite = False
+
     def update(self, dt: float):
         if not self.grounded():
             self.enable_physics = True
@@ -52,15 +52,9 @@ class Player(ko.KinematicObject):
         self.update_physics(dt)
 
     def draw(self):
-        # TODO : replace with player sprite
-        gr.draw_rectangle(self.position.x - 0.5,
-                          self.position.y - 0.5,
-                          1, 1,
-                          (0, 0, 255, 255) if self.team == 0 else (255, 0, 0, 255))
+        self.block_default_sprite = False
 
-        self.draw_hitbox()  # debuggging
-
-        # Throw angle
+        # Throw angle  TODO : remove this (or put this
         gr.draw_line(
             self.position,
             pyray.vector2_add(self.position, pyray.Vector2(
@@ -68,8 +62,27 @@ class Player(ko.KinematicObject):
             (0, 255, 255, 255)
         )
 
+        # Draw action (this can set block_default_sprite to True)
         if 0 <= self.current_action < len(self.actions):
             self.actions[self.current_action].on_draw(self)
+
+        # Player sprite
+        if not self.block_default_sprite:
+            if self.enable_physics:
+                flip_factor = -1 if self.velocity.x < 0 else 1
+                gr.draw_sprite_rot_ex(res.player_injump_sprite,
+                                      pyray.Rectangle(self.team*32, 0, flip_factor*32, 37),     # the sprite is 32*37
+                                      pyray.Vector2(self.position.x, self.position.y + 0.15625/2),
+                                      pyray.Vector2(1.0, 1.15625),      # 37/32 = 1.15625 (from size of sprite in pixel)
+                                      0.0)
+            else:
+                gr.draw_sprite_rot_ex(res.player_sprite,
+                                      pyray.Rectangle(0, self.team*32, 32, 32),     # Sprite is 32*32
+                                      self.position,
+                                      pyray.Vector2(1.0, 1.0),
+                                      0.0)
+
+        self.draw_hitbox()  # debuggging  TODO : remove this
 
     def update_physics(self, dt: float) -> None:
         """
@@ -80,7 +93,8 @@ class Player(ko.KinematicObject):
         if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             self.use_small_hitbox = False
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
-                self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
+                 #self.position.x -= math.copysign(self.parent_state.t.pixel_width() / 2, self.velocity.x)
+                 self.position.x -= math.copysign(0.01, self.velocity.x)
             self.velocity.x = 0
 
         # Vertical
@@ -89,14 +103,15 @@ class Player(ko.KinematicObject):
             self.use_small_hitbox = False
             # TODO : more complex collision checking for handling correctly slopes & other wierd terrain irregularities.
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
-                self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                #self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                self.position.y -= math.copysign(0.01, self.velocity.y)
 
             if self.velocity.y > 0:  # going down (collision with ground)
                 self.velocity.x = 0
                 # We disable the physics once we have landed on the ground.
                 # In the future we might want to call something in the state to pass the turn to the next player.
                 self.enable_physics = False
-                if self.is_playing == 1:
+                if self.is_playing():
                     self.parent_state.show_action_widgets()
 
             self.velocity.y = 0  # always reset y velocity on vertical collision
@@ -105,40 +120,26 @@ class Player(ko.KinematicObject):
         #     print("collision detected")
 
     def get_action_widgets(self) -> list[widget.Widget]:
-        button_size = 64
         result = []
-
-        # We don't need to set the positions of the widgets here because they
-        # are calculated in GameplayState.show_action_widgets()
 
         # Create a button for each actions
         for i in range(len(self.actions)):
-            action_name = self.actions[i].action_name
-            result.append(button.Button(0, 0, button_size, button_size,
-                          "BC", self.make_action_callback(i), action_name))
+            result.append(actionbutton.ActionButton(self, i))
 
         # Add the skip button
         def local_skip_turn():
             self.action_points += 10                # Increase points
             self.current_action = -1                # Cancel any action
             self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-        result.append(button.Button(0, 0, button_size, button_size, "BC", local_skip_turn, "Skip\n(+10)"))
+
+        skip_button = fakeactionbutton.FakeActionButton("Skip", "(+10)", local_skip_turn)
+        result.append(skip_button)
         return result
-
-    def make_action_callback(self, index: int):
-        """
-        Creates a callback that will trigger the action's onclick
-        """
-        assert 0 <= index < len(self.actions), "Player : trying to create a callback to an action that does not exit !"
-
-        def local_action_onclick():  # create the callback (the index variable is kept in the scope of this function)
-            self.actions[index].on_click(self, index)
-        return local_action_onclick  # return it
 
     def add_action(self, action):
         # TODO : assertion if action is not an action ?
         self.actions.append(action)
-        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+        if self.parent_state.show_actions and self.is_playing():
             self.parent_state.show_action_widgets()    # refresh
 
     def remove_action(self, action):
@@ -149,7 +150,8 @@ class Player(ko.KinematicObject):
             return
 
         self.actions.remove(action)
-        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+        self.current_action = -1
+        if self.parent_state.show_actions and self.is_playing():
             self.parent_state.show_action_widgets()  # refresh
 
     def get_rectangle(self) -> tuple[float, float, float, float]:
@@ -181,3 +183,11 @@ class Player(ko.KinematicObject):
             if len(col) >= 1:
                 return True
         return False
+
+    def is_playing(self):
+        """
+        Returns True if the instance of the player is currently playing
+        """
+        if self.parent_state is None:
+            return False        # Maybe returning true is better for testing ?
+        return self.parent_state.get_current_player() == self

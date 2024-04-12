@@ -4,6 +4,7 @@ class PlayerAction(object):
     def __init__(self):
         self.action_name = "default"        # needs to be replaced in subclasses
         self.action_cost = 0                # needs to be replaced in subclasses
+        self.is_item = False                # needs to be replaced in subclasses if the action is an item
         self.icon = None
 
     def on_click(self, _player: player.Player, action_index: int):

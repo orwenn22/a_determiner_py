@@ -1,6 +1,6 @@
 camera_center 12.5 6
 background None
-map level2.png 
+map level1.png
 mapsize 25 12
 blue_start 0 0 12.5 12
 red_start 12.5 0 12.5 12
@@ -8,3 +8,4 @@ portal 5 4 9 5
 portal 4 2 12 4
 portal_gun 23.3 7.1
 trowel 23.3 6.1
+spdiamond 10.5 10.9

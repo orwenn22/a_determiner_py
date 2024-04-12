@@ -73,7 +73,8 @@ class Wall(kinematicobject.KinematicObject):
         # If the wall is clipping with the terrain then we make it go in the opposite direction of its velocity
         if self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
             while self.parent_state.t.check_collision_rec(self.get_rectangle(), True) or self.collide_with_solid_object():
-                self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                #self.position.y -= math.copysign(self.parent_state.t.pixel_height() / 2, self.velocity.y)
+                self.position.y -= math.copysign(0.01, self.velocity.y)
 
             if self.velocity.y > 0:  # going down (collision with ground)
                 self.velocity.x = 0

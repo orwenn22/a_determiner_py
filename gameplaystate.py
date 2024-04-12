@@ -28,6 +28,8 @@ class GameplayState(state.State):
 
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
+
+        # This is set to True if show_action_widgets is called, and to False when hide_action_widgets is called.
         self.show_actions = False
 
         # We put all the players in here. This is to keep track of the order are the turns.
@@ -65,7 +67,7 @@ class GameplayState(state.State):
     def update(self, dt):
         if self.t is None:
             print("Terrain not initialised, loading default")
-            self.t = terrain.Terrain("level2.png", pyray.Vector2(25, 12))
+            self.t = terrain.Terrain("maps/level1.png", pyray.Vector2(25, 12))
             self.blue_start = (0, 0, 25, 12)
             self.red_start = (0, 0, 25, 12)
             return
@@ -103,7 +105,7 @@ class GameplayState(state.State):
 
         if self.current_player != -1:
             # Display green marker on top of current player
-            player_pos = self.players[self.current_player].position
+            player_pos = self.get_current_player().position
             arrow_pos = pyray.Vector2(player_pos.x, player_pos.y)
             arrow_pos.y -= 1
             gr.draw_sprite_rot(res.green_marker_sprite, arrow_pos, pyray.Vector2(0.5, 0.5), 0.0)
@@ -111,7 +113,7 @@ class GameplayState(state.State):
             # Display action points (this is temporary, we need to find a way to do this in a better way)
             arrow_pos.y -= 1
             text_pos = m.meters_position_to_window_position(arrow_pos)
-            pyray.draw_text(str(self.players[self.current_player].action_points), int(
+            pyray.draw_text(str(self.get_current_player().action_points), int(
                 text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
 
     def update_cam_position(self, mouse_x: int, mouse_y: int):
@@ -145,19 +147,25 @@ class GameplayState(state.State):
         p = player.Player(dest_x, dest_y, team, self, 10)
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
-        if team == 0:
-            if not u.check_collision_rectangles(p.get_rectangle(), self.blue_start):
-                return
-        else:
-            if not u.check_collision_rectangles(p.get_rectangle(), self.red_start):
-                return
+
+        spawn_zone = self.blue_start if team == 0 else self.red_start
+        if not u.check_collision_rectangles(p.get_rectangle(), spawn_zone):
+            return
 
         self.players.append(p)              # Add new player to player list
         self.object_manager.add_object(p)   # Add new player to objects
         print("object spawned at", p.position.x, p.position.y)
-        if len(self.players) >= 6:          # Check if we are done manually spawning players
+        if len(self.players) >= 6:          # Check if we are done manually spawning players   TODO : make the amount of player configurable ?
             self.placing_players = False
             self.next_player_turn()
+
+    def get_current_player(self) -> None | player.Player:
+        """
+        Return a ref to the player that is currently playing (None if there are no player)
+        """
+        if self.current_player < 0 or self.current_player >= len(self.players):
+            return None
+        return self.players[self.current_player]
 
     def kill_player(self, player_object: player.Player):
         """
@@ -194,23 +202,19 @@ class GameplayState(state.State):
             self.current_player += 1
             self.current_player %= len(self.players)
 
-        for p in self.players:
-            if p is not None:
-                p.is_playing = 0
-
-        self.players[self.current_player].is_playing = 1
-        print("player", self.current_player)
+        print("player", self.current_player, "'s turn")
         self.show_action_widgets()
 
     def show_action_widgets(self):
         """
         This will display the on-screen control buttons for the current object
+        (this will clear the previous action buttons if they exist)
         """
         self.actions_widgets.clear()
         self.show_actions = True
         marge = 10
 
-        current_player = self.players[self.current_player]
+        current_player = self.get_current_player()
         if current_player is None:
             return
 

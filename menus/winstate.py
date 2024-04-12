@@ -34,7 +34,7 @@ class WinState(state.State):
         blue_team_label = label.Label(-150, -130, "MC", "Blue team :", 20, pyray.BLUE)
         red_team_label = label.Label(150, -130, "MC", "Red team : ", 20, pyray.RED)
 
-        actions_sprites = [res.default_void_sprite, res.default_void_sprite, res.portal_gun_sprite, res.trowel_sprite]
+        actions_sprites = [res.shoot_action_sprite, res.jump_action_sprite, res.portal_gun_sprite, res.trowel_sprite]
         actions_names = ["shoot", "jump", "portal", "wall"]     # these must be the sames as gameplaystate.stats
         actions_descriptions = [                                # Descriptions for the tooltips
             "Number of shot",

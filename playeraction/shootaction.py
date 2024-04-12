@@ -2,10 +2,11 @@ import pyray
 import math
 
 import key
-from . import playeraction      # TODO : fix this
-from engine import globals as g
+from . import playeraction
+from engine import globals as g, graphics as gr
 from engine.object import kinematicprediction
 from gameobject import bullet, player
+import globalresources as res
 
 
 class ShootAction(playeraction.PlayerAction):
@@ -13,7 +14,8 @@ class ShootAction(playeraction.PlayerAction):
     def __init__(self):
         super().__init__()
         self.action_cost = 25
-        self.action_name = f"Shoot\n(-{str(self.action_cost)})"
+        self.action_name = "Shoot"
+        self.icon = res.shoot_action_sprite
 
     def on_update(self, _player: player.Player, dt: float):
         _player.throw_angle += (g.is_key_down(key.key_binds["right"]) - g.is_key_down(key.key_binds["left"])) * dt
@@ -31,3 +33,10 @@ class ShootAction(playeraction.PlayerAction):
         a.apply_force(pyray.Vector2(math.cos(_player.throw_angle) * _player.strength / 0.01,
                                     math.sin(_player.throw_angle) * _player.strength / 0.01))
         a.draw_simulation(10)
+
+        _player.block_default_sprite = True
+        gr.draw_sprite_rot_ex(res.player_shooting_sprite,
+                              pyray.Rectangle(0, _player.team*32, 32, 32),    # Sprite is 32*32
+                              _player.position,
+                              pyray.Vector2(1.0, 1.0),
+                              0.0)

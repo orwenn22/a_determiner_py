@@ -1,0 +1,10 @@
+camera_center 16 11
+background None
+map wowmap.png
+mapsize 32 22
+blue_start 0 0 16 22
+red_start 16 0 16 22
+portal 5 4 9 5
+portal 4 2 12 4
+portal_gun 23.3 7.1
+trowel 23.3 6.1
