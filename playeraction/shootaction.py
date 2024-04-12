@@ -35,9 +35,8 @@ class ShootAction(playeraction.PlayerAction):
         a.draw_simulation(10)
 
         _player.block_default_sprite = True
-        shooting_sprite = res.player_shooting_blue_sprite if _player.team == 0 else res.player_shooting_red_sprite
-        gr.draw_sprite_rot_ex(shooting_sprite,
-                              pyray.Rectangle(0, 0, shooting_sprite.width, shooting_sprite.height),
+        gr.draw_sprite_rot_ex(res.player_shooting_sprite,
+                              pyray.Rectangle(0, _player.team*32, 32, 32),    # Sprite is 32*32
                               _player.position,
                               pyray.Vector2(1.0, 1.0),
                               0.0)

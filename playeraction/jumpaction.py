@@ -44,10 +44,9 @@ class JumpAction(playeraction.PlayerAction):
 
         # Draw player
         _player.block_default_sprite = True
-        jumping_sprite = res.player_jump_blue_sprite if _player.team == 0 else res.player_jump_red_sprite
         flip_factor = -1 if (_player.throw_angle > math.pi/2 or _player.throw_angle < -math.pi/2) else 1
-        gr.draw_sprite_rot_ex(jumping_sprite,
-                              pyray.Rectangle(0, 0, flip_factor*jumping_sprite.width, jumping_sprite.height),
+        gr.draw_sprite_rot_ex(res.player_jump_sprite,
+                              pyray.Rectangle(0, _player.team*32, flip_factor*32, 32),  # Sprite is 32*32
                               _player.position,
                               pyray.Vector2(1.0, 1.0),
                               0.0,

@@ -27,11 +27,6 @@ class Player(ko.KinematicObject):
         self.enable_physics = False
         self.parent_state: gameplaystate.GameplayState = parent_state
 
-        # This determines what this player is currently playing.
-        # 0 : it's not this object's turn.
-        # 1 : it's this object's turn.
-        self.is_playing = 0
-
         # Contain all the actions the player can do
         from playeraction import playeraction, jumpaction, shootaction
         self.actions: list[playeraction.PlayerAction] = [jumpaction.JumpAction(), shootaction.ShootAction()]
@@ -74,17 +69,15 @@ class Player(ko.KinematicObject):
         # Player sprite
         if not self.block_default_sprite:
             if self.enable_physics:
-                injump_sprite = res.player_in_jump_blue_sprite if self.team == 0 else res.player_in_jump_red_sprite
                 flip_factor = -1 if self.velocity.x < 0 else 1
-                gr.draw_sprite_rot_ex(injump_sprite,
-                                      pyray.Rectangle(0, 0, flip_factor*injump_sprite.width, injump_sprite.height),
+                gr.draw_sprite_rot_ex(res.player_injump_sprite,
+                                      pyray.Rectangle(self.team*32, 0, flip_factor*32, 37),     # the sprite is 32*37
                                       pyray.Vector2(self.position.x, self.position.y + 0.15625/2),
-                                      pyray.Vector2(1.0, 1.15625),      # 37/32 = 1.5625 (from size of sprite in pixe)
+                                      pyray.Vector2(1.0, 1.15625),      # 37/32 = 1.15625 (from size of sprite in pixel)
                                       0.0)
             else:
-                player_sprite = res.player_blue_sprite if self.team == 0 else res.player_red_sprite
-                gr.draw_sprite_rot_ex(player_sprite,
-                                      pyray.Rectangle(0, 0, player_sprite.width, player_sprite.height),
+                gr.draw_sprite_rot_ex(res.player_sprite,
+                                      pyray.Rectangle(0, self.team*32, 32, 32),     # Sprite is 32*32
                                       self.position,
                                       pyray.Vector2(1.0, 1.0),
                                       0.0)
@@ -118,7 +111,7 @@ class Player(ko.KinematicObject):
                 # We disable the physics once we have landed on the ground.
                 # In the future we might want to call something in the state to pass the turn to the next player.
                 self.enable_physics = False
-                if self.is_playing == 1:
+                if self.is_playing():
                     self.parent_state.show_action_widgets()
 
             self.velocity.y = 0  # always reset y velocity on vertical collision
@@ -146,7 +139,7 @@ class Player(ko.KinematicObject):
     def add_action(self, action):
         # TODO : assertion if action is not an action ?
         self.actions.append(action)
-        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+        if self.parent_state.show_actions and self.is_playing():
             self.parent_state.show_action_widgets()    # refresh
 
     def remove_action(self, action):
@@ -157,7 +150,8 @@ class Player(ko.KinematicObject):
             return
 
         self.actions.remove(action)
-        if self.parent_state.show_actions and self.parent_state.players[self.parent_state.current_player] == self:
+        self.current_action = -1
+        if self.parent_state.show_actions and self.is_playing():
             self.parent_state.show_action_widgets()  # refresh
 
     def get_rectangle(self) -> tuple[float, float, float, float]:
@@ -189,3 +183,11 @@ class Player(ko.KinematicObject):
             if len(col) >= 1:
                 return True
         return False
+
+    def is_playing(self):
+        """
+        Returns True if the instance of the player is currently playing
+        """
+        if self.parent_state is None:
+            return False        # Maybe returning true is better for testing ?
+        return self.parent_state.get_current_player() == self

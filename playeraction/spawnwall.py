@@ -1,3 +1,5 @@
+import pyray
+
 from . import playeraction
 from gameobject import wall, player
 from engine import globals as g
@@ -15,12 +17,24 @@ class PlaceWallAction(playeraction.PlayerAction):
         self.action_name = "Wall"
         self.wall_height = 1        # Put this to 2 ?
         self.is_item = True
+
+        # For the character animation
+        self.animation_time = 0             # Time since the beginning of the animation cycle (in seconds)
+        self.animation_current_frame = 0    # Current frame being displayed
+        self.animation_frame_count = 4      # Number of frames in the animation
+        self.animation_duration = 1.5       # The time it take in second to loop through all the frames
         
     def on_click(self, _player: player.Player, action_index: int):
         super().on_click(_player, action_index)
         _player.throw_angle = 0
 
     def on_update(self, _player: player.Player, dt: float):
+        # Update character animation
+        self.animation_time += dt
+        self.animation_time %= self.animation_duration
+        self.animation_current_frame = int((self.animation_time / self.animation_duration) * self.animation_frame_count)
+
+        # Check for keyboard input
         if g.is_key_pressed(key.key_binds["right"]):
             _player.throw_angle = 0
         elif g.is_key_pressed(key.key_binds["left"]):
@@ -45,12 +59,18 @@ class PlaceWallAction(playeraction.PlayerAction):
 
             _player.manager.add_object(w)
             _player.remove_action(self)
-            _player.current_action = -1
-            _player.parent_state.show_action_widgets()
+            _player.parent_state.show_action_widgets()      # This shouldn't be necessary, but let's do it just in case
             _player.throw_angle = 0
             _player.parent_state.stats["wall"][_player.team] += 1
 
     def on_draw(self, _player: player.Player):
+        _player.block_default_sprite = True
+        gr.draw_sprite_rot_ex(res.player_wall_sprite,
+                              pyray.Rectangle(self.animation_current_frame*32, _player.team*43, 32, 43),
+                              pyray.Vector2(_player.position.x, _player.position.y - 0.34375/2),    # Make sure the player sprite is above the ground
+                              pyray.Vector2(1, 1.34375),        # 43/32 = 1.34375
+                              0.0)
+
         w = wall.Wall(_player.position.x + math.cos(_player.throw_angle) * 2,
                       _player.position.y, 0.5, self.wall_height,
                       _player.parent_state)
