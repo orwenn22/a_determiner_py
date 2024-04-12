@@ -1,4 +1,5 @@
 import pyray
+import os
 import terrain
 from gameobject import portal, spdiamond
 import items.portalgun as portalgun
@@ -21,7 +22,11 @@ def read_map_file(map_name: str) -> list:
     return map_list
 
 
-def parse_map_file(gameplay_state, map_file: str):
+def parse_map_file(gameplay_state, map_file: str) -> str:
+    """
+    Parse a specified map file (in maps directory) and put all of its stuff in a gameplay_state
+    Return empty string on success, or a string containing the error on failure
+    """
     import gameplaystate
     gameplay_state: gameplaystate.GameplayState
 
@@ -30,36 +35,49 @@ def parse_map_file(gameplay_state, map_file: str):
     map_size: pyray.Vector2 = pyray.Vector2(0, 0)
     for line in map_init:
         match line[0]:
-            # Put the cam at the center of the world
             case "camera_center":
+                # Specify the position of the camera's center           format : camera_center x y
                 m.set_camera_center(pyray.Vector2(float(line[1]), float(line[2])))
-            case "map":
+            case "bitmap":
+                # Image corresponding to the main layer of the map      format : bitmap my_map.png
                 map_image_path = line[1]
             case "mapsize":
+                # Size of the map in meter                              format : mapsize x y
                 map_size = pyray.Vector2(float(line[1]), float(line[2]))
             case "portal":
+                # Place a pair of portal                                format : portal x1 y1 x2 y2
                 portal.Portal.spawn_portals(gameplay_state.object_manager, float(line[1]), float(line[2]), float(line[3]),
                                             float(line[4]))
             case "portal_gun":
+                # Place a portal gun object                             format : portal_gun x y
                 gameplay_state.object_manager.add_object(portalgun.PortalGun(float(line[1]), float(line[2])))
             case "trowel":
+                # Place a trowel object                                 format : trowel x y
                 gameplay_state.object_manager.add_object(trowel.Trowel(float(line[1]), float(line[2])))
             case "spdiamond":
+                # Place a skill point diamond                           format : spdiamond x y
                 gameplay_state.object_manager.add_object(spdiamond.SPDiamond(float(line[1]), float(line[2])))
             case "blue_start":
+                # Define the blue spawn location                        format : blue_start x y w h
                 gameplay_state.blue_start: tuple[float, float, float, float] = (
                 float(line[1]), float(line[2]), float(line[3]), float(line[4]))
             case "red_start":
+                # Define the red spawn location                         format : red_start x y w h
                 gameplay_state.red_start: tuple[float, float, float, float] = (
                 float(line[1]), float(line[2]), float(line[3]), float(line[4]))
             case "background":
                 pass  # we haven't already defined how the background will be placed
 
     if map_image_path == "":
-        assert "Image not specified in level file"
+        return "Image not specified in level file"
 
-    if map_size.x != 0 and map_size.y != 0:
-        # TODO URGENT : handle the case where the file don't exist
-        gameplay_state.t = terrain.Terrain("maps/" + map_image_path, map_size)
-    else:
-        assert f"Error while loading map : invalid size {map_size.x} {map_size.y}"
+    if map_size.x <= 0 or map_size.y <= 0:
+        return f"Error while loading map : invalid size {map_size.x} {map_size.y}"
+
+    full_map_image_path = "maps/" + map_image_path
+    if not os.path.isfile(full_map_image_path):
+        return f"The file " + full_map_image_path + " don't exist"
+
+    # We already checked if the file exists, therefore this shouldn't fail.
+    gameplay_state.initialise_terrain(full_map_image_path, map_size.x, map_size.y)
+    return ""

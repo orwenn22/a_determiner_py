@@ -1,9 +1,11 @@
+import pyray
+import os
+
 from engine.state import state
 from engine.object import objectmanager
 from engine.widget import widgetmanager
 from engine import metrics as m, graphics as gr, globals as g, utils as u
 from widgets import playersindicator
-import pyray
 from gameobject import player
 import terrain
 import mapparsing
@@ -50,10 +52,14 @@ class GameplayState(state.State):
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
 
+        # The terrain is set to None by default. It should be initialised before we call update or draw
         self.t: terrain.Terrain | None = None
+
+        # Spawn region of each teams
         self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
         self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
 
+        # Stats for each teams
         self.stats = {
             "jump": [0, 0],
             "shoot": [0, 0],
@@ -62,12 +68,25 @@ class GameplayState(state.State):
         }
 
     def unload_ressources(self):
-        self.t.unload()
+        if self.t is not None:
+            self.t.unload()
+
+    def initialise_terrain(self, bitmap_path: str, width_m: float, height_m: float):
+        """
+        Load a terrain into the gameplay state
+        """
+        if not os.path.isfile(bitmap_path):
+            print("initialise_terrain : path " + bitmap_path + " don't exist :(")
+
+        if self.t is not None:
+            self.t.unload()
+        self.t = terrain.Terrain(bitmap_path, pyray.Vector2(width_m, height_m))
+        print("initialise_terrain : Successfully loaded " + bitmap_path + "as bitmap")
 
     def update(self, dt):
         if self.t is None:
             print("Terrain not initialised, loading default")
-            self.t = terrain.Terrain("maps/level1.png", pyray.Vector2(25, 12))
+            self.initialise_terrain("maps/level1.png", 25.0, 12.0)
             self.blue_start = (0, 0, 25, 12)
             self.red_start = (0, 0, 25, 12)
             return
@@ -267,7 +286,10 @@ class GameplayState(state.State):
             self.manager.set_state(winstate.WinState(victory_index, self.stats))
 
     @classmethod
-    def from_level_file(cls, level_file: str):
+    def from_level_file(cls, level_file: str):      # Returns gameplaystate or None
         r = cls()
-        mapparsing.parse_map_file(r, level_file)
+        error_mes = mapparsing.parse_map_file(r, level_file)
+        if error_mes != "":
+            print("Error parsing map : " + error_mes)
+            return None
         return r

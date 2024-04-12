@@ -1,6 +1,6 @@
 camera_center 16 11
 background None
-map wowmap.png
+bitmap wowmap.png
 mapsize 32 22
 blue_start 0 0 16 22
 red_start 16 0 16 22
