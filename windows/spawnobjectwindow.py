@@ -34,3 +34,7 @@ class SpawnObjectWindow(window.Window):
         def spawn_object_callback():
             self.gameplay_state.spawned_object = self.constructors[index](0, 0)
         return spawn_object_callback
+
+    def _close(self):
+        self.gameplay_state.spawned_object = None
+        super()._close()
