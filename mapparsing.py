@@ -1,7 +1,7 @@
 import pyray
 import os
-import terrain
-from gameobject import portal, spdiamond
+from gameobject import portal
+from items import spdiamond
 import items.portalgun as portalgun
 import items.trowel as trowel
 from engine import metrics as m

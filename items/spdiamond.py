@@ -1,13 +1,14 @@
 import pyray
-from engine.object import entityobject
 import globalresources as res
 from engine import graphics as gr
-from . import player
+from gameobject import player
+from items import collectible
 
 
-class SPDiamond(entityobject.EntityObject):
+class SPDiamond(collectible.Collectible):
     def __init__(self, x: float, y: float):
-        super().__init__(x, y, 0.3, 0.5, res.spdiamond_sprite)       # change xpdiamond_sprite with jude battery sprite
+        super().__init__(x, y)
+        self._setup_collectible(0.3, 0.5, res.spdiamond_sprite)  # TODO change xpdiamond_sprite with jude battery sprite
         self.action_points = 25
         self.existence_time = 0
 
