@@ -97,7 +97,8 @@ class GameplayState(state.State):
             return
 
         if g.is_key_pressed(pyray.KeyboardKey.KEY_F1):
-            self.window_manager.add_window(spawnobjectwindow.SpawnObjectWindow(self))
+            if not self.window_manager.check_existence(spawnobjectwindow.SpawnObjectWindow):
+                self.window_manager.add_window(spawnobjectwindow.SpawnObjectWindow(self))
 
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
 

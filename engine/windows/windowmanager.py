@@ -23,31 +23,41 @@ class WindowManager:
             # Windows should not be destroyed at this point, therefore we don't need bound-checks here
             i -= 1
 
-    def add_window(self, window: window.Window):
+    def add_window(self, win: window.Window):
         # self.windows.append(window)
-        self.windows.insert(0, window)
-        window.manager = self
+        self.windows.insert(0, win)
+        win.manager = self
 
-    def remove_window(self, window: window.Window):
-        if window not in self.windows:
+    def remove_window(self, win: window.Window):
+        if win not in self.windows:
             return
 
-        self.windows.remove(window)
+        self.windows.remove(win)
         # TODO : maybe we shouldn't remove the reference ?
-        window.manager = None
+        win.manager = None
 
-    def bring_on_top(self, window: window.Window):
-        if window not in self.windows:
+    def bring_on_top(self, win: window.Window):
+        if win not in self.windows:
             return
 
-        i = self.windows.index(window)
+        i = self.windows.index(win)
         del self.windows[i]
-        self.windows.insert(0, window)
+        self.windows.insert(0, win)
 
-    def _make_window_in_bound(self, window: window.Window):
+    def check_existence(self, window_type):
+        """
+        Check if a window of a specific type is open
+        TODO : maybe letter we shouldn't rely on python type and instead have type identifiers on the windows ?
+        """
+        for win in self.windows:
+            if isinstance(win, window_type):
+                return True
+        return False
+
+    def _make_window_in_bound(self, win: window.Window):
         # TODO : make it so the window manager store a minimum and maximum position for the window
-        if window.x < 0: window.set_position(0, window.y)
-        elif window.x+window.width >= pyray.get_screen_width(): window.set_position(pyray.get_screen_width() - window.width - 1, window.y)
+        if win.x < 0: win.set_position(0, win.y)
+        elif win.x+win.width >= pyray.get_screen_width(): win.set_position(pyray.get_screen_width() - win.width - 1, win.y)
 
-        if window.y < 0: window.set_position(window.x, 0)
-        elif window.y + window.height >= pyray.get_screen_height(): window.set_position(window.x, pyray.get_screen_height() - window.height - 1)
+        if win.y < 0: win.set_position(win.x, 0)
+        elif win.y + win.height >= pyray.get_screen_height(): win.set_position(win.x, pyray.get_screen_height() - win.height - 1)
