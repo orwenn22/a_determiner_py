@@ -13,8 +13,8 @@ class Widget(object):
         :param height: Height of the widget
         :param placement: relative placement in the window of the widget : TL,TC,TR,ML,MC,MR,BL,BC,BR (T=top,M=middle,B=bottom,L=left,C=center,R=right)
         """
-        self.origin = pyray.Vector2(x, y)       # relative position from alignment/placement
-        self.coordinate = pyray.Vector2(x, y)   # absolute position on window
+        self.relative_position = pyray.Vector2(x, y)        # relative position from alignment/placement (inside manager)
+        self.absolute_position = pyray.Vector2(x, y)        # absolute position on window
         self.width = width
         self.height = height
         self.placement = placement
@@ -40,42 +40,42 @@ class Widget(object):
 
         match(self.placement[0]):
             case "M":
-                self.coordinate.y = container_y + container_h//2 + (self.origin.y-self.height//2)
+                self.absolute_position.y = container_y + container_h // 2 + (self.relative_position.y - self.height // 2)
             case "B":
-                self.coordinate.y = container_y + container_h - self.height - self.origin.y
+                self.absolute_position.y = container_y + container_h - self.height - self.relative_position.y
             case _:
-                self.coordinate.y = container_y + self.origin.y
+                self.absolute_position.y = container_y + self.relative_position.y
         match(self.placement[1]):
             case "C":
-                self.coordinate.x = container_x + container_w//2 + (self.origin.x-self.width//2)
+                self.absolute_position.x = container_x + container_w // 2 + (self.relative_position.x - self.width // 2)
             case "R":
-                self.coordinate.x = container_x + container_w - self.width - self.origin.x
+                self.absolute_position.x = container_x + container_w - self.width - self.relative_position.x
             case _:
-                self.coordinate.x = container_x + self.origin.x
+                self.absolute_position.x = container_x + self.relative_position.x
 
         if self.manager is not None and self.scrollable:
-            self.coordinate.x += int(self.manager.h_scrolling_offset)
-            self.coordinate.y += int(self.manager.v_scrolling_offset)
+            self.absolute_position.x += int(self.manager.h_scrolling_offset)
+            self.absolute_position.y += int(self.manager.v_scrolling_offset)
 
     def update(self):
         pass
 
     def draw(self):
-        pyray.draw_rectangle_pro(pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
+        pyray.draw_rectangle_pro(pyray.Rectangle(self.absolute_position.x, self.absolute_position.y, self.width, self.height),
                                  pyray.Vector2(0, 0), 0,
                                  pyray.Color(255, 0, 0, 255))
 
     def is_hovered(self) -> bool:
         return utils.check_collision_point_rect((pyray.get_mouse_x(), pyray.get_mouse_y()),
-                                                (int(self.coordinate.x), int(self.coordinate.y), self.width, self.height))
+                                                (int(self.absolute_position.x), int(self.absolute_position.y), self.width, self.height))
 
     def set_x(self, x: int):
-        self.origin.x = x
+        self.relative_position.x = x
         self.reload_placement()
         return self
 
     def set_y(self, y: int):
-        self.origin.y = y
+        self.relative_position.y = y
         self.reload_placement()
         return self
 
@@ -90,8 +90,8 @@ class Widget(object):
         return self
 
     def set_position(self, x: int, y: int):
-        self.origin.x = x
-        self.origin.y = y
+        self.relative_position.x = x
+        self.relative_position.y = y
         self.reload_placement()
         return self
 

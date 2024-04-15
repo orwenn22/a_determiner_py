@@ -26,21 +26,21 @@ class TabBar(widget.Widget):
         g.mouse_used = True
 
     def draw(self):
-        pyray.draw_rectangle(int(self.coordinate.x), int(self.coordinate.y), self.width, self.height, pyray.BLACK)
+        pyray.draw_rectangle(int(self.absolute_position.x), int(self.absolute_position.y), self.width, self.height, pyray.BLACK)
 
         if self.provider is None:
             return
 
-        painter_x = int(self.coordinate.x)
+        painter_x = int(self.absolute_position.x)
         tab_count = self.provider.get_tab_count()
         selected_tab = self.provider.get_selected_tab()
         for i in range(tab_count):
             tab_name = self.provider.get_tab_name(i)
             tab_width = pyray.measure_text(tab_name, 20) + self.inner_tab_marge*2
 
-            pyray.draw_rectangle(painter_x, int(self.coordinate.y), tab_width, self.height, (45, 45, 45, 255) if (i == selected_tab) else pyray.BLACK)
-            pyray.draw_text(tab_name, painter_x+3, int(self.coordinate.y)+2, 20, pyray.WHITE)
-            pyray.draw_line(painter_x+tab_width, int(self.coordinate.y), painter_x+tab_width, int(self.coordinate.y)+self.height, pyray.WHITE)
+            pyray.draw_rectangle(painter_x, int(self.absolute_position.y), tab_width, self.height, (45, 45, 45, 255) if (i == selected_tab) else pyray.BLACK)
+            pyray.draw_text(tab_name, painter_x + 3, int(self.absolute_position.y) + 2, 20, pyray.WHITE)
+            pyray.draw_line(painter_x + tab_width, int(self.absolute_position.y), painter_x + tab_width, int(self.absolute_position.y) + self.height, pyray.WHITE)
 
             painter_x += tab_width
 
@@ -58,11 +58,11 @@ class TabBar(widget.Widget):
         """
         handle a click on the tabbar by the user
         """
-        relative_mouse_x = int(pyray.get_mouse_x() - self.coordinate.x)
-        relative_mouse_y = int(pyray.get_mouse_y() - self.coordinate.y)
+        relative_mouse_x = int(pyray.get_mouse_x() - self.absolute_position.x)
+        relative_mouse_y = int(pyray.get_mouse_y() - self.absolute_position.y)
 
         tab_count = self.provider.get_tab_count()
-        top_left_x = int(self.coordinate.x)     # This is the position of the top left of the current tab
+        top_left_x = int(self.absolute_position.x)     # This is the position of the top left of the current tab
         for i in range(tab_count):
             tab_name = self.provider.get_tab_name(i)
             tab_width = pyray.measure_text(tab_name, 20) + self.inner_tab_marge*2

@@ -16,8 +16,8 @@ class PreviewButton(tiledbutton.TiledButton):
     def draw(self):
         super()._draw_tiles()
 
-        pos_x = self.coordinate.x + self.hover_offset_x * self.hovered
-        pos_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        pos_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        pos_y = self.absolute_position.y + self.hover_offset_y * self.hovered
         pyray.draw_texture_pro(self.leftimage, pyray.Rectangle(0, 0, self.leftimage.width, self.leftimage.height),
                                pyray.Rectangle(pos_x + 5, pos_y + 5, self.width/2-10, self.height-10),
                                pyray.Vector2(0, 0), 0,

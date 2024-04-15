@@ -16,8 +16,8 @@ class TiledButton(button.Button):
         super().update()
 
     def draw(self):
-        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
-        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        position_y = self.absolute_position.y + self.hover_offset_y * self.hovered
         self._draw_tiles()
 
         if self.label != "":
@@ -25,8 +25,8 @@ class TiledButton(button.Button):
                             self.fontsize, self.fontcolor)
 
     def _draw_tiles(self):
-        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
-        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        position_y = self.absolute_position.y + self.hover_offset_y * self.hovered
         current_texture = self.hover_tile_set if self.hovered else self.tile_set
         current_color = self.hovering_color if self.hovered else self.color
 

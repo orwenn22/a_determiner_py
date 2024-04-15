@@ -27,8 +27,8 @@ class TexturedButton(button.Button):
         self.hovering_color = self.color
 
     def draw(self):
-        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
-        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        position_y = self.absolute_position.y + self.hover_offset_y * self.hovered
 
         pyray.draw_texture_pro(self.sprite,
                                pyray.Rectangle(0, 0, self.sprite.width, self.sprite.height),

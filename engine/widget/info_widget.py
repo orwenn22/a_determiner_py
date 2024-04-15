@@ -22,6 +22,6 @@ class InfoWidget(widget.Widget):
     def draw(self):
        pyray.draw_texture_pro(self.image,
                               pyray.Rectangle(0, 0, self.image.width, self.image.height),
-                              pyray.Rectangle(self.coordinate.x, self.coordinate.y, self.width, self.height),
+                              pyray.Rectangle(self.absolute_position.x, self.absolute_position.y, self.width, self.height),
                               pyray.Vector2(0, 0), 0,
                               pyray.WHITE)
