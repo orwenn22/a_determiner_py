@@ -61,8 +61,16 @@ class GameplayState(state.State):
         self.t: terrain.Terrain | None = None
 
         # Spawn region of each teams
-        self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
-        self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
+        self.starts: list[tuple[float, float, float, float]] = [
+            (0.0, 0.0, 1.0, 1.0),       # Blue
+            (0.0, 0.0, 1.0, 1.0)        # Red
+        ]
+
+        # Colors associated to each team (alpha of 90 because they are used for drawing the spawn regions)
+        self.team_colors: list[pyray.Color] = [
+            pyray.Color(0, 0, 255, 90),
+            pyray.Color(255, 0, 0, 90)
+        ]
 
         # Stats for each teams
         self.stats = {
@@ -92,8 +100,8 @@ class GameplayState(state.State):
         if self.t is None:
             print("Terrain not initialised, loading default")
             self.initialise_terrain("maps/level1.png", 25.0, 12.0)
-            self.blue_start = (0, 0, 25, 12)
-            self.red_start = (0, 0, 25, 12)
+            self.starts[0] = (0, 0, 25, 12)
+            self.starts[1] = (0, 0, 25, 12)
             return
 
         if g.is_key_pressed(pyray.KeyboardKey.KEY_F1):
@@ -124,8 +132,8 @@ class GameplayState(state.State):
 
         # Show the spawn regions if we are placing players
         if self.placing_players():
-            gr.draw_rectangle(self.blue_start[0], self.blue_start[1], self.blue_start[2], self.blue_start[3], pyray.Color(0, 0, 255, 90))
-            gr.draw_rectangle(self.red_start[0], self.red_start[1], self.red_start[2], self.red_start[3], pyray.Color(255, 0, 0, 90))
+            for i in range(len(self.starts)):
+                gr.draw_rectangle(self.starts[i][0], self.starts[i][1], self.starts[i][2], self.starts[i][3], self.team_colors[i])
 
         if self.t is None:
             pyray.draw_text("Terrain not initialised", 50, 50, 40, pyray.RED)
@@ -194,11 +202,13 @@ class GameplayState(state.State):
             self.object_manager.add_object(self.spawned_object)
             self.spawned_object = None
 
-    def place_player(self, dest_x: float, dest_y: float, team: int):
+    def place_player(self, dest_x: float, dest_y: float, team: int, check_start_pos: bool = True):
         """
         Place a new player in the game, and add it to the player list
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
+        :param team: the team of the player (0 for blue, 1 for red)
+        :param check_start_pos: if set to true, we will check if the player is spawned in its team's associated region
         """
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT) or g.mouse_used:
             return
@@ -207,8 +217,7 @@ class GameplayState(state.State):
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
 
-        spawn_zone = self.blue_start if team == 0 else self.red_start
-        if not u.check_collision_rectangles(p.get_rectangle(), spawn_zone):
+        if not u.check_collision_rectangles(p.get_rectangle(), self.starts[team]) and check_start_pos:
             return
 
         self.players.append(p)              # Add new player to player list

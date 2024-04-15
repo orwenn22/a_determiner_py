@@ -59,12 +59,10 @@ def parse_map_file(gameplay_state, map_file: str) -> str:
                 gameplay_state.object_manager.add_object(spdiamond.SPDiamond(float(line[1]), float(line[2])))
             case "blue_start":
                 # Define the blue spawn location                        format : blue_start x y w h
-                gameplay_state.blue_start: tuple[float, float, float, float] = (
-                float(line[1]), float(line[2]), float(line[3]), float(line[4]))
+                gameplay_state.starts[0] = (float(line[1]), float(line[2]), float(line[3]), float(line[4]))
             case "red_start":
                 # Define the red spawn location                         format : red_start x y w h
-                gameplay_state.red_start: tuple[float, float, float, float] = (
-                float(line[1]), float(line[2]), float(line[3]), float(line[4]))
+                gameplay_state.starts[1] = (float(line[1]), float(line[2]), float(line[3]), float(line[4]))
             case "background":
                 pass  # we haven't already defined how the background will be placed
 
