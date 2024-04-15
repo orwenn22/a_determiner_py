@@ -4,7 +4,7 @@ from engine.state import state
 class StateManager(object):
     def __init__(self, state: state.State = None):
         self.state = None
-        self.old_state = None
+        self.old_state = None       # TODO : replace this by a list in the case we change state multiple time in the same frame
         self.set_state(state)
 
     def unload(self):
@@ -15,8 +15,9 @@ class StateManager(object):
             self.old_state.unload_ressources()
             self.old_state = None
 
-    def set_state(self, state: state.State):
-        self.old_state = self.state
+    def set_state(self, state: state.State, clear_previous_state: bool = True):
+        if clear_previous_state:
+            self.old_state = self.state
         self.state = state
         state.manager = self
 

@@ -11,7 +11,7 @@ from gameobject import player
 from items import collectible
 import terrain
 import mapparsing
-from menus import winstate
+from menus import winstate, pausemenu
 import globalresources as res
 from windows import spawnobjectwindow
 
@@ -97,6 +97,10 @@ class GameplayState(state.State):
         print("initialise_terrain : Successfully loaded " + bitmap_path + "as bitmap")
 
     def update(self, dt):
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_ESCAPE):
+            self.manager.set_state(pausemenu.PauseMenu(self), False)    # We don't want to unload the map yet
+            return
+
         if self.t is None:
             print("Terrain not initialised, loading default")
             self.initialise_terrain("maps/level1.png", 25.0, 12.0)
