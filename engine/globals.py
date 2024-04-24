@@ -16,6 +16,7 @@ def init_window(w, h, game_name) -> None:
     pyray.set_config_flags(pyray.ConfigFlags.FLAG_WINDOW_RESIZABLE)
     pyray.init_window(w, h, game_name)
     pyray.set_target_fps(240)
+    pyray.set_exit_key(0)              # Make sure escape don't quit the game
     deltatime = pyray.get_time()       # Perfect approximation for the first frame
 
 

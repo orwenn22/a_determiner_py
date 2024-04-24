@@ -1,14 +1,19 @@
+import pyray
+import os
+
 from engine.state import state
 from engine.object import objectmanager
 from engine.widget import widgetmanager
+from engine.windows import windowmanager, window
 from engine import metrics as m, graphics as gr, globals as g, utils as u
 from widgets import playersindicator
-import pyray
 from gameobject import player
+from items import collectible
 import terrain
 import mapparsing
-from menus import winstate
+from menus import winstate, pausemenu
 import globalresources as res
+from windows import spawnobjectwindow
 
 
 # Team indexes :
@@ -29,6 +34,10 @@ class GameplayState(state.State):
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
 
+        # This is where we put all the windows
+        self.window_manager = windowmanager.WindowManager()
+        self.spawned_object: collectible.Collectible | None = None
+
         # This is set to True if show_action_widgets is called, and to False when hide_action_widgets is called.
         self.show_actions = False
 
@@ -37,11 +46,9 @@ class GameplayState(state.State):
         # (use kill_player)
         self.players: list[player.Player | None] = []
 
-        # This indicates if we are at the begging of the game, and we are currently placing players.
-        self.placing_players = True
-
-        # Indicate what player is currently playing
+        # Indicate what player is currently playing (-1 means we are still placing players at the beginning of the game)
         self.current_player = -1
+        self.players_per_team = 3       # TODO : make this configurable in settings ??
 
         # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
@@ -50,10 +57,22 @@ class GameplayState(state.State):
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
 
+        # The terrain is set to None by default. It should be initialised before we call update or draw
         self.t: terrain.Terrain | None = None
-        self.blue_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
-        self.red_start: tuple[float, float, float, float] = (0.0, 0.0, 1.0, 1.0)
 
+        # Spawn region of each teams
+        self.starts: list[tuple[float, float, float, float]] = [
+            (0.0, 0.0, 1.0, 1.0),       # Blue
+            (0.0, 0.0, 1.0, 1.0)        # Red
+        ]
+
+        # Colors associated to each team (alpha of 90 because they are used for drawing the spawn regions)
+        self.team_colors: list[pyray.Color] = [
+            pyray.Color(0, 0, 255, 90),
+            pyray.Color(255, 0, 0, 90)
+        ]
+
+        # Stats for each teams
         self.stats = {
             "jump": [0, 0],
             "shoot": [0, 0],
@@ -62,18 +81,40 @@ class GameplayState(state.State):
         }
 
     def unload_ressources(self):
-        self.t.unload()
+        if self.t is not None:
+            self.t.unload()
+
+    def initialise_terrain(self, bitmap_path: str, width_m: float, height_m: float):
+        """
+        Load a terrain into the gameplay state
+        """
+        if not os.path.isfile(bitmap_path):
+            print("initialise_terrain : path " + bitmap_path + " don't exist :(")
+
+        if self.t is not None:
+            self.t.unload()
+        self.t = terrain.Terrain(bitmap_path, pyray.Vector2(width_m, height_m))
+        print("initialise_terrain : Successfully loaded " + bitmap_path + "as bitmap")
 
     def update(self, dt):
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_ESCAPE):
+            self.manager.set_state(pausemenu.PauseMenu(self), False)    # We don't want to unload the map yet
+            return
+
         if self.t is None:
             print("Terrain not initialised, loading default")
-            self.t = terrain.Terrain("maps/level1.png", pyray.Vector2(25, 12))
-            self.blue_start = (0, 0, 25, 12)
-            self.red_start = (0, 0, 25, 12)
+            self.initialise_terrain("maps/level1.png", 25.0, 12.0)
+            self.starts[0] = (0, 0, 25, 12)
+            self.starts[1] = (0, 0, 25, 12)
             return
+
+        if g.is_key_pressed(pyray.KeyboardKey.KEY_F1):
+            if not self.window_manager.check_existence(spawnobjectwindow.SpawnObjectWindow):
+                self.window_manager.add_window(spawnobjectwindow.SpawnObjectWindow(self))
 
         mouse_x, mouse_y = pyray.get_mouse_x(), pyray.get_mouse_y()
 
+        self.window_manager.update(dt)
         self.overlay.update(dt)
 
         if self.show_actions:
@@ -82,15 +123,22 @@ class GameplayState(state.State):
         self.update_cam_position(mouse_x, mouse_y)      # Camera drag&drop update
 
         mouse_pos_meter = m.window_position_to_meters_position(mouse_x, mouse_y)
+
+        self.update_spawned_object(mouse_pos_meter)
+
         self.t.update()
         self.object_manager.update(dt)                  # Update all objects
-        if self.placing_players:                        # Check if we are still placing players
-            gr.draw_rectangle(self.blue_start[0],self.blue_start[1],self.blue_start[2], self.blue_start[3], pyray.Color(0, 0, 255, 90))
-            gr.draw_rectangle(self.red_start[0],self.red_start[1],self.red_start[2], self.red_start[3], pyray.Color(255, 0, 0, 90))
+        if self.placing_players():                      # Check if we are still placing players
             self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
+
+        # Show the spawn regions if we are placing players
+        if self.placing_players():
+            for i in range(len(self.starts)):
+                gr.draw_rectangle(self.starts[i][0], self.starts[i][1], self.starts[i][2], self.starts[i][3], self.team_colors[i])
+
         if self.t is None:
             pyray.draw_text("Terrain not initialised", 50, 50, 40, pyray.RED)
             return
@@ -98,12 +146,16 @@ class GameplayState(state.State):
         self.t.draw()
         #gr.draw_grid()
         self.object_manager.draw()
+
+        if self.spawned_object is not None and not g.mouse_used:
+            self.spawned_object.draw()
+
         if self.show_actions:
             self.actions_widgets.draw()
 
         self.overlay.draw()
 
-        if self.current_player != -1:
+        if not self.placing_players():
             # Display green marker on top of current player
             player_pos = self.get_current_player().position
             arrow_pos = pyray.Vector2(player_pos.x, player_pos.y)
@@ -116,9 +168,12 @@ class GameplayState(state.State):
             pyray.draw_text(str(self.get_current_player().action_points), int(
                 text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
 
+        self.window_manager.draw()
+
     def update_cam_position(self, mouse_x: int, mouse_y: int):
+
         # Drag & drop cam
-        if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_RIGHT):
+        if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_RIGHT) and not g.mouse_used:
             self.cam_follow_mouse = True
             self.cam_mouse_offset = (m.x_offset_pixel - mouse_x, m.y_offset_pixel - mouse_y)
         if not g.is_mouse_button_down(pyray.MouseButton.MOUSE_BUTTON_RIGHT):
@@ -127,6 +182,8 @@ class GameplayState(state.State):
             m.x_offset_pixel = self.cam_mouse_offset[0] + mouse_x
             m.y_offset_pixel = self.cam_mouse_offset[1] + mouse_y
         else:
+            if g.mouse_used:
+                return
             # Zoom (we can't zoom while dragging)
             cam_center = m.get_camera_center()
             if g.mouse_wheel > 0:
@@ -135,11 +192,27 @@ class GameplayState(state.State):
                 m.set_pixels_per_meter(m.pixels_per_meter // 2)
             m.set_camera_center(cam_center)
 
-    def place_player(self, dest_x: float, dest_y: float, team: int):
+    def update_spawned_object(self, mouse_pos_meter: pyray.Vector2):
+        """
+        Update the object spawned using the cheat window
+        """
+        if self.spawned_object is None:
+            return
+
+        self.spawned_object.position.x = mouse_pos_meter.x
+        self.spawned_object.position.y = mouse_pos_meter.y
+        if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT) and not g.mouse_used:
+            g.mouse_used = True
+            self.object_manager.add_object(self.spawned_object)
+            self.spawned_object = None
+
+    def place_player(self, dest_x: float, dest_y: float, team: int, check_start_pos: bool = True):
         """
         Place a new player in the game, and add it to the player list
         :param dest_x: x destination in meter
         :param dest_y: y destination in meter
+        :param team: the team of the player (0 for blue, 1 for red)
+        :param check_start_pos: if set to true, we will check if the player is spawned in its team's associated region
         """
         if not g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT) or g.mouse_used:
             return
@@ -148,16 +221,20 @@ class GameplayState(state.State):
         if self.t.check_collision_rec(p.get_rectangle(), True):     # Check if object is clipping in terrain
             return  # object clipping in terrain, we can't spawn it.
 
-        spawn_zone = self.blue_start if team == 0 else self.red_start
-        if not u.check_collision_rectangles(p.get_rectangle(), spawn_zone):
+        if not u.check_collision_rectangles(p.get_rectangle(), self.starts[team]) and check_start_pos:
             return
 
         self.players.append(p)              # Add new player to player list
         self.object_manager.add_object(p)   # Add new player to objects
         print("object spawned at", p.position.x, p.position.y)
-        if len(self.players) >= 6:          # Check if we are done manually spawning players   TODO : make the amount of player configurable ?
-            self.placing_players = False
+        if len(self.players) >= self.players_per_team*2:          # Check if we are done manually spawning players
             self.next_player_turn()
+
+    def placing_players(self) -> bool:
+        """
+        Return true if we are still placing players, false otherwise.
+        """
+        return self.current_player == -1
 
     def get_current_player(self) -> None | player.Player:
         """
@@ -267,7 +344,10 @@ class GameplayState(state.State):
             self.manager.set_state(winstate.WinState(victory_index, self.stats))
 
     @classmethod
-    def from_level_file(cls, level_file: str):
+    def from_level_file(cls, level_file: str):      # Returns gameplaystate or None
         r = cls()
-        mapparsing.parse_map_file(r, level_file)
+        error_mes = mapparsing.parse_map_file(r, level_file)
+        if error_mes != "":
+            print("Error parsing map : " + error_mes)
+            return None
         return r

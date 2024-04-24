@@ -39,8 +39,8 @@ class ActionButton(fakeactionbutton.FakeActionButton):
     def draw(self):
         super().draw()
 
-        position_x = self.coordinate.x + self.hover_offset_x * self.hovered
-        position_y = self.coordinate.y + self.hover_offset_y * self.hovered
+        position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        position_y = self.absolute_position.y + self.hover_offset_y * self.hovered
 
         # Action icon
         action_texture: pyray.Texture | None = self.player.actions[self.action_index].icon

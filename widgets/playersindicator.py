@@ -28,7 +28,7 @@ class PlayersIndicator(widget.Widget):
         if g.mouse_used or not self.is_hovered():
             return
 
-        rel_mouse_x = int(pyray.get_mouse_x() - self.coordinate.x)
+        rel_mouse_x = int(pyray.get_mouse_x() - self.absolute_position.x)
         player_index = rel_mouse_x // (18*self.scale)
         if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             player = self.gameplay_state.players[player_index]
@@ -38,10 +38,10 @@ class PlayersIndicator(widget.Widget):
         g.mouse_used = True
 
     def draw(self):
-        painter_x = int(self.coordinate.x)
+        painter_x = int(self.absolute_position.x)
         for i in range(len(self.gameplay_state.players)):
             p = self.gameplay_state.players[i]
-            painter_y = int(self.coordinate.y)
+            painter_y = int(self.absolute_position.y)
             if p is None:
                 pyray.draw_texture_pro(res.mini_ded_sprite, pyray.Rectangle(0, 0, 16, 16),
                                        pyray.Rectangle(painter_x, painter_y, 16*self.scale, 16*self.scale),

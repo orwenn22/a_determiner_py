@@ -53,8 +53,8 @@ class Button(widget.Widget):
             g.mouse_used = True
 
     def draw(self):
-        position_x = self.coordinate.x + self.hover_offset_x*self.hovered
-        position_y = self.coordinate.y + self.hover_offset_y*self.hovered
+        position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
+        position_y = self.absolute_position.y + self.hover_offset_y * self.hovered
         pyray.draw_rectangle_pro(pyray.Rectangle(position_x, position_y, self.width, self.height),
                                  pyray.Vector2(0, 0), 0, self.hovering_color if self.hovered else self.color)
 

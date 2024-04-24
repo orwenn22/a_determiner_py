@@ -1,15 +1,17 @@
 import pyray
-from . import widget as w
+from . import widget as widget
 from .. import globals as g
 
 
 class WidgetManager(object):
-    def __init__(self):
-        self.list_widget: list[w.Widget] = []
+    def __init__(self, x: int = 0, y: int = 0, w: int = 0, h: int = 0):
+        self.list_widget: list[widget.Widget] = []
 
-        # TODO : custom WidgetManager position & size to make it more flexible and embeddable everywhere
-        self.width = pyray.get_render_width()
-        self.height = pyray.get_render_height()
+        self.use_custom_size = not (x == 0 and y == 0 and w == 0 and h == 0)
+        self.x = x
+        self.y = y
+        self.width = pyray.get_render_width() if not self.use_custom_size else w
+        self.height = pyray.get_render_height() if not self.use_custom_size else h
 
         # Determine if scrolling is enabled or disabled (disabled by default)
         self.enable_h_scrolling = False
@@ -34,18 +36,19 @@ class WidgetManager(object):
 
     def update(self, dt: float):
         # Window resized
-        if self.width != pyray.get_render_width() or self.height != pyray.get_render_height():
+        if (not self.use_custom_size) and (self.width != pyray.get_render_width() or self.height != pyray.get_render_height()):
             self.width = pyray.get_render_width()
-            self.height = pyray.get_render_width()
+            self.height = pyray.get_render_height()
             for i in self.list_widget:
                 i.reload_placement()
 
         # Scrolling
         self.scrolled = False
-        if self.enable_h_scrolling:
-            self._handle_horizontal_scrolling(dt)
-        if self.enable_v_scrolling:
-            self._handle_vertical_scrolling(dt)
+        if self.x <= pyray.get_mouse_x() < self.x+self.width and self.y <= pyray.get_mouse_y() < self.y+self.height:
+            if self.enable_h_scrolling:
+                self._handle_horizontal_scrolling(dt)
+            if self.enable_v_scrolling:
+                self._handle_vertical_scrolling(dt)
 
         if self.scrolled:
             for i in self.list_widget:
@@ -57,15 +60,23 @@ class WidgetManager(object):
             i += 1
 
     def draw(self):
-        for i in self.list_widget:
-            i.draw()
+        if self.use_custom_size:
+            # pyray.draw_rectangle_lines(self.x, self.y, self.width, self.height, pyray.RED)
+            # FIXME : this will break if we have a widget manger in a widget in the future
+            pyray.begin_scissor_mode(self.x, self.y, self.width, self.height)
+            for i in self.list_widget:
+                i.draw()
+            pyray.end_scissor_mode()
+        else:
+            for i in self.list_widget:
+                i.draw()
 
-    def add_widget(self, widget_to_add: w.Widget):
+    def add_widget(self, widget_to_add: widget.Widget):
         self.list_widget.append(widget_to_add)
         widget_to_add.manager = self
         widget_to_add.reload_placement()
 
-    def remove_widget(self, widget_to_remove: w.Widget):
+    def remove_widget(self, widget_to_remove: widget.Widget):
         if widget_to_remove not in self.list_widget:
             return
         self.list_widget.remove(widget_to_remove)
@@ -121,3 +132,26 @@ class WidgetManager(object):
         self.h_scrolling_max = h_max
         self.v_scrolling_min = v_min
         self.v_scrolling_max = v_max
+
+    def set_position(self, x: int, y: int):
+        self.use_custom_size = True
+        self.x = x
+        self.y = y
+        for i in self.list_widget:
+            i.reload_placement()
+
+    def set_size(self, w: int, h: int):
+        self.use_custom_size = True
+        self.width = w
+        self.height = h
+        for i in self.list_widget:
+            i.reload_placement()
+
+    def make_fullscreen(self):
+        self.use_custom_size = False
+        self.x = 0
+        self.y = 0
+        self.width = pyray.get_screen_width()
+        self.height = pyray.get_screen_height()
+        for i in self.list_widget:
+            i.reload_placement()

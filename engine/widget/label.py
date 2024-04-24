@@ -13,9 +13,9 @@ class Label(widget.Widget):
         self.reload_placement()
 
     def draw(self):
-        # pyray.draw_rectangle(int(self.coordinate.x), int(self.coordinate.y), self.width, self.height, pyray.RED)
+        # pyray.draw_rectangle(int(self.absolute_position.x), int(self.absolute_position.y), self.width, self.height, pyray.RED)
         # TODO : if we support custom fonts one day we need to replace this by draw_text_ex
-        pyray.draw_text(self.text, int(self.coordinate.x), int(self.coordinate.y), int(self.font_size), self.color)
+        pyray.draw_text(self.text, int(self.absolute_position.x), int(self.absolute_position.y), int(self.font_size), self.color)
 
     def set_color(self, color: pyray.Color):
         self.color = color
