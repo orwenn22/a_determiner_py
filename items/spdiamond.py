@@ -23,4 +23,4 @@ class SPDiamond(collectible.Collectible):
 
     def draw(self):
         position = pyray.Vector2(self.position.x, self.position.y + int(self.existence_time)/20)
-        gr.draw_sprite_rot(self.sprite, position, pyray.Vector2(self.width, self.height), 0.0)
+        gr.draw_sprite_rot(self.sprite, position, pyray.Vector2(self.height, self.height), 0.0)
