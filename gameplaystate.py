@@ -281,6 +281,10 @@ class GameplayState(state.State):
             self.current_player += 1
             self.current_player %= len(self.players)
 
+        if random.random() < 0.20:      # 20% chance of spawning random items
+            item_count = random.randint(1, 5)
+            for i in range(item_count): self.spawn_item_randomly()
+
         print("player", self.current_player, "'s turn")
         self.show_action_widgets()
 
@@ -371,6 +375,12 @@ class GameplayState(state.State):
             while not self.t.check_collision_rec(item.get_rectangle(), True):
                 item.position.y += 0.1  # Make it go down
             item.position.y -= 0.2      # When we find the floor, make it go up
+
+        # Make it so we can't randomly spawn the item on a player
+        if self.object_manager.get_collision(item, player.Player):
+            print("spawn_item_randomly : spawning item on player, cancelling")
+            # recursive call here ?
+            return
 
         self.object_manager.add_object(item)
 
