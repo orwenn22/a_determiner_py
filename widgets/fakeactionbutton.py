@@ -24,6 +24,11 @@ class FakeActionButton(tiledbutton.TiledButton):
         self.set_text_offset(8, 8)
 
     def draw(self):
+        if len(self.label) >= 7:
+            self.set_font_size(10)
+        else:
+            self.set_font_size(20)
+
         super().draw()
 
         position_x = self.absolute_position.x + self.hover_offset_x * self.hovered
