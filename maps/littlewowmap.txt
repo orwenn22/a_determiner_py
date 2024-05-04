@@ -1,0 +1,10 @@
+camera_center 10 8
+background None
+bitmap littlewowmap.png
+mapsize 18 12
+blue_start 0 2.5 8 9.5
+red_start 10 2.5 8 9.5
+portal 6 1 13 8
+portal 12 1 5 8
+portal_gun 9 1.2
+trowel 9 3.5
