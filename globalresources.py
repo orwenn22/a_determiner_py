@@ -1,6 +1,7 @@
 import pyray
 
 portal_gun_sprite: pyray.Texture = None
+portal_remover_sprite: pyray.Texture = None
 menu_bg_sprite: pyray.Texture = None
 menu_bg_option_sprite: pyray.Texture = None
 menu_bg_credits_sprite: pyray.Texture = None
@@ -35,10 +36,11 @@ def init_resources():
            explosion_spritesheet, default_void_sprite, portal_sprite, mini_blue_sprite, mini_red_sprite, \
            mini_ded_sprite, green_marker_sprite, menu_bg_grayscale_sprite, shoot_action_sprite, jump_action_sprite, \
            spdiamond_sprite, player_jump_sprite, player_injump_sprite, player_sprite, player_shooting_sprite, \
-           player_portal_sprite, player_wall_sprite
+           player_portal_sprite, player_wall_sprite, portal_remover_sprite
 
     wall_sprite = pyray.load_texture("res/wall.png")
     portal_gun_sprite = pyray.load_texture("res/portal_gun.png")
+    portal_remover_sprite = pyray.load_texture("res/portal_remover.png")
     trowel_sprite = pyray.load_texture("res/truelle.png")
     menu_bg_sprite = pyray.load_texture("res/menubg.png")
     menu_bg_option_sprite = pyray.load_texture("res/menubg_option.png")
@@ -92,5 +94,6 @@ def unload_resources():
     pyray.unload_texture(menu_bg_option_sprite)
     pyray.unload_texture(menu_bg_sprite)
     pyray.unload_texture(trowel_sprite)
+    pyray.unload_texture(portal_remover_sprite)
     pyray.unload_texture(portal_gun_sprite)
     pyray.unload_texture(wall_sprite)

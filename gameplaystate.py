@@ -16,7 +16,7 @@ import mapparsing
 from menus import winstate, pausemenu
 import globalresources as res
 from windows import spawnobjectwindow
-from items import spdiamond, trowel, portalgun
+from items import spdiamond, trowel, portalgun, portalremover
 
 
 # Team indexes :
@@ -363,7 +363,8 @@ class GameplayState(state.State):
         items = [
             spdiamond.SPDiamond,
             trowel.Trowel,
-            portalgun.PortalGun
+            portalgun.PortalGun,
+            portalremover.PortalRemover
         ]
         random_item_index = random.randint(0, len(items)-1)
 

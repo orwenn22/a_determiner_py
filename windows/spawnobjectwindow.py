@@ -1,6 +1,6 @@
 from engine.windows import window
 
-from items import portalgun, trowel, spdiamond
+from items import portalgun, trowel, spdiamond, portalremover
 from engine.widget import button
 
 
@@ -18,7 +18,8 @@ class SpawnObjectWindow(window.Window):
         self.constructors = [
             portalgun.PortalGun,
             trowel.Trowel,
-            spdiamond.SPDiamond
+            spdiamond.SPDiamond,
+            portalremover.PortalRemover
         ]
 
         x = 2
