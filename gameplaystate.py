@@ -370,6 +370,7 @@ class GameplayState(state.State):
         else:           # Not clipping terrain
             while not self.t.check_collision_rec(item.get_rectangle(), True):
                 item.position.y += 0.1  # Make it go down
+            item.position.y -= 0.2      # When we find the floor, make it go up
 
         self.object_manager.add_object(item)
 

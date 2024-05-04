@@ -22,5 +22,5 @@ class SPDiamond(collectible.Collectible):
             self.manager.remove_object(self)
 
     def draw(self):
-        position = pyray.Vector2(self.position.x, self.position.y + int(self.existence_time)/20)
+        position = pyray.Vector2(self.position.x, self.position.y - int(self.existence_time)/20)
         gr.draw_sprite_rot(self.sprite, position, pyray.Vector2(self.height, self.height), 0.0)
