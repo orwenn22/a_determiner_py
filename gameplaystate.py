@@ -4,6 +4,7 @@ import random
 
 from engine.state import state
 from engine.object import objectmanager
+from engine.tooltip import tooltip
 from engine.widget import widgetmanager
 from engine.windows import windowmanager, window
 from engine import metrics as m, graphics as gr, globals as g, utils as u
@@ -55,6 +56,9 @@ class GameplayState(state.State):
         # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
 
+        # Tooltip to put info when hovering on some elements
+        self.tooltip = tooltip.Tooltip()
+
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
         self.cam_mouse_offset = (0, 0)
@@ -99,6 +103,8 @@ class GameplayState(state.State):
         print("initialise_terrain : Successfully loaded " + bitmap_path + "as bitmap")
 
     def update(self, dt):
+        self.tooltip.clear_elements()
+
         if g.is_key_pressed(pyray.KeyboardKey.KEY_ESCAPE):
             self.manager.set_state(pausemenu.PauseMenu(self), False)    # We don't want to unload the map yet
             return
@@ -171,9 +177,9 @@ class GameplayState(state.State):
                 text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
 
         self.window_manager.draw()
+        self.tooltip.draw(pyray.get_mouse_x()+6, pyray.get_mouse_y()+6)
 
     def update_cam_position(self, mouse_x: int, mouse_y: int):
-
         # Drag & drop cam
         if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_RIGHT) and not g.mouse_used:
             self.cam_follow_mouse = True

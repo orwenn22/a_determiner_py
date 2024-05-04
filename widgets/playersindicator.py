@@ -2,6 +2,7 @@ import pyray
 
 import engine.globals as g
 import engine.metrics as m
+from engine.tooltip import tooltip, tooltiptext
 import engine.widget.widget as widget
 import globalresources as res
 import playeraction.placeportalsaction as placeportalaction
@@ -28,8 +29,15 @@ class PlayersIndicator(widget.Widget):
         if g.mouse_used or not self.is_hovered():
             return
 
+        # If we get here it means that the widget is hovered and mouse isn't used
+
         rel_mouse_x = int(pyray.get_mouse_x() - self.absolute_position.x)
         player_index = rel_mouse_x // (18*self.scale)
+
+        # Fill tooltip
+        if self.gameplay_state is not None:
+            self.fill_tooltip(self.gameplay_state.tooltip, player_index)
+
         if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_LEFT):
             player = self.gameplay_state.players[player_index]
             if player is not None:
@@ -78,3 +86,10 @@ class PlayersIndicator(widget.Widget):
                 painter_y += 18*self.scale
 
             painter_x += 18*self.scale
+
+    def fill_tooltip(self, tt: tooltip.Tooltip, player_index: int):
+        player = self.gameplay_state.players[player_index]
+        if player is None:
+            tt.add_elements(tooltiptext.TooltipText("Dead", 20, pyray.WHITE))
+        else:
+            player.fill_tooltip(tt)
