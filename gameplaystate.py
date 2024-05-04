@@ -1,5 +1,6 @@
-import pyray
 import os
+import pyray
+import random
 
 from engine.state import state
 from engine.object import objectmanager
@@ -14,6 +15,7 @@ import mapparsing
 from menus import winstate, pausemenu
 import globalresources as res
 from windows import spawnobjectwindow
+from items import spdiamond, trowel, portalgun
 
 
 # Team indexes :
@@ -342,6 +344,34 @@ class GameplayState(state.State):
         if victory_index != -1:
             print("Victory of team", victory_index)
             self.manager.set_state(winstate.WinState(victory_index, self.stats))
+
+    def spawn_item_randomly(self):
+        random_x = random.random() * self.t.size.x
+        random_y = random.random() * self.t.size.y
+
+        # Constructors of all the objects
+        items = [
+            spdiamond.SPDiamond,
+            trowel.Trowel,
+            portalgun.PortalGun
+        ]
+        random_item_index = random.randint(0, len(items)-1)
+
+        item = items[random_item_index](random_x, random_y)
+
+        if self.t.check_collision_rec(item.get_rectangle(), True):        # the objet is clipping inside the terrain
+            iterations = 0
+            while self.t.check_collision_rec(item.get_rectangle(), True):
+                item.position.y -= 0.1      # Make it go up
+                iterations += 1
+                if iterations > 1500:
+                    self.spawn_item_randomly()      # In that case we might be in an impossible situation, so try again
+                    return                          # Don't spawn the bad item
+        else:           # Not clipping terrain
+            while not self.t.check_collision_rec(item.get_rectangle(), True):
+                item.position.y += 0.1  # Make it go down
+
+        self.object_manager.add_object(item)
 
     @classmethod
     def from_level_file(cls, level_file: str):      # Returns gameplaystate or None

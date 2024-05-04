@@ -37,7 +37,6 @@ class Widget(object):
             container_w = self.manager.width
             container_h = self.manager.height
 
-
         match(self.placement[0]):
             case "M":
                 self.absolute_position.y = container_y + container_h // 2 + (self.relative_position.y - self.height // 2)
