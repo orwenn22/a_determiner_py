@@ -30,6 +30,7 @@ player_portal_sprite: pyray.Texture = None
 player_wall_sprite: pyray.Texture = None
 strength_upgrade_sprite: pyray.Texture = None
 strength_downgrade_sprite: pyray.Texture = None
+potato_sprite: pyray.Texture = None
 
 
 def init_resources():
@@ -39,7 +40,7 @@ def init_resources():
            mini_ded_sprite, green_marker_sprite, menu_bg_grayscale_sprite, shoot_action_sprite, jump_action_sprite, \
            spdiamond_sprite, player_jump_sprite, player_injump_sprite, player_sprite, player_shooting_sprite, \
            player_portal_sprite, player_wall_sprite, portal_remover_sprite, strength_upgrade_sprite, \
-           strength_downgrade_sprite
+           strength_downgrade_sprite, potato_sprite
 
     wall_sprite = pyray.load_texture("res/wall.png")
     portal_gun_sprite = pyray.load_texture("res/portal_gun.png")
@@ -71,9 +72,11 @@ def init_resources():
     player_wall_sprite = pyray.load_texture("res/player_wall.png")
     strength_upgrade_sprite = pyray.load_texture("res/strength_upgrade.png")
     strength_downgrade_sprite = pyray.load_texture("res/strength_downgrade.png")
+    potato_sprite = pyray.load_texture("res/potato.png")
 
 
 def unload_resources():
+    pyray.unload_texture(potato_sprite)
     pyray.unload_texture(strength_downgrade_sprite)
     pyray.unload_texture(strength_upgrade_sprite)
     pyray.unload_texture(player_wall_sprite)

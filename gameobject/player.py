@@ -137,13 +137,27 @@ class Player(ko.KinematicObject):
 
         # Add the skip button
         def local_skip_turn():
-            self.action_points += 10                # Increase points
-            self.current_action = -1                # Cancel any action
-            self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-
+            self.skip_turn()
         skip_button = fakeactionbutton.FakeActionButton("Skip", "(+10)", local_skip_turn)
         result.append(skip_button)
         return result
+
+    def skip_turn(self):
+        """
+        Called when the "skip" button is pressed
+        """
+        # Actions are able to cancel passing the turn to the next player
+        cancel_next_player_turn = False
+        for action in self.actions:
+            if action.on_skip(self):
+                cancel_next_player_turn = True
+
+        self.action_points += 10  # Increase points
+        self.current_action = -1  # Cancel any action
+
+        if not cancel_next_player_turn:
+            # Give the turn to the next character (will clear action widgets)
+            self.parent_state.next_player_turn()
 
     def add_action(self, action):
         # TODO : assertion if action is not an action ?

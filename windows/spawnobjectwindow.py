@@ -1,6 +1,6 @@
 from engine.windows import window
 
-from items import portalgun, trowel, spdiamond, portalremover, strengthmodifier
+from items import portalgun, trowel, spdiamond, portalremover, strengthmodifier, hotpotato
 from engine.widget import button
 
 
@@ -21,7 +21,8 @@ class SpawnObjectWindow(window.Window):
             spdiamond.SPDiamond,
             portalremover.PortalRemover,
             strengthmodifier.StrengthModifier.make_upgrade,
-            strengthmodifier.StrengthModifier.make_downgrade
+            strengthmodifier.StrengthModifier.make_downgrade,
+            hotpotato.HotPotato
         ]
 
         x = 2

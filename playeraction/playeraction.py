@@ -19,6 +19,13 @@ class PlayerAction(object):
         print("clicked action", action_index)
         pass
 
+    def on_skip(self, _player: player.Player) -> bool:
+        """
+        Called when the turn of the current player is skipped by clicking on the "skip" button
+        Can return True if this action require custom handling for skipping turn
+        """
+        return False
+
     def on_update(self, _player: player.Player, dt: float):
         """
         Called every frame on the player's update if the action is selected
