@@ -16,13 +16,13 @@ class StrengthModifier(collectible.Collectible):
     def update(self, dt: float):
         self.existence_time += dt
         self.existence_time %= 1.0
+        super().update(dt)
 
-        cols: list[player.Player] = self.manager.get_collision(self, player.Player)
-        for p in cols:
-            if p.strength + self.points > 0:
-                p.strength += self.points
-                self.manager.remove_object(self)
-                return
+    def on_collect(self, p: player.Player) -> bool:
+        if p.strength + self.points <= 0:
+            return False
+        p.strength += self.points
+        return True
 
     def draw(self):
         position = pyray.Vector2(self.position.x, self.position.y - float(self.existence_time//0.5)*0.05)
