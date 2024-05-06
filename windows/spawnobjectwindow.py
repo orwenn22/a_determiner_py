@@ -1,6 +1,6 @@
 from engine.windows import window
 
-from items import portalgun, trowel, spdiamond
+from items import portalgun, trowel, spdiamond, portalremover, strengthmodifier, hotpotato
 from engine.widget import button
 
 
@@ -18,17 +18,25 @@ class SpawnObjectWindow(window.Window):
         self.constructors = [
             portalgun.PortalGun,
             trowel.Trowel,
-            spdiamond.SPDiamond
+            spdiamond.SPDiamond,
+            portalremover.PortalRemover,
+            strengthmodifier.StrengthModifier.make_upgrade,
+            strengthmodifier.StrengthModifier.make_downgrade,
+            hotpotato.HotPotato
         ]
 
         x = 2
         y = 2
         for i in range(len(self.constructors)):
-            self.widget_manager.add_widget(button.Button(x, y, 20, 20, "LT", self.make_spawn_object_callback(i), f"{i}"))
+            self.widget_manager.add_widget(button.Button(x, y, 20, 20, "TL", self.make_spawn_object_callback(i), f"{i}"))
             x += 22
             if x >= self.width-24:
                 y += 22
                 x = 2
+
+        def local_spawn_random():
+            self.gameplay_state.spawn_item_randomly()
+        self.widget_manager.add_widget(button.Button(2, 2, 150, 20, "BL", local_spawn_random, "spawn random"))
 
     def make_spawn_object_callback(self, index: int):
         def spawn_object_callback():

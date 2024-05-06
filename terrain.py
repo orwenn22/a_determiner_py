@@ -6,9 +6,14 @@ import math
 
 class Terrain(object):
     def __init__(self, sprite_path: str, size: pyray.Vector2):
-        self.image = pyray.load_image(sprite_path)
-        self.texture = pyray.load_texture_from_image(self.image)
-        self.size = size
+        """
+        Create a new terrain
+        :param sprite_path: path to the bitmap to use
+        :param size: size of the map in meter
+        """
+        self.image = pyray.load_image(sprite_path)                  # on cpu
+        self.texture = pyray.load_texture_from_image(self.image)    # on gpu
+        self.size = size                                            # Size of terrain in meter
 
         self.collision_mask = []
         print("terrain : calculating terrain mesh...")

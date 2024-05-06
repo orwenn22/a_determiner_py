@@ -1,5 +1,6 @@
 import pyray
 from engine.object import entityobject
+from gameobject import player
 
 
 class Collectible(entityobject.EntityObject):
@@ -14,4 +15,16 @@ class Collectible(entityobject.EntityObject):
         self.width = w
         self.height = h
 
-    # TODO : put update method here and have some kind of on_collect callback ?
+    def update(self, dt: float):
+        cols: list[player.Player] = self.manager.get_collision(self, player.Player)
+        for p in cols:
+            if self.on_collect(p):                  # If collecting was a success
+                self.manager.remove_object(self)    # Remove the object
+                return                              # Stop iterating
+
+    def on_collect(self, p: player.Player) -> bool:
+        """
+        Should be redefined by subclasses. Can return False to cancel the collecting.
+        Otherwise, should always return True.
+        """
+        return True

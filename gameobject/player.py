@@ -1,8 +1,9 @@
 import pyray
 import math
 
-from engine import graphics as gr
+from engine import graphics as gr, metrics as m, globals as g
 from engine.object import kinematicobject as ko
+from engine.tooltip import tooltip, tooltiptext
 from engine.widget import widget
 from gameobject import wall
 from widgets import actionbutton, fakeactionbutton
@@ -50,6 +51,14 @@ class Player(ko.KinematicObject):
             self.actions[self.current_action].on_update(self, dt)
 
         self.update_physics(dt)
+
+        if g.mouse_used:
+            return
+        rec = self.get_rectangle()
+        mouse_pos_meter = m.window_position_to_meters_position(pyray.get_mouse_x(), pyray.get_mouse_y())
+        if rec[0] <= mouse_pos_meter.x < rec[0]+rec[2] and rec[1] <= mouse_pos_meter.y < rec[1]+rec[3] and self.parent_state is not None:
+            self.fill_tooltip(self.parent_state.tooltip)
+            g.mouse_used = True
 
     def draw(self):
         self.block_default_sprite = False
@@ -128,13 +137,27 @@ class Player(ko.KinematicObject):
 
         # Add the skip button
         def local_skip_turn():
-            self.action_points += 10                # Increase points
-            self.current_action = -1                # Cancel any action
-            self.parent_state.next_player_turn()    # Give the turn to the next character (will clear action widgets)
-
+            self.skip_turn()
         skip_button = fakeactionbutton.FakeActionButton("Skip", "(+10)", local_skip_turn)
         result.append(skip_button)
         return result
+
+    def skip_turn(self):
+        """
+        Called when the "skip" button is pressed
+        """
+        # Actions are able to cancel passing the turn to the next player
+        cancel_next_player_turn = False
+        for action in self.actions:
+            if action.on_skip(self):
+                cancel_next_player_turn = True
+
+        self.action_points += 10  # Increase points
+        self.current_action = -1  # Cancel any action
+
+        if not cancel_next_player_turn:
+            # Give the turn to the next character (will clear action widgets)
+            self.parent_state.next_player_turn()
 
     def add_action(self, action):
         # TODO : assertion if action is not an action ?
@@ -191,3 +214,12 @@ class Player(ko.KinematicObject):
         if self.parent_state is None:
             return False        # Maybe returning true is better for testing ?
         return self.parent_state.get_current_player() == self
+
+    def fill_tooltip(self, tt: tooltip.Tooltip):
+        teams = ["Blue", "Red"]
+        team_colors = [pyray.BLUE, pyray.RED]
+
+        tt.add_elements(tooltiptext.TooltipText(f"{teams[self.team]} player", 20, team_colors[self.team]))
+        tt.add_elements(tooltiptext.TooltipText(f"Energy : {self.action_points}", 20, pyray.GREEN))
+        tt.add_elements(tooltiptext.TooltipText(f"Strength : {self.strength}", 10, pyray.ORANGE))
+        tt.add_elements(tooltiptext.TooltipText(f"Mass : {self.mass}", 10, pyray.PURPLE))

@@ -2,30 +2,31 @@ import pyray
 from .. import globals as g
 from . import tooltipelements
 
-class Tooltip():
+
+class Tooltip:
     def __init__(self):
         self.elements: list[tooltipelements.TooltipElement] = []
     
-    def add_elements(self,element :tooltipelements.TooltipElement):
+    def add_elements(self, element: tooltipelements.TooltipElement):
         self.elements.append(element)
 
     def clear_elements(self):
         self.elements.clear()
 
-    def draw(self, x:int, y:int):
+    def draw(self, x: int, y: int):
         width = 0
         height = 0
         for e in self.elements:
-            height = e.height + 2
+            height += e.height + 2
             w = e.width
             if w > width:
                 width = w
 
-        if (width == 0 or height == 0):
+        if width == 0 or height == 0:
             return
         
         width += 4
-        height +=2
+        height += 2
 
         if x+width >= pyray.get_render_width():
             x -= width + 3

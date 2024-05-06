@@ -15,12 +15,12 @@ class SPDiamond(collectible.Collectible):
     def update(self, dt: float):
         self.existence_time += dt
         self.existence_time %= 2
+        super().update(dt)
 
-        cols: list[player.Player] = self.manager.get_collision(self, player.Player)
-        if len(cols) > 0:
-            cols[0].action_points += self.action_points
-            self.manager.remove_object(self)
+    def on_collect(self, p: player.Player) -> bool:
+        p.action_points += self.action_points
+        return True
 
     def draw(self):
-        position = pyray.Vector2(self.position.x, self.position.y + int(self.existence_time)/20)
+        position = pyray.Vector2(self.position.x, self.position.y - int(self.existence_time)/20)
         gr.draw_sprite_rot(self.sprite, position, pyray.Vector2(self.height, self.height), 0.0)

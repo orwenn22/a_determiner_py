@@ -1,8 +1,10 @@
-import pyray
 import os
+import pyray
+import random
 
 from engine.state import state
 from engine.object import objectmanager
+from engine.tooltip import tooltip
 from engine.widget import widgetmanager
 from engine.windows import windowmanager, window
 from engine import metrics as m, graphics as gr, globals as g, utils as u
@@ -14,6 +16,7 @@ import mapparsing
 from menus import winstate, pausemenu
 import globalresources as res
 from windows import spawnobjectwindow
+from items import spdiamond, trowel, portalgun, portalremover, strengthmodifier, hotpotato
 
 
 # Team indexes :
@@ -52,6 +55,9 @@ class GameplayState(state.State):
 
         # This will contain all the objects of the game
         self.object_manager = objectmanager.ObjectManager()
+
+        # Tooltip to put info when hovering on some elements
+        self.tooltip = tooltip.Tooltip()
 
         # These are used for drag&dropping the camera
         self.cam_follow_mouse = False
@@ -97,6 +103,8 @@ class GameplayState(state.State):
         print("initialise_terrain : Successfully loaded " + bitmap_path + "as bitmap")
 
     def update(self, dt):
+        self.tooltip.clear_elements()
+
         if g.is_key_pressed(pyray.KeyboardKey.KEY_ESCAPE):
             self.manager.set_state(pausemenu.PauseMenu(self), False)    # We don't want to unload the map yet
             return
@@ -169,9 +177,9 @@ class GameplayState(state.State):
                 text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
 
         self.window_manager.draw()
+        self.tooltip.draw(pyray.get_mouse_x()+6, pyray.get_mouse_y()+6)
 
     def update_cam_position(self, mouse_x: int, mouse_y: int):
-
         # Drag & drop cam
         if g.is_mouse_button_pressed(pyray.MouseButton.MOUSE_BUTTON_RIGHT) and not g.mouse_used:
             self.cam_follow_mouse = True
@@ -279,6 +287,10 @@ class GameplayState(state.State):
             self.current_player += 1
             self.current_player %= len(self.players)
 
+        if random.random() < 0.20:      # 20% chance of spawning random items
+            item_count = random.randint(1, 5)
+            for i in range(item_count): self.spawn_item_randomly()
+
         print("player", self.current_player, "'s turn")
         self.show_action_widgets()
 
@@ -342,6 +354,45 @@ class GameplayState(state.State):
         if victory_index != -1:
             print("Victory of team", victory_index)
             self.manager.set_state(winstate.WinState(victory_index, self.stats))
+
+    def spawn_item_randomly(self):
+        random_x = random.random() * self.t.size.x
+        random_y = random.random() * self.t.size.y
+
+        # Constructors of all the objects
+        items = [
+            spdiamond.SPDiamond,
+            trowel.Trowel,
+            portalgun.PortalGun,
+            portalremover.PortalRemover,
+            strengthmodifier.StrengthModifier.make_upgrade,
+            strengthmodifier.StrengthModifier.make_downgrade,
+            hotpotato.HotPotato
+        ]
+        random_item_index = random.randint(0, len(items)-1)
+
+        item = items[random_item_index](random_x, random_y)
+
+        if self.t.check_collision_rec(item.get_rectangle(), True):        # the objet is clipping inside the terrain
+            iterations = 0
+            while self.t.check_collision_rec(item.get_rectangle(), True):
+                item.position.y -= 0.1      # Make it go up
+                iterations += 1
+                if iterations > 1500:
+                    self.spawn_item_randomly()      # In that case we might be in an impossible situation, so try again
+                    return                          # Don't spawn the bad item
+        else:           # Not clipping terrain
+            while not self.t.check_collision_rec(item.get_rectangle(), True):
+                item.position.y += 0.1  # Make it go down
+            item.position.y -= 0.2      # When we find the floor, make it go up
+
+        # Make it so we can't randomly spawn the item on a player
+        if self.object_manager.get_collision(item, player.Player):
+            print("spawn_item_randomly : spawning item on player, cancelling")
+            # recursive call here ?
+            return
+
+        self.object_manager.add_object(item)
 
     @classmethod
     def from_level_file(cls, level_file: str):      # Returns gameplaystate or None
