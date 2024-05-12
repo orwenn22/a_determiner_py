@@ -1,9 +1,5 @@
 # Contributing
 
-Liste non exhaustive des trucs à faire, sans aucun ordre en particulier. 
-
-(Il est même possible que certaines de ces tâches ne soient pas nécessaire à réaliser
-selon ce qu'on veut faire dans le projet).
 
 NOTE : il ne faut **JAMAIS** commit directement sur master (éventuellement pour des petits fixs).
 Pour travailler sur une tâche, vous pouvez créer une branch sur le répo principale (ou bien fork si
