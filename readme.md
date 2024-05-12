@@ -1,4 +1,4 @@
-![](meta/logo.png)
+_![](meta/logo.png)
 
 ![](meta/coverage.svg) 
 ![windows](https://img.shields.io/badge/platform-windows-blue)
@@ -25,5 +25,15 @@ pip install raylib    # One time
 python ./main.py
 ```
 
-### Screenshot
+## Screenshot
 ![](meta/screenshot000.png)
+
+## Authors
+
+(Int 1 group 2)
+
+- [Ewenn BAUDET](https://github.com/orwenn22)
+- [Alexis DELAVIS](https://github.com/DAlexis1)
+- [Jude AYBALEN](https://github.com/AppleJude)
+- Adrian NOYES
+- Maxime DURET
