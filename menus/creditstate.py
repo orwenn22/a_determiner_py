@@ -15,9 +15,9 @@ class CreditState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
 
-        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.WHITE)
-        tm = label.Label(140, -160, "MC", "TM", 10, pyray.WHITE)
-        group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.WHITE)
+        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.WHITE).set_outline(True)
+        tm = label.Label(140, -160, "MC", "TM", 10, pyray.WHITE).set_outline(True)
+        group = label.Label(0, -100, "MC", "By : SomeGroup", 30, pyray.WHITE).set_outline(True)
 
         return_to_menu = tiledbutton.TiledButton(0, 200, 250, 40, "MC",
                                                  res.tiled_button_sprite, 8, 2,
@@ -27,11 +27,11 @@ class CreditState(state.State):
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)
         self.widget_manager.add_widget(group)
-        self.widget_manager.add_widget(label.Label(0, -60, "MC", "Ewenn Baudet", 20, pyray.WHITE))
-        self.widget_manager.add_widget(label.Label(0, -30, "MC", "Alexis Delavis", 20, pyray.WHITE))
-        self.widget_manager.add_widget(label.Label(0, 0, "MC", "Jude Aybalen", 20, pyray.WHITE))
-        self.widget_manager.add_widget(label.Label(0, 30, "MC", "Adrian Noyes", 20, pyray.WHITE))
-        self.widget_manager.add_widget(label.Label(0, 60, "MC", "Maxime Duret", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, -60, "MC", "Ewenn Baudet", 20, pyray.WHITE).set_outline(True))
+        self.widget_manager.add_widget(label.Label(0, -30, "MC", "Alexis Delavis", 20, pyray.WHITE).set_outline(True))
+        self.widget_manager.add_widget(label.Label(0, 0, "MC", "Jude Aybalen", 20, pyray.WHITE).set_outline(True))
+        self.widget_manager.add_widget(label.Label(0, 30, "MC", "Adrian Noyes", 20, pyray.WHITE).set_outline(True))
+        self.widget_manager.add_widget(label.Label(0, 60, "MC", "Maxime Duret", 20, pyray.WHITE).set_outline(True))
         self.widget_manager.add_widget(return_to_menu)
 
         self.bg = tiledbackground.TiledBackground(res.menu_bg_credits_sprite)

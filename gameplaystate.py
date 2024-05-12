@@ -5,7 +5,7 @@ import random
 from engine.state import state
 from engine.object import objectmanager
 from engine.tooltip import tooltip
-from engine.widget import widgetmanager
+from engine.widget import widgetmanager, label
 from engine.windows import windowmanager, window
 from engine import metrics as m, graphics as gr, globals as g, utils as u
 from widgets import playersindicator
@@ -33,6 +33,9 @@ class GameplayState(state.State):
         # This is where we put permanent ui elements
         self.overlay = widgetmanager.WidgetManager()
         self.overlay.add_widget(playersindicator.PlayersIndicator(self))
+        self.hotbar_text = label.Label(0, 95, "BC", "Hotbar text", 20)
+        self.hotbar_text.enable_outline = True
+        self.overlay.add_widget(self.hotbar_text)
 
         # Widget manager for the action buttons.
         self.actions_widgets = widgetmanager.WidgetManager()
@@ -139,6 +142,8 @@ class GameplayState(state.State):
         if self.placing_players():                      # Check if we are still placing players
             self.place_player(mouse_pos_meter.x, mouse_pos_meter.y, len(self.players) % 2)
 
+        self.update_hotbar_text()
+
     def draw(self):
         pyray.clear_background(pyray.Color(25, 25, 25, 255))
 
@@ -155,14 +160,6 @@ class GameplayState(state.State):
         #gr.draw_grid()
         self.object_manager.draw()
 
-        if self.spawned_object is not None and not g.mouse_used:
-            self.spawned_object.draw()
-
-        if self.show_actions:
-            self.actions_widgets.draw()
-
-        self.overlay.draw()
-
         if not self.placing_players():
             # Display green marker on top of current player
             player_pos = self.get_current_player().position
@@ -170,11 +167,13 @@ class GameplayState(state.State):
             arrow_pos.y -= 1
             gr.draw_sprite_rot(res.green_marker_sprite, arrow_pos, pyray.Vector2(0.5, 0.5), 0.0)
 
-            # Display action points (this is temporary, we need to find a way to do this in a better way)
-            arrow_pos.y -= 1
-            text_pos = m.meters_position_to_window_position(arrow_pos)
-            pyray.draw_text(str(self.get_current_player().action_points), int(
-                text_pos.x), int(text_pos.y), 20, pyray.Color(255, 255, 255, 255))
+        if self.spawned_object is not None and not g.mouse_used:
+            self.spawned_object.draw()
+
+        if self.show_actions:
+            self.actions_widgets.draw()
+
+        self.overlay.draw()
 
         self.window_manager.draw()
         self.tooltip.draw(pyray.get_mouse_x()+6, pyray.get_mouse_y()+6)
@@ -213,6 +212,24 @@ class GameplayState(state.State):
             g.mouse_used = True
             self.object_manager.add_object(self.spawned_object)
             self.spawned_object = None
+
+    def update_hotbar_text(self):
+        """
+        This will put the default messages in the hotbar text depending on the situation
+        """
+        # Currently this get executed at every frame, therefore it is not optimised at all.
+        if self.current_player == -1:
+            self.hotbar_text.set_text(f"Place {"blue" if len(self.players) % 2 == 0 else "red"} player")
+            self.hotbar_text.set_color(pyray.BLUE if len(self.players) % 2 == 0 else pyray.RED)
+            return
+
+        p = self.get_current_player()
+        if p is None:
+            self.hotbar_text.set_text("Error : player is None :^(")
+            return
+
+        self.hotbar_text.set_text(f"Energy : {p.action_points}")
+        self.hotbar_text.set_color(pyray.BLUE if p.team == 0 else pyray.RED)
 
     def place_player(self, dest_x: float, dest_y: float, team: int, check_start_pos: bool = True):
         """

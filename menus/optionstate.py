@@ -15,7 +15,7 @@ class OptionState(state.State):
             self.manager.set_state(menustate.MenuState())
 
         self.widget_manager = widgetmanager.WidgetManager()
-        title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(0, 0, 0, 255))
+        title = label.Label(0, -200, "MC",  "Options", 40, pyray.Color(255, 255, 255, 255)).set_outline(True)
 
         key_left = tiledbutton.TiledButton(-85, -50, 140, 40, "MC",
                                            res.tiled_button_left_sprite, 8, 2,

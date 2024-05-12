@@ -14,7 +14,7 @@ class PauseMenu(state.State):
         self.gameplay_state: gameplaystate.GameplayState = gameplay_state       # TODO : handle any type of state ?
         self.widget_manager = widgetmanager.WidgetManager()
 
-        self.widget_manager.add_widget(label.Label(0, -55, "MC", "== PAUSE ==", 20, pyray.WHITE))
+        self.widget_manager.add_widget(label.Label(0, -55, "MC", "== PAUSE ==", 20, pyray.WHITE).set_outline(True))
 
         def local_resume():
             self._resume()

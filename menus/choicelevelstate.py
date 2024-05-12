@@ -39,7 +39,7 @@ class ChoiceLevelState(state.State):
         self.level_files_list: list[str] = os.listdir("maps/")
 
         # Title (static)
-        title = label.Label(0, 10, "TC", "Choose the level", 30, pyray.BLACK).set_scrollable(False)
+        title = label.Label(0, 10, "TC", "Select the level", 30, pyray.WHITE).set_scrollable(False).set_outline(True)
         self.widget_manager.add_widget(title)
 
         # Level buttons (scrollable)
@@ -64,7 +64,7 @@ class ChoiceLevelState(state.State):
             level_count += 1
 
         # Configure scrolling on the widget manager
-        self.widget_manager.set_scrolling_proportions(0, 0, -level_count*120, 0)
+        self.widget_manager.set_scrolling_proportions(0, 0, -(level_count-1)*120, 0)
         self.widget_manager.set_scrolling_flags(False, True)
 
     def unload_ressources(self):

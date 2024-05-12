@@ -28,8 +28,13 @@ class MenuState(state.State):
 
         self.widget_manager = widgetmanager.WidgetManager()
 
-        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.Color(0, 0, 0, 255))
-        tm = label.Label(140, -160, "MC", "TM", 10, pyray.Color(0, 0, 0, 255))
+        title = label.Label(0, -150, "MC", "À déterminer", 40, pyray.Color(255, 255, 255, 255))
+        title.enable_outline = True
+        title.outline_color = pyray.BLACK
+
+        tm = label.Label(140, -160, "MC", "TM", 10, pyray.Color(255, 255, 255, 255))
+        tm.enable_outline = True
+        tm.outline_color = pyray.BLACK
 
         play_button = tiledbutton.TiledButton(0, -50, 150, 40, "MC",
                                               res.tiled_button_sprite, 8, 2,
