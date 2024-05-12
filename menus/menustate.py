@@ -1,9 +1,11 @@
 import pyray
+import random
 from engine import globals as g
 from engine.state import state
 from engine.widget import widgetmanager, label, tiledbutton
-from utils import tiledbackground
+from utils import tiledbackground, keyboardcode
 import globalresources as res
+import gameplaystate
 
 
 class MenuState(state.State):
@@ -58,14 +60,24 @@ class MenuState(state.State):
         self.widget_manager.add_widget(quit_button)
         self.widget_manager.add_widget(title)
         self.widget_manager.add_widget(tm)
-
+        self.code = keyboardcode.KeyboardCode("SILLY", self.silly)
         self.bg = tiledbackground.TiledBackground(res.menu_bg_sprite)
 
     def update(self, dt):
         self.bg.update(dt)
         self.widget_manager.update(dt)
+        self.code.update()
 
     def draw(self):
         pyray.clear_background(pyray.BLACK)
         self.bg.draw()
         self.widget_manager.draw()
+
+    def silly(self):
+        gameplay_state = None
+        if random.randint(0, 100) < 90:
+            gameplay_state = gameplaystate.GameplayState.from_level_file("old/silly.txt")
+        else:
+            gameplay_state = gameplaystate.GameplayState.from_level_file("old/silly_better.txt")
+        if gameplay_state is not None:
+            self.manager.set_state(gameplay_state)

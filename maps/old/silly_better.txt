@@ -1,0 +1,6 @@
+camera_center 20 11.25
+background None
+bitmap old/silly_better.png
+mapsize 40 22.5
+blue_start 0 0 20 22.5
+red_start 20 0 20 22.5
