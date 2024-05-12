@@ -64,12 +64,12 @@ class Player(ko.KinematicObject):
         self.block_default_sprite = False
 
         # Throw angle  TODO : remove this (or put this
-        gr.draw_line(
-            self.position,
-            pyray.vector2_add(self.position, pyray.Vector2(
-                math.cos(self.throw_angle) * 1, math.sin(self.throw_angle) * 1)),
-            (0, 255, 255, 255)
-        )
+        # gr.draw_line(
+        #     self.position,
+        #     pyray.vector2_add(self.position, pyray.Vector2(
+        #         math.cos(self.throw_angle) * 1, math.sin(self.throw_angle) * 1)),
+        #     (0, 255, 255, 255)
+        # )
 
         # Draw action (this can set block_default_sprite to True)
         if 0 <= self.current_action < len(self.actions):
@@ -91,7 +91,9 @@ class Player(ko.KinematicObject):
                                       pyray.Vector2(1.0, 1.0),
                                       0.0)
 
-        self.draw_hitbox()  # debuggging  TODO : remove this
+        # debuggging  TODO : remove this
+        # self.draw_hitbox()
+        ko.entityobject.EntityObject.draw_hitbox(self)
 
     def update_physics(self, dt: float) -> None:
         """
