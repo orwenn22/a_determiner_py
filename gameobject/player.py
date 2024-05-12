@@ -34,7 +34,7 @@ class Player(ko.KinematicObject):
         self.current_action = -1
 
         # Some actions cost points. The points are stored in this.
-        self.action_points = 20
+        self.action_points = 30
 
         self.use_small_hitbox = False
 
