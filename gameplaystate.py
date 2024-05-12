@@ -222,7 +222,8 @@ class GameplayState(state.State):
         """
         # Currently this get executed at every frame, therefore it is not optimised at all.
         if self.current_player == -1:
-            self.hotbar_text.set_text(f"Place {"blue" if len(self.players) % 2 == 0 else "red"} player")
+            team_name = "blue" if len(self.players) % 2 == 0 else "red"
+            self.hotbar_text.set_text(f"Place {team_name} player")
             self.hotbar_text.set_color(pyray.BLUE if len(self.players) % 2 == 0 else pyray.RED)
             return
 
