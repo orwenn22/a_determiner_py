@@ -7,8 +7,8 @@ import globalresources as res
 
 
 class Portal(entityobject.EntityObject):
-    def __init__(self, x: float, y: float, sprite: pyray.Texture = res.portal_sprite):
-        super().__init__(x, y, 1.0, 1.0, sprite)
+    def __init__(self, x: float, y: float):
+        super().__init__(x, y, 1.0, 1.0, res.portal_sprite)
         self.destination: Portal | None = None
         self.whitelisted_types = [player.Player, bullet.Bullet, wall.Wall]
         self.cooldown = 1.0
@@ -63,9 +63,9 @@ class Portal(entityobject.EntityObject):
         self.destination = destination
 
     @classmethod
-    def spawn_portals(cls, manager: objectmanager.ObjectManager, x1: float, y1: float, x2: float, y2: float, sprite: pyray.Texture = res.portal_sprite):
-        p1 = cls(x1, y1, sprite)
-        p2 = cls(x2, y2, sprite)
+    def spawn_portals(cls, manager: objectmanager.ObjectManager, x1: float, y1: float, x2: float, y2: float):
+        p1 = cls(x1, y1)
+        p2 = cls(x2, y2)
         p1.set_destination(p2)
         p2.set_destination(p1)
         manager.add_object(p1)
