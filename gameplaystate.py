@@ -114,7 +114,7 @@ class GameplayState(state.State):
 
         if self.t is None:
             print("Terrain not initialised, loading default")
-            self.initialise_terrain("maps/level1.png", 25.0, 12.0)
+            self.initialise_terrain("maps/old/level1.png", 25.0, 12.0)
             self.starts[0] = (0, 0, 25, 12)
             self.starts[1] = (0, 0, 25, 12)
             return
@@ -159,6 +159,9 @@ class GameplayState(state.State):
         self.t.draw()
         #gr.draw_grid()
         self.object_manager.draw()
+
+        if g.is_key_down(pyray.KeyboardKey.KEY_F2):
+            return
 
         if not self.placing_players():
             # Display green marker on top of current player
